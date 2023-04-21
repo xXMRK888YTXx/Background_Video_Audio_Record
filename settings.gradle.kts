@@ -16,3 +16,4 @@ rootProject.name = "BackgroundVideoVoiceRecord"
 include (":app")
 include(":CoreAndroid")
 include(":CoreCompose")
+include(":BottomBarScreen")

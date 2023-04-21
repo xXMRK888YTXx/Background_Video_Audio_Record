@@ -8,5 +8,8 @@ data class Colors(
     val navigationBar:Color,
     val primaryFontColor:Color,
     val secondFontColor:Color,
-    val iconsColor: Color
+    val iconsColor: Color,
+    val bottomBarColor:Color,
+    val bottomBarSelectedContentColor:Color,
+    val bottomBarUnselectedContentColor:Color
 )

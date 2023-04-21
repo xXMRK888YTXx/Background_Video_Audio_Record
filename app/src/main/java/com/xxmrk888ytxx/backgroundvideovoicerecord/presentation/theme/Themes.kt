@@ -3,7 +3,9 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.theme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.xxmrk888ytxx.corecompose.AppTheme
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Colors
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Dimensions
@@ -21,6 +23,9 @@ object Themes {
                 primaryFontColor = Color(0xFFFFFFFF),
                 secondFontColor = Color.Gray,
                 iconsColor = Color(0xFFFFFFFF),
+                bottomBarColor = Color(0xFF1B252D),
+                bottomBarSelectedContentColor = Color(0xFF5849C2),
+                bottomBarUnselectedContentColor = Color(0x99FFFFFF),
             )
         override val dimensions: Dimensions
             get() = Dimensions(
@@ -32,7 +37,10 @@ object Themes {
             )
         override val typography: Typography
             get() = Typography(
-                body = TextStyle()
+                bottomBar = TextStyle(
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.W500
+                ),
             )
 
     }

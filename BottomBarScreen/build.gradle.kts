@@ -1,35 +1,34 @@
 plugins {
-    id ("com.android.application")
-    id ("org.jetbrains.kotlin.android")
-    id (Deps.Dagger.DaggerKaptPlugin)
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
 }
 
 android {
-    namespace = Config.packageName
+    namespace = "com.xxmrk888ytxx.bottombarscreen"
     compileSdk = Config.compileSdk
 
     defaultConfig {
-        applicationId = Config.packageName
         minSdk = Config.minSdk
-        targetSdk = Config.compileSdk
-        versionCode = 1
-        versionName = "devBuild"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
         release {
             isMinifyEnabled = Config.isR8ProGuardEnableForRelease
-            proguardFiles("proguard-android-optimize.txt","proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
 
         debug {
             isMinifyEnabled = Config.isR8ProGuardEnableForDebug
-            proguardFiles("proguard-android-optimize.txt","proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -54,12 +53,4 @@ android {
 
 dependencies {
     implementation(project(Project.CoreCompose))
-    implementation(project(Project.BottomBarScreen))
-
-    //Dagger
-    kapt(Deps.Dagger.DaggerKaptCompiler)
-
-    //Compose
-    implementation(Deps.Compose.Navigation)
-    implementation(Deps.Compose.SystemUiController)
 }

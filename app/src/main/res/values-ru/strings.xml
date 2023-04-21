@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Sound_record">Запись звука</string>
+    <string name="Record_video">Запись видео</string>
+    <string name="Settings">Настройки</string>
+</resources>
