@@ -55,6 +55,7 @@ android {
 dependencies {
     implementation(project(Project.CoreCompose))
     implementation(project(Project.BottomBarScreen))
+    implementation(project(Project.RecordAudioScreen))
 
     //Dagger
     kapt(Deps.Dagger.DaggerKaptCompiler)

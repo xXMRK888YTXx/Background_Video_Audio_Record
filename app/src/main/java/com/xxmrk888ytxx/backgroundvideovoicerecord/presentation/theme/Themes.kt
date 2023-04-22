@@ -4,6 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.W900
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.xxmrk888ytxx.corecompose.AppTheme
@@ -26,6 +27,7 @@ object Themes {
                 bottomBarColor = Color(0xFF1B252D),
                 bottomBarSelectedContentColor = Color(0xFF5849C2),
                 bottomBarUnselectedContentColor = Color(0x99FFFFFF),
+                borderRecordWidgetWhenRecordDisabled = Color(0xFFD40415)
             )
         override val dimensions: Dimensions
             get() = Dimensions(
@@ -41,6 +43,10 @@ object Themes {
                     fontSize = 15.sp,
                     fontWeight = FontWeight.W500
                 ),
+                recordCounter = TextStyle(
+                    fontSize = 40.sp,
+                    fontWeight = W900
+                )
             )
 
     }

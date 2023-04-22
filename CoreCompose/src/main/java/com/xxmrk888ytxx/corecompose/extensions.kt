@@ -1,10 +1,13 @@
 package com.xxmrk888ytxx.corecompose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Colors
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Dimensions
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Shapes
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Typography
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 val themeColors:Colors
     @Composable get() = LocalTheme.current.colors
@@ -17,3 +20,10 @@ val themeShapes: Shapes
 
 val themeTypography: Typography
     @Composable get() = LocalTheme.current.typography
+
+val randomColor: Color
+    get() = Color(
+        red = Random(System.currentTimeMillis() / 3).nextInt(0..255),
+        green = Random(System.currentTimeMillis() / 2).nextInt(0..255),
+        blue = Random(System.currentTimeMillis()).nextInt(0..255)
+    )
