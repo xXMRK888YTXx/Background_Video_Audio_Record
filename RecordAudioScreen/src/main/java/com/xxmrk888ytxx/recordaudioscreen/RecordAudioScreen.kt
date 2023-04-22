@@ -8,20 +8,32 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButtonHolderWidget
 import com.xxmrk888ytxx.corecompose.Shared.RecordStateWidget
+import com.xxmrk888ytxx.corecompose.Shared.StyleIcon
+import com.xxmrk888ytxx.corecompose.Shared.StyleIconButton
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -75,6 +87,26 @@ fun RecordAudioScreen(
                     .fillMaxWidth(),
                 borderWhenRecordEnabled = animatedWidgetGradientColor
             )
+
+            ControlRecordButtonHolderWidget(
+                modifier = Modifier.offset(
+                    y = 20.dp
+                )
+            ) {
+                Button(
+                    onClick = { /*TODO*/ },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Red
+                    ),
+                    modifier = Modifier.clip(CircleShape)
+                ) {
+                    StyleIconButton(
+                        painter = painterResource(id = R.drawable.baseline_fiber_manual_record_24),
+                        modifier = Modifier.size(40.dp)
+                            .clip(RoundedCornerShape(100))
+                    ) {}
+                }
+            }
 
 
         }

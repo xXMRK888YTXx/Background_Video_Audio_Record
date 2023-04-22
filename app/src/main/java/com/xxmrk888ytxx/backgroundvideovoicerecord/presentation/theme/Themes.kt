@@ -27,7 +27,8 @@ object Themes {
                 bottomBarColor = Color(0xFF1B252D),
                 bottomBarSelectedContentColor = Color(0xFF5849C2),
                 bottomBarUnselectedContentColor = Color(0x99FFFFFF),
-                borderRecordWidgetWhenRecordDisabled = Color(0xFFD40415)
+                borderRecordWidgetWhenRecordDisabled = Color(0xFFD40415),
+                cardColor = Color(0xFF303F4F)
             )
         override val dimensions: Dimensions
             get() = Dimensions(

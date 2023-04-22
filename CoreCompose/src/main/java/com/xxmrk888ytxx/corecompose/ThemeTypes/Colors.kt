@@ -12,5 +12,6 @@ data class Colors(
     val bottomBarColor:Color,
     val bottomBarSelectedContentColor:Color,
     val bottomBarUnselectedContentColor:Color,
-    val borderRecordWidgetWhenRecordDisabled: Color
+    val borderRecordWidgetWhenRecordDisabled: Color,
+    val cardColor: Color
 )
