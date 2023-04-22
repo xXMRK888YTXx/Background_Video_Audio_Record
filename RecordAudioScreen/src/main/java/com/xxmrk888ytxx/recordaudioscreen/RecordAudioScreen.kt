@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.xxmrk888ytxx.corecompose.LocalTheme
 import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButton
 import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButtonHolderWidget
 import com.xxmrk888ytxx.corecompose.Shared.RecordStateWidget
@@ -51,10 +52,12 @@ fun RecordAudioScreen(
 
     val currentWidgetGradientColor by recordAudioViewModel.currentWidgetColor.collectAsStateWithLifecycle()
 
+    val themeValues = LocalTheme.current.values
+
     val animatedWidgetGradientColor by animateColorAsState(
         targetValue = currentWidgetGradientColor.color,
         animationSpec = tween(
-            durationMillis = 1000
+            durationMillis = themeValues.animationDuration
         )
     )
 
@@ -64,7 +67,7 @@ fun RecordAudioScreen(
 
     val animatedAlpha by animateFloatAsState(
         targetValue = alpha,
-        animationSpec = tween(1000)
+        animationSpec = tween(themeValues.animationDuration)
     )
 
     LaunchedEffect(key1 = isRecord, block = {
@@ -75,7 +78,7 @@ fun RecordAudioScreen(
             while (isRecord) {
                 recordAudioViewModel.regenerateButtonGradientColor()
                 alpha = if (alpha == 1f) 0f else 1f
-                delay(1100)
+                delay((themeValues.animationDuration + themeValues.additionalAnimationDuration).toLong())
             }
         }
     })
@@ -116,7 +119,7 @@ fun RecordAudioScreen(
 
             ControlRecordButtonHolderWidget(
                 modifier = Modifier.offset(
-                    y = 20.dp
+                    y = themeDimensions.controlRecordButtonHolderWidgetOffset
                 )
             ) {
                 ControlRecordButton(
