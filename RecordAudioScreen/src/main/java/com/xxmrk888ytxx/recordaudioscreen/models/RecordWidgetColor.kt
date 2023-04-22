@@ -5,11 +5,11 @@ import androidx.compose.ui.graphics.Color
 import com.xxmrk888ytxx.corecompose.randomColor
 
 @Stable
-data class RecordWitgetColor(
-    val color1:Color = randomColor
+internal data class RecordWidgetColor(
+    val color:Color = randomColor
 ) {
-    val newRecordGradient: RecordWitgetColor
+    val newRecordGradient: RecordWidgetColor
         get() = this.copy(
-            color1 = randomColor,
+            color = randomColor,
         )
 }

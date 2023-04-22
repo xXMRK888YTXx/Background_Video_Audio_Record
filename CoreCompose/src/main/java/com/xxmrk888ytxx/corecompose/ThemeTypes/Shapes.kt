@@ -4,5 +4,6 @@ import androidx.compose.ui.graphics.Shape
 
 
 data class Shapes(
-    val card: Shape
+    val card: Shape,
+    val controlButtonShape: Shape
 )

@@ -56,6 +56,7 @@ dependencies {
     implementation(project(Project.CoreCompose))
     implementation(project(Project.BottomBarScreen))
     implementation(project(Project.RecordAudioScreen))
+    implementation(project(Project.RecordVideoScreen))
 
     //Dagger
     kapt(Deps.Dagger.DaggerKaptCompiler)

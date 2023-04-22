@@ -28,15 +28,19 @@ object Themes {
                 bottomBarSelectedContentColor = Color(0xFF5849C2),
                 bottomBarUnselectedContentColor = Color(0x99FFFFFF),
                 borderRecordWidgetWhenRecordDisabled = Color(0xFFD40415),
-                cardColor = Color(0xFF303F4F)
+                cardColor = Color(0xFF303F4F),
+                recordButtonColor = Color.Red,
+                supportControlRecordButtonColor = Color(0xFF5849C2)
             )
         override val dimensions: Dimensions
             get() = Dimensions(
-                iconSize = 30.dp
+                iconSize = 30.dp,
+                controlButtonSize = 60.dp
             )
         override val shapes: Shapes
             get() = Shapes(
-                card = RoundedCornerShape(20.dp)
+                card = RoundedCornerShape(20.dp),
+                controlButtonShape = RoundedCornerShape(100)
             )
         override val typography: Typography
             get() = Typography(

@@ -22,6 +22,8 @@ import com.xxmrk888ytxx.bottombarscreen.models.BottomBarScreenModel
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.recordaudioscreen.RecordAudioScreen
 import com.xxmrk888ytxx.recordaudioscreen.RecordAudioViewModel
+import com.xxmrk888ytxx.recordvideoscreen.RecordVideoScreen
+import com.xxmrk888ytxx.recordvideoscreen.RecordVideoViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -29,6 +31,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var recordAudioViewModel: Provider<RecordAudioViewModel>
+
+    @Inject
+    lateinit var recordVideoViewModel: Provider<RecordVideoViewModel>
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,11 +71,9 @@ class MainActivity : ComponentActivity() {
             BottomBarScreenModel(
                 title = getString(R.string.Record_video),
                 icon = R.drawable.videocam,
-                content = {
-                    Box(Modifier.fillMaxSize()) {
-
-                    }
-                }
+                content = { RecordVideoScreen(
+                    recordVideoViewModel = composeViewModel { recordVideoViewModel.get() }
+                ) }
             ),
             BottomBarScreenModel(
                 title = getString(R.string.Settings),

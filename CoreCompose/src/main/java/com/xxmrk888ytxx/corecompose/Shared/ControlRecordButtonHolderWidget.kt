@@ -30,9 +30,9 @@ fun ControlRecordButtonHolderWidget(
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
+                .padding(15.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterHorizontally),
             content = content
         )
     }
