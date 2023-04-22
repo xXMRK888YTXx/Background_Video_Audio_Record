@@ -4,6 +4,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -12,7 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import com.xxmrk888ytxx.coreandroid.milliSecondToString
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeTypography
 
@@ -21,6 +25,7 @@ fun RecordStateWidget(
     modifier: Modifier = Modifier,
     recordTime:Long = 0,
     isRecordEnabled:Boolean,
+    icon:@Composable () -> Unit,
     borderWhenRecordEnabled: Color,
     borderWhenRecordDisabled:Color = themeColors.borderRecordWidgetWhenRecordDisabled,
 ) {
@@ -32,13 +37,23 @@ fun RecordStateWidget(
             contentAlignment = Alignment.Center,
             modifier = Modifier
         ) {
-            Text(
-                text = "00:00",
-                style = themeTypography.recordCounter,
-                color = themeColors.primaryFontColor
-            )
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = recordTime.milliSecondToString(),
+                    style = themeTypography.recordCounter,
+                    color = themeColors.primaryFontColor,
+                    modifier = Modifier.padding(bottom = 10.dp)
+                )
+
+                icon()
+            }
             Canvas(
-                modifier = Modifier.size(300.dp)
+                modifier = Modifier
+                    .size(300.dp)
                     .then(modifier)
             ) {
                 drawCircle(

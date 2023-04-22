@@ -32,7 +32,7 @@ object Themes {
             )
         override val dimensions: Dimensions
             get() = Dimensions(
-                iconSize = 25.dp
+                iconSize = 30.dp
             )
         override val shapes: Shapes
             get() = Shapes(

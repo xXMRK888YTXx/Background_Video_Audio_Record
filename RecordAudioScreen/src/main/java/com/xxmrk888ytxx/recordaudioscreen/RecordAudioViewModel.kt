@@ -25,4 +25,15 @@ class RecordAudioViewModel @Inject constructor(
     fun regenerateButtonGradientColor() {
         _currentWidgetColor.update { it.newRecordGradient }
     }
+
+    //Temp
+    val isRecord = MutableStateFlow(false)
+
+    fun startRecord() {
+        isRecord.update { true }
+    }
+
+    fun stopRecord() {
+        isRecord.update { false }
+    }
 }
