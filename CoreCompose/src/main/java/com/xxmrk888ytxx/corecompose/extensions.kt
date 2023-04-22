@@ -6,6 +6,7 @@ import com.xxmrk888ytxx.corecompose.ThemeTypes.Colors
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Dimensions
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Shapes
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Typography
+import com.xxmrk888ytxx.corecompose.ThemeTypes.Values
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -20,6 +21,9 @@ val themeShapes: Shapes
 
 val themeTypography: Typography
     @Composable get() = LocalTheme.current.typography
+
+val themeValues: Values
+    @Composable get() = LocalTheme.current.values
 
 val randomColor: Color
     get() = Color(

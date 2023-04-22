@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -12,7 +13,9 @@ import com.xxmrk888ytxx.corecompose.ThemeTypes.Colors
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Dimensions
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Shapes
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Typography
+import com.xxmrk888ytxx.corecompose.ThemeTypes.Values
 
+@Immutable
 object Themes {
 
     val dark = object : AppTheme {
@@ -35,7 +38,8 @@ object Themes {
         override val dimensions: Dimensions
             get() = Dimensions(
                 iconSize = 30.dp,
-                controlButtonSize = 60.dp
+                controlButtonSize = 60.dp,
+                controlRecordButtonHolderWidgetOffset = 20.dp
             )
         override val shapes: Shapes
             get() = Shapes(
@@ -52,6 +56,11 @@ object Themes {
                     fontSize = 40.sp,
                     fontWeight = W900
                 )
+            )
+        override val values: Values
+            get() = Values(
+                animationDuration = 5000,
+                additionalAnimationDuration = 100
             )
 
     }
