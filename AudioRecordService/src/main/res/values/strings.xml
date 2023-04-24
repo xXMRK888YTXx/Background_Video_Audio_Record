@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Channel_name">Channel for displaying audio recording status notifications</string>
+</resources>

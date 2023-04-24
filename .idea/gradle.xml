@@ -10,6 +10,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/AudioRecordService" />
             <option value="$PROJECT_DIR$/BottomBarScreen" />
             <option value="$PROJECT_DIR$/CoreAndroid" />
             <option value="$PROJECT_DIR$/CoreCompose" />
