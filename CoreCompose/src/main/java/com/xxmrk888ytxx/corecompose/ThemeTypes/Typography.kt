@@ -4,5 +4,7 @@ import androidx.compose.ui.text.TextStyle
 
 data class Typography(
     val bottomBar: TextStyle,
-    val recordCounter: TextStyle
+    val recordCounter: TextStyle,
+    val permissionDescription: TextStyle,
+    val body:TextStyle
 )

@@ -2,15 +2,18 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.font.FontWeight.Companion.W900
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.xxmrk888ytxx.corecompose.AppTheme
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Colors
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Dimensions
+import com.xxmrk888ytxx.corecompose.ThemeTypes.Gradients
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Shapes
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Typography
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Values
@@ -35,16 +38,24 @@ object Themes {
                 recordButtonColor = Color.Red,
                 supportControlRecordButtonColor = Color(0xFF5849C2)
             )
+        override val gradients: Gradients
+            get() = Gradients(
+                enablePermissionButtonGradient = Brush.linearGradient(listOf(Color(0xFF5849C2),Color(0xFF4871CC))),
+                disablePermissionButtonGradient = Brush.linearGradient(listOf(Color(0xFF25313D),Color(0xFF25313D)))
+            )
         override val dimensions: Dimensions
             get() = Dimensions(
                 iconSize = 30.dp,
                 controlButtonSize = 60.dp,
-                controlRecordButtonHolderWidgetOffset = 20.dp
+                controlRecordButtonHolderWidgetOffset = 20.dp,
+                cardOutPaddings = 10.dp,
+                cardInPaddings = 10.dp
             )
         override val shapes: Shapes
             get() = Shapes(
                 card = RoundedCornerShape(20.dp),
-                controlButtonShape = RoundedCornerShape(100)
+                controlButtonShape = RoundedCornerShape(100),
+                permissionDialog = RoundedCornerShape(15.dp)
             )
         override val typography: Typography
             get() = Typography(
@@ -55,6 +66,14 @@ object Themes {
                 recordCounter = TextStyle(
                     fontSize = 40.sp,
                     fontWeight = W900
+                ),
+                permissionDescription = TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = W600
+                ),
+                body = TextStyle(
+                    fontSize = 20.sp,
+                    fontWeight = W600
                 )
             )
         override val values: Values
