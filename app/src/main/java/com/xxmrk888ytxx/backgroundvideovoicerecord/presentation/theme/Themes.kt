@@ -71,8 +71,12 @@ object Themes {
                     fontSize = 18.sp,
                     fontWeight = W600
                 ),
-                body = TextStyle(
+                head = TextStyle(
                     fontSize = 20.sp,
+                    fontWeight = W600
+                ),
+                body = TextStyle(
+                    fontSize = 18.sp,
                     fontWeight = W600
                 )
             )
