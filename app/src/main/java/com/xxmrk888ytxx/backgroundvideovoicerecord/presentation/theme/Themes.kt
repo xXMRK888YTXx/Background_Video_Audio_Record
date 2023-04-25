@@ -60,7 +60,7 @@ object Themes {
         override val typography: Typography
             get() = Typography(
                 bottomBar = TextStyle(
-                    fontSize = 15.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.W500
                 ),
                 recordCounter = TextStyle(

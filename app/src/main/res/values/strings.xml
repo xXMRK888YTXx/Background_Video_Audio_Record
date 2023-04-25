@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">BackgroundVideo&amp;VoiceRecord</string>
-    <string name="Sound_record">Recording audio</string>
-    <string name="Record_video">Video Recording</string>
+    <string name="Sound_record">Audio</string>
+    <string name="Record_video">Video</string>
     <string name="Settings">Settings</string>
+    <string name="Storage">Storage</string>
 </resources>

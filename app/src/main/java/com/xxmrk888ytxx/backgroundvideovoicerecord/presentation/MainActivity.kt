@@ -24,6 +24,8 @@ import com.xxmrk888ytxx.recordaudioscreen.RecordAudioScreen
 import com.xxmrk888ytxx.recordaudioscreen.RecordAudioViewModel
 import com.xxmrk888ytxx.recordvideoscreen.RecordVideoScreen
 import com.xxmrk888ytxx.recordvideoscreen.RecordVideoViewModel
+import com.xxmrk888ytxx.storagescreen.StorageScreen
+import com.xxmrk888ytxx.storagescreen.StorageScreenViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -34,6 +36,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var recordVideoViewModel: Provider<RecordVideoViewModel>
+
+    @Inject
+    lateinit var storageScreenViewModel: Provider<StorageScreenViewModel>
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,6 +79,13 @@ class MainActivity : ComponentActivity() {
                 content = { RecordVideoScreen(
                     recordVideoViewModel = composeViewModel { recordVideoViewModel.get() }
                 ) }
+            ),
+            BottomBarScreenModel(
+                title = getString(R.string.Storage),
+                icon = R.drawable.baseline_storage_24,
+                content = {
+                    StorageScreen(composeViewModel { storageScreenViewModel.get() })
+                }
             ),
             BottomBarScreenModel(
                 title = getString(R.string.Settings),

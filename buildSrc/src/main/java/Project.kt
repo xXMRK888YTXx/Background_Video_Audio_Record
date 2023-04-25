@@ -6,4 +6,5 @@ object Project {
     const val RecordAudioScreen = ":RecordAudioScreen"
     const val RecordVideoScreen = ":RecordVideoScreen"
     const val AudioRecordService = ":AudioRecordService"
+    const val StorageScreen = ":StorageScreen"
 }
