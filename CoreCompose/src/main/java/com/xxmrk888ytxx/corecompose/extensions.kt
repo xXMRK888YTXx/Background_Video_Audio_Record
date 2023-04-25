@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Colors
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Dimensions
+import com.xxmrk888ytxx.corecompose.ThemeTypes.Gradients
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Shapes
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Typography
 import com.xxmrk888ytxx.corecompose.ThemeTypes.Values
@@ -15,6 +16,9 @@ val themeColors:Colors
 
 val themeDimensions: Dimensions
     @Composable get() = LocalTheme.current.dimensions
+
+val themeGradients: Gradients
+    @Composable get() = LocalTheme.current.gradients
 
 val themeShapes: Shapes
     @Composable get() = LocalTheme.current.shapes

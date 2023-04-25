@@ -1,5 +1,9 @@
 package com.xxmrk888ytxx.recordaudioscreen
 
+import android.annotation.SuppressLint
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -21,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,6 +41,8 @@ import com.xxmrk888ytxx.corecompose.LocalTheme
 import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButton
 import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButtonHolderWidget
 import com.xxmrk888ytxx.corecompose.Shared.RecordStateWidget
+import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestPermissionDialog
+import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPermissionModel
 import com.xxmrk888ytxx.corecompose.Shared.StyleIcon
 import com.xxmrk888ytxx.corecompose.Shared.StyleIconButton
 import com.xxmrk888ytxx.corecompose.themeColors
@@ -49,9 +56,36 @@ fun RecordAudioScreen(
     recordAudioViewModel: RecordAudioViewModel,
 ) {
 
+    val requestAudioRecordPermissionContract = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = recordAudioViewModel::onRequestAudioRecordPermissionResult
+    )
+
+    val requestPostNotificationPermissionContract =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission(),
+                onResult = recordAudioViewModel::onRequestPostNotificationPermissionResult
+            )
+        } else {
+            null
+        }
+
+    LaunchedEffect(
+        key1 = requestAudioRecordPermissionContract,
+        key2 = requestPostNotificationPermissionContract
+    ) {
+        recordAudioViewModel.initRequestPermissionsContracts(
+            requestAudioRecordPermissionContract,
+            requestPostNotificationPermissionContract
+        )
+    }
+
     val recordState by recordAudioViewModel.recordState.collectAsStateWithLifecycle(
         RecordState.Idle
     )
+
+    val dialogState by recordAudioViewModel.dialogState.collectAsStateWithLifecycle()
 
     val currentWidgetGradientColor by recordAudioViewModel.currentWidgetColor.collectAsStateWithLifecycle()
 
@@ -73,9 +107,9 @@ fun RecordAudioScreen(
         animationSpec = tween(themeValues.animationDuration)
     )
 
-    LaunchedEffect(key1 = recordState, block = {
+    LaunchedEffect(key1 = recordState::class, block = {
         launch {
-            if(recordState is RecordState.Idle) {
+            if (recordState is RecordState.Idle) {
                 alpha = 1f
             }
             while (recordState is RecordState.Recording) {
@@ -145,6 +179,26 @@ fun RecordAudioScreen(
         }
     }
 
+    if (dialogState.isPermissionDialogVisible) {
+        RequestPermissionDialog(
+            permissions = requestedPermissions(recordAudioViewModel),
+            onDismissRequest = recordAudioViewModel::hideRequestPermissionDialog
+        )
+    }
+
+}
+
+@SuppressLint("NewApi")
+@Composable
+internal fun requestedPermissions(
+    recordAudioViewModel: RecordAudioViewModel,
+): List<RequestedPermissionModel> {
+    val recordAudio by recordAudioViewModel.recordAudioPermissionState.collectAsStateWithLifecycle()
+
+    val postNotification by recordAudioViewModel.postNotificationPermissionState.collectAsStateWithLifecycle()
+
+    return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) listOf(recordAudio,postNotification)
+        else listOf(recordAudio)
 }
 
 @Composable
