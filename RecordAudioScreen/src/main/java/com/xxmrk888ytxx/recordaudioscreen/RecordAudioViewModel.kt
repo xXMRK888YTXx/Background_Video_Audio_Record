@@ -2,16 +2,22 @@ package com.xxmrk888ytxx.recordaudioscreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordManageContract
+import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordStateProviderContract
+import com.xxmrk888ytxx.recordaudioscreen.models.RecordState
 import com.xxmrk888ytxx.recordaudioscreen.models.RecordWidgetColor
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class RecordAudioViewModel @Inject constructor(
-
+    private val recordManageContract: RecordManageContract,
+    private val recordStateProviderContract: RecordStateProviderContract
 ) : ViewModel() {
 
     private val _currentWidgetColor = MutableStateFlow(RecordWidgetColor())
@@ -26,14 +32,15 @@ class RecordAudioViewModel @Inject constructor(
         _currentWidgetColor.update { it.newRecordGradient }
     }
 
-    //Temp
-    val isRecord = MutableStateFlow(false)
+
+    internal val recordState: Flow<RecordState> = recordStateProviderContract.currentState
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),RecordState.Idle)
 
     fun startRecord() {
-        isRecord.update { true }
+        recordManageContract.start()
     }
 
     fun stopRecord() {
-        isRecord.update { false }
+        recordManageContract.stop()
     }
 }

@@ -8,6 +8,8 @@ interface AudioRecordServiceController {
 
     fun pauseRecord()
 
+    fun resumeRecord()
+
     fun stopRecord()
 
     val currentState: Flow<RecordAudioState>

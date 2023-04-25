@@ -6,6 +6,12 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.core.content.getSystemService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 fun Long.milliSecondToString(): String {
     val seconds = this / 1000
@@ -46,4 +52,14 @@ inline fun Context.buildNotification(
     }
 
     return notificationBuilder.apply(configuration).build()
+}
+
+fun CoroutineScope.cancelChillersAndLaunch(
+    context: CoroutineContext = EmptyCoroutineContext,
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Unit
+) {
+    coroutineContext.cancelChildren()
+
+    launch(context, start, block)
 }

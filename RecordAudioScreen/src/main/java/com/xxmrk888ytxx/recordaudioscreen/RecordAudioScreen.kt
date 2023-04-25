@@ -40,6 +40,7 @@ import com.xxmrk888ytxx.corecompose.Shared.StyleIcon
 import com.xxmrk888ytxx.corecompose.Shared.StyleIconButton
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeDimensions
+import com.xxmrk888ytxx.recordaudioscreen.models.RecordState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -48,7 +49,9 @@ fun RecordAudioScreen(
     recordAudioViewModel: RecordAudioViewModel,
 ) {
 
-    val isRecord by recordAudioViewModel.isRecord.collectAsStateWithLifecycle()
+    val recordState by recordAudioViewModel.recordState.collectAsStateWithLifecycle(
+        RecordState.Idle
+    )
 
     val currentWidgetGradientColor by recordAudioViewModel.currentWidgetColor.collectAsStateWithLifecycle()
 
@@ -70,12 +73,12 @@ fun RecordAudioScreen(
         animationSpec = tween(themeValues.animationDuration)
     )
 
-    LaunchedEffect(key1 = isRecord, block = {
+    LaunchedEffect(key1 = recordState, block = {
         launch {
-            if(!isRecord) {
+            if(recordState is RecordState.Idle) {
                 alpha = 1f
             }
-            while (isRecord) {
+            while (recordState is RecordState.Recording) {
                 recordAudioViewModel.regenerateButtonGradientColor()
                 alpha = if (alpha == 1f) 0f else 1f
                 delay((themeValues.animationDuration + themeValues.additionalAnimationDuration).toLong())
@@ -102,7 +105,8 @@ fun RecordAudioScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             RecordStateWidget(
-                isRecordEnabled = isRecord,
+                recordTime = recordState.recordDuration,
+                isRecordEnabled = recordState !is RecordState.Idle,
                 modifier = Modifier
                     .fillMaxWidth(),
                 borderWhenRecordEnabled = animatedWidgetGradientColor,
@@ -124,12 +128,12 @@ fun RecordAudioScreen(
             ) {
                 ControlRecordButton(
                     painter = painterResource(
-                        id = if (!isRecord) R.drawable.baseline_mic_24
+                        id = if (recordState is RecordState.Idle) R.drawable.baseline_mic_24
                         else R.drawable.baseline_stop_24
                     ),
                     background = themeColors.recordButtonColor
                 ) {
-                    if (isRecord) {
+                    if (recordState !is RecordState.Idle) {
                         recordAudioViewModel.stopRecord()
                     } else {
                         recordAudioViewModel.startRecord()
