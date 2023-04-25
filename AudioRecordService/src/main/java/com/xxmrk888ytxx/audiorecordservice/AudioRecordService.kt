@@ -126,6 +126,7 @@ class AudioRecordService : Service(), AudioRecordServiceController {
         super.onDestroy()
         audioRecordServiceScope.launch {
             stopRecord()
+            durationObserverScope.cancel()
             audioRecordServiceScope.cancel()
         }
     }
