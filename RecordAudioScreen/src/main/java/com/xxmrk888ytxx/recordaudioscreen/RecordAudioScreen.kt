@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -160,6 +161,22 @@ fun RecordAudioScreen(
                     y = themeDimensions.controlRecordButtonHolderWidgetOffset
                 )
             ) {
+                AnimatedVisibility(visible = recordState !is RecordState.Idle) {
+                    ControlRecordButton(
+                        painter = if(recordState is RecordState.Recording)
+                            painterResource(id = R.drawable.pause)
+                        else
+                            painterResource(id = R.drawable.play),
+                        background = themeColors.supportControlRecordButtonColor
+                    ) {
+                        if(recordState is RecordState.Recording) {
+                            recordAudioViewModel.pauseRecord()
+                        } else {
+                            recordAudioViewModel.resumeRecord()
+                        }
+                    }
+                }
+
                 ControlRecordButton(
                     painter = painterResource(
                         id = if (recordState is RecordState.Idle) R.drawable.baseline_mic_24
@@ -199,10 +216,4 @@ internal fun requestedPermissions(
 
     return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) listOf(recordAudio,postNotification)
         else listOf(recordAudio)
-}
-
-@Composable
-@Preview
-fun prev() {
-    //RecordWidget()
 }

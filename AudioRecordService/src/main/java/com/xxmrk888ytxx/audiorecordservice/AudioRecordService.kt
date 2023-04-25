@@ -28,8 +28,6 @@ class AudioRecordService : Service(), AudioRecordServiceController {
 
     private var mediaRecorder: MediaRecorder? = null
 
-    private var startRecordTime: Long = -1
-
     @OptIn(ExperimentalCoroutinesApi::class)
     private val audioRecordServiceScope = CoroutineScope(
         SupervisorJob() + Dispatchers.Default.limitedParallelism(1)
@@ -79,7 +77,6 @@ class AudioRecordService : Service(), AudioRecordServiceController {
                     )
                     prepare()
                     start()
-                    startRecordTime = System.currentTimeMillis()
                 }
             }
 
@@ -91,7 +88,7 @@ class AudioRecordService : Service(), AudioRecordServiceController {
         audioRecordServiceScope.launch {
             mediaRecorder?.let { recorder ->
                 recorder.apply {
-                    stop()
+                    pause()
                 }
             }
 
@@ -103,7 +100,7 @@ class AudioRecordService : Service(), AudioRecordServiceController {
         audioRecordServiceScope.launch {
             mediaRecorder?.let { recorder ->
                 recorder.apply {
-                    start()
+                    resume()
 
                     toRecordingState()
                 }
@@ -118,7 +115,6 @@ class AudioRecordService : Service(), AudioRecordServiceController {
                     stop()
                     release()
                     mediaRecorder = null
-                    startRecordTime = -1
                 }
             }
 
@@ -164,14 +160,14 @@ class AudioRecordService : Service(), AudioRecordServiceController {
                     _currentState.update {
                         when (it) {
                             is RecordAudioState.Recording ->
-                                it.copy(System.currentTimeMillis() - startRecordTime)
+                                it.copy(it.recordDuration + 1000)
 
                             else -> it
                         }
                     }
                 }
 
-                delay(900)
+                delay(1000)
             }
         }
     }

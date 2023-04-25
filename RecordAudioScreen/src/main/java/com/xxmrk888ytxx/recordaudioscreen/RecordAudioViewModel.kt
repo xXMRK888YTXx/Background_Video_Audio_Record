@@ -109,6 +109,14 @@ class RecordAudioViewModel @Inject constructor(
         recordManageContract.stop()
     }
 
+    fun pauseRecord() {
+        recordManageContract.pause()
+    }
+
+    fun resumeRecord() {
+        recordManageContract.resume()
+    }
+
     private fun requestAudioPermission() {
         requestAudioRecordPermissionContract?.launch(Manifest.permission.RECORD_AUDIO)
     }
