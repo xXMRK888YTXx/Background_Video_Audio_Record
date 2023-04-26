@@ -1,6 +1,6 @@
 package com.xxmrk888ytxx.backgroundvideovoicerecord.glue.RecordAudioScreen
 
-import com.xxmrk888ytxx.audiorecordservice.RecordAudioState
+import com.xxmrk888ytxx.audiorecordservice.models.RecordAudioState
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioRecordServiceManager.AudioRecordServiceManager
 import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordManageContract
 import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordStateProviderContract

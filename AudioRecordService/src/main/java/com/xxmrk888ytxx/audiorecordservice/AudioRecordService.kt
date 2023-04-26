@@ -7,9 +7,11 @@ import android.media.MediaRecorder
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import com.xxmrk888ytxx.audiorecordservice.models.RecordAudioState
 import com.xxmrk888ytxx.coreandroid.buildNotification
 import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.cancelChillersAndLaunch
+import com.xxmrk888ytxx.coredeps.DepsProvider.getDepsByApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,6 +27,14 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class AudioRecordService : Service(), AudioRecordServiceController {
+
+    private val recordAudioParams:RecordAudioParams by lazy {
+        applicationContext.getDepsByApplication()
+    }
+
+    private val cacheFile by lazy {
+        File(recordAudioParams.recordAudioConfig.tempRecordPath)
+    }
 
     private var mediaRecorder: MediaRecorder? = null
 
@@ -60,6 +70,10 @@ class AudioRecordService : Service(), AudioRecordServiceController {
         audioRecordServiceScope.launch {
             if (mediaRecorder != null) return@launch
 
+            try {
+                cacheFile.delete()
+            }catch (_:Exception) {}
+
             mediaRecorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                 MediaRecorder(applicationContext)
             else MediaRecorder()
@@ -69,12 +83,7 @@ class AudioRecordService : Service(), AudioRecordServiceController {
                     setAudioSource(MediaRecorder.AudioSource.MIC)
                     setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
                     setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-                    setOutputFile(
-                        File(
-                            applicationContext.cacheDir,
-                            "${System.currentTimeMillis()}.mp3"
-                        ).absolutePath
-                    )
+                    setOutputFile(cacheFile.absolutePath)
                     prepare()
                     start()
                 }
@@ -118,7 +127,16 @@ class AudioRecordService : Service(), AudioRecordServiceController {
                 }
             }
 
+
             toIdleState()
+
+            recordAudioParams.saveAudioRecordStrategy.scope.launch {
+                recordAudioParams.saveAudioRecordStrategy.saveRecord(cacheFile)
+
+                try {
+                    cacheFile.delete()
+                }catch (_:Exception) {}
+            }.join()
         }
     }
 

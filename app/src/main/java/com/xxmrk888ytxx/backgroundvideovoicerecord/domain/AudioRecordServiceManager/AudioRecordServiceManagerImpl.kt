@@ -7,7 +7,7 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import com.xxmrk888ytxx.audiorecordservice.AudioRecordService
 import com.xxmrk888ytxx.audiorecordservice.AudioRecordServiceController
-import com.xxmrk888ytxx.audiorecordservice.RecordAudioState
+import com.xxmrk888ytxx.audiorecordservice.models.RecordAudioState
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.RecordStateObserverScopeQualifier
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.ServiceManagedScopeQualifier
 import com.xxmrk888ytxx.coreandroid.cancelChillersAndLaunch
@@ -16,7 +16,6 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.LinkedList
@@ -29,7 +28,9 @@ class AudioRecordServiceManagerImpl @Inject constructor(
     @ServiceManagedScopeQualifier private val serviceManagedScope:CoroutineScope
 ) : AudioRecordServiceManager,ServiceConnection {
 
-    private val _currentRecordState:MutableStateFlow<RecordAudioState> = MutableStateFlow(RecordAudioState.Idle)
+    private val _currentRecordState:MutableStateFlow<RecordAudioState> = MutableStateFlow(
+        RecordAudioState.Idle
+    )
 
     override val currentRecordState: Flow<RecordAudioState> = _currentRecordState.asStateFlow()
 

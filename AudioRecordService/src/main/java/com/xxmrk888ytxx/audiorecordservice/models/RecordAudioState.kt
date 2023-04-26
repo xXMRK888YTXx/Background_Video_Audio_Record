@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.audiorecordservice
+package com.xxmrk888ytxx.audiorecordservice.models
 
 sealed class RecordAudioState(open val recordDuration:Long) {
     object Idle : RecordAudioState(-1)

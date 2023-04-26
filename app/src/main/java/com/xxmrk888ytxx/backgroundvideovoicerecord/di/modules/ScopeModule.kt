@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules
 
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.AppScope
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.ApplicationScopeQualifier
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.RecordStateObserverScopeQualifier
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.ServiceManagedScopeQualifier
 import dagger.Module
@@ -30,5 +31,12 @@ class ScopeModule {
         return CoroutineScope(
             SupervisorJob() + Dispatchers.Default.limitedParallelism(1)
         )
+    }
+
+    @Provides
+    @AppScope
+    @ApplicationScopeQualifier
+    fun provideApplicationScope() : CoroutineScope {
+        return CoroutineScope(SupervisorJob() + Dispatchers.IO)
     }
 }
