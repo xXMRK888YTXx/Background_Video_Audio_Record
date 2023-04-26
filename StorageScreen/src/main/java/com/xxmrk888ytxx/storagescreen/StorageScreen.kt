@@ -19,6 +19,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xxmrk888ytxx.coreandroid.milliSecondToString
 import com.xxmrk888ytxx.coreandroid.toDateString
 import com.xxmrk888ytxx.coreandroid.toTimeString
@@ -53,7 +55,7 @@ fun StorageScreen(
                 label = R.string.Audio,
                 icon = R.drawable.music,
                 onClick = { scope.launch { pageState.animateScrollToPage(0) } }
-            ) to { AudioStorageList() },
+            ) to { AudioStorageList(storageScreenViewModel) },
             StorageType(
                 label = R.string.Video,
                 icon = R.drawable.video,
@@ -87,20 +89,11 @@ fun StorageScreen(
 }
 
 @Composable
-fun AudioStorageList() {
+fun AudioStorageList(storageScreenViewModel: StorageScreenViewModel) {
     val context = LocalContext.current
 
     //Test
-    val audioFiles = listOf(
-        AudioFileModel(
-            5000L,
-            System.currentTimeMillis()
-        ),
-        AudioFileModel(
-            15000L,
-            System.currentTimeMillis()
-        )
-    )
+    val audioFiles by storageScreenViewModel.audioFiles.collectAsStateWithLifecycle()
 
     LazyColumn(Modifier.fillMaxSize()) {
         items(audioFiles) {
