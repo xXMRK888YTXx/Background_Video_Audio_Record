@@ -38,9 +38,33 @@ class AudioPlayer private constructor (
         }
     }
 
+    /**
+     * [Ru]
+     * Возвращает true, если данный экземпляр [AudioPlayer] уничтожен.
+     * В таком случаи его использование не возможно
+     */
+
+    /**
+     * [En]
+     * Returns true if this instance of [AudioPlayer] is destroyed.
+     * In this case it cannot be used
+     */
     var isDestroy:Boolean = false
         private set
 
+    /**
+     * [Ru]
+     * Возвращает true,если аудио фойл подготовлен к произведению, путем вызова [AudioPlayer.prepare].
+     *
+     * Обратите внимания, что его значение будет false, после вызова [AudioPlayer.destroy]
+     */
+
+    /**
+     * [En]
+     * Returns true if the audio foil is prepared for the work by calling [AudioPlayer.prepare].
+     *
+     * Note that its value will be false, after calling [AudioPlayer.destroy].
+     */
     var isPrepare = false
         private set
 
@@ -52,9 +76,38 @@ class AudioPlayer private constructor (
 
     private val _currentState:MutableStateFlow<PlayerState> = MutableStateFlow(PlayerState.Idle)
 
+    /**
+     * [Ru]
+     * Возвращает текущее состояние плеера
+     */
+
+    /**
+     * [En]
+     * Returns the current state of the player
+     */
     val currentState = _currentState.asStateFlow()
 
 
+    /**
+     * [Ru]
+     * Подготавливает файл к воспроизведению.
+     *
+     * Данный метод, необходимо вызывать перед вызовом [AudioPlayer.play].
+     *
+     * Учтите, что после вызова [AudioPlayer.stop], подготовка будет сброшена, и для воспроизведения,
+     * необходимо будет заново вызвать данный метод
+     */
+
+    /**
+     * [En]
+     * Prepares the file for playback.
+     *
+     * This method must be called before calling [AudioPlayer.play].
+     *
+     * Note that after calling [AudioPlayer.stop], the preparation will be reset,
+     * and you will need to call this method again to play,
+     * this method will need to be called again
+     */
     fun prepare(media:Uri) = scope.launch {
         exoPlayer?.run {
             if(isPlaying) return@launch
@@ -69,6 +122,25 @@ class AudioPlayer private constructor (
 
     }
 
+    /**
+     * [Ru]
+     * Воспроизводит файл, переданный при вызове [AudioPlayer.prepare]
+     *
+     * Если текущее состояние, это состояние паузы([PlayerState.Pause]),
+     * то возобновляет воспроизведение
+     *
+     * После вызова этого методо, состояние плеера будет [PlayerState.Play]
+     */
+
+    /**
+     * [En]
+     * Plays the file sent when you call [AudioPlayer.prepare]
+     *
+     * If the current state is the pause state ([PlayerState.Pause]),
+     * it resumes playback
+     *
+     * After calling this method, the player state will be [PlayerState.Play]
+     */
     fun play() = scope.launch {
         exoPlayer?.run {
             if(isPlaying) return@launch
@@ -79,6 +151,21 @@ class AudioPlayer private constructor (
         toPlayState()
     }
 
+    /**
+     * [Ru]
+     * Приостанавливает воспроизведение,
+     * устанавливает состояние плеера [PlayerState.Pause]
+     *
+     * Воспроизведение будет продолжено, после вызова [AudioPlayer.play]
+     */
+
+    /**
+     * [En]
+     * Pauses playback,
+     * Sets the state of the player [PlayerState.Pause]
+     *
+     * Playback will continue, after calling [AudioPlayer.play]
+     */
     fun pause() = scope.launch {
         exoPlayer?.run {
             if(!isPlaying) return@launch
@@ -90,6 +177,23 @@ class AudioPlayer private constructor (
 
     }
 
+    /**
+     * [Ru]
+     * Сбрасывает воспроизведение.
+     *
+     * Переводит состояние плеера в [PlayerState.Idle].
+     * Устанавливает [AudioPlayer.isPrepare] в false, и перед повторным использованием нужно вызвать
+     * [AudioPlayer.prepare]
+     */
+
+    /**
+     * [En]
+     * Resets playback.
+     *
+     * Sets player state to [PlayerState.Idle].
+     * Sets [AudioPlayer.isPrepare] to false, and you must call
+     * [AudioPlayer.prepare]
+     */
     fun stop() = scope.launch {
         exoPlayer?.run {
             stop()
@@ -101,6 +205,14 @@ class AudioPlayer private constructor (
         toIdleState()
     }
 
+    /**
+     * [Ru]
+     * Сбрасывает и очищает ресурсы плеера
+     *
+     * После вызова этого метода, будет не возможно использования плеера
+     *
+     * Установливает состояние [PlayerState.Destroy]
+     */
     fun destroy() = scope.launch {
         observeStateScope.cancel()
         exoPlayer?.run {
@@ -116,6 +228,21 @@ class AudioPlayer private constructor (
         scope.cancel()
     }
 
+    /**
+     * [Ru]
+     * Переводит воспроизведение, на переданую временую точку.
+     *
+     * Если переданая значение, находится за пределами времени воспроизведения, то будет установлено
+     * на последную секунду
+     */
+
+    /**
+     * [En]
+     * Transfers playback, to the transferred time point.
+     *
+     * If the transmitted value is outside the playback time, it will be set
+     * to the last second
+     */
     fun seekTo(time:Long) = scope.launch {
         exoPlayer?.run {
             if(!isPlaying) {
@@ -178,12 +305,40 @@ class AudioPlayer private constructor (
             SupervisorJob() + Dispatchers.Main
         )
 
+        /**
+         * [Ru]
+         * Добавляет [ScreenLockBlocker] в [AudioPlayer].
+         *
+         * Если [ScreenLockBlocker] добавлен, то он автоматически при воспроизведении вызовет метод
+         * [ScreenLockBlocker.enable], а при остановки воспроизведения [ScreenLockBlocker.cancel]
+         */
+
+        /**
+         * [En]
+         * Adds [ScreenLockBlocker] to [AudioPlayer].
+         *
+         * If [ScreenLockBlocker] is added, it will automatically invoke the
+         * [ScreenLockBlocker.enable] method and [ScreenLockBlocker.cancel] method when playback is stopped.
+         */
         fun addScreenLockBlocker(screenLockBlocker: ScreenLockBlocker) : Builder {
             this.screenLockBlocker = screenLockBlocker
 
             return this
         }
 
+        /**
+         * [Ru]
+         * Задаёт [CoroutineScope] на котором будет выполняться работа с [AudioPlayer].
+         * Обратите внимание, что после вызова [AudioPlayer.destroy] переданный [CoroutineScope]
+         * будет закрыт.
+         */
+
+        /**
+         * [En]
+         * Sets the [CoroutineScope] on which [AudioPlayer] will be executed.
+         * Note that after calling [AudioPlayer.destroy] the passed [CoroutineScope]
+         * will be closed.
+         */
         fun setCoroutinesScope(scope: CoroutineScope) : Builder {
             this.scope = scope
 

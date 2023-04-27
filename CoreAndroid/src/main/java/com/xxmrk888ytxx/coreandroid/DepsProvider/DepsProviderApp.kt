@@ -5,6 +5,17 @@ import com.xxmrk888ytxx.coredeps.DepsProvider.DepsProvider
 import com.xxmrk888ytxx.coredeps.Exceptions.DepsProviderNotFoundDeps
 import kotlin.reflect.KClass
 
+/**
+ * [Ru]
+ * Данный класс реализует [DepsProvider],
+ * что позволяет использовать метод [Context.getDepsByApplication] в проекте
+ */
+
+/**
+ * [En]
+ * This class implements [DepsProvider],
+ * which allows you to use the [Context.getDepsByApplication] method in a project
+ */
 abstract class DepsProviderApp : Application(),DepsProvider {
 
     protected abstract val depsMap:Map<KClass<*>,() -> Any>
