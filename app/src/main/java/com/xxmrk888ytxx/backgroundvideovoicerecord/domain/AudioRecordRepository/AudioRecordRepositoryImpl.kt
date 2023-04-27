@@ -40,6 +40,12 @@ class AudioRecordRepositoryImpl @Inject constructor(
         loadNewFile(file)
     }
 
+    override suspend fun getFileById(id: Int): File? = withContext(Dispatchers.IO) {
+        val file = File(audioDir,id.toString())
+
+        return@withContext if(file.exists()) file else null
+    }
+
     override val fileList: Flow<List<AudioModel>> = _fileList.asStateFlow().onStart {
         loadAllFiles()
     }

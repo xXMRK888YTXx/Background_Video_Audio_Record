@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.presentation
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -26,10 +27,11 @@ import com.xxmrk888ytxx.recordvideoscreen.RecordVideoScreen
 import com.xxmrk888ytxx.recordvideoscreen.RecordVideoViewModel
 import com.xxmrk888ytxx.storagescreen.StorageScreen
 import com.xxmrk888ytxx.storagescreen.StorageScreenViewModel
+import com.xxmrk888ytxx.storagescreen.models.LockBlockerScreen
 import javax.inject.Inject
 import javax.inject.Provider
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), LockBlockerScreen {
 
     @Inject
     lateinit var recordAudioViewModel: Provider<RecordAudioViewModel>
@@ -38,7 +40,7 @@ class MainActivity : ComponentActivity() {
     lateinit var recordVideoViewModel: Provider<RecordVideoViewModel>
 
     @Inject
-    lateinit var storageScreenViewModel: Provider<StorageScreenViewModel>
+    lateinit var storageScreenViewModel: StorageScreenViewModel.Factory
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,7 +86,7 @@ class MainActivity : ComponentActivity() {
                 title = getString(R.string.Storage),
                 icon = R.drawable.baseline_storage_24,
                 content = {
-                    StorageScreen(composeViewModel { storageScreenViewModel.get() })
+                    StorageScreen(composeViewModel { storageScreenViewModel.create(this) })
                 }
             ),
             BottomBarScreenModel(
@@ -97,4 +99,12 @@ class MainActivity : ComponentActivity() {
                 }
             ),
         )
+
+    override fun enable() {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    override fun cancel() {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
 }

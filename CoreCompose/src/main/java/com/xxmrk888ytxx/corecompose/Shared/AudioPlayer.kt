@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xxmrk888ytxx.coreandroid.milliSecondToString
 import com.xxmrk888ytxx.corecompose.R
 import com.xxmrk888ytxx.corecompose.Shared.StyleCard
+import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeTypography
 import kotlinx.coroutines.flow.Flow
 import java.time.Duration
@@ -42,9 +43,8 @@ fun AudioPlayer(
         ) {
             Column(
                 Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp,Alignment.CenterVertically)
             ) {
                 Row(
                     Modifier.fillMaxWidth(),
@@ -52,19 +52,24 @@ fun AudioPlayer(
                 ) {
                     Text(
                         text = currentDuration.milliSecondToString(),
-                        style = themeTypography.playerText
+                        style = themeTypography.playerText,
+                        color = themeColors.primaryFontColor,
+                        modifier = Modifier.weight(2f)
                     )
 
                     Slider(
                         value = currentDuration.toFloat(),
                         onValueChange = { onSeekTo(it.toLong()) },
                         valueRange = 0f..maxDuration.toFloat(),
-                        colors = SliderDefaults.colors()
+                        colors = SliderDefaults.colors(),
+                        modifier = Modifier.weight(7f)
                     )
 
                     Text(
                         text = maxDuration.milliSecondToString(),
-                        style = themeTypography.playerText
+                        style = themeTypography.playerText,
+                        color = themeColors.primaryFontColor,
+                        modifier = Modifier.weight(2f)
                     )
                 }
 

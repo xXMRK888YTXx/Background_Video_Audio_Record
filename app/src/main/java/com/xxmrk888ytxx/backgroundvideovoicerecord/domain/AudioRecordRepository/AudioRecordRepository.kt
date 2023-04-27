@@ -8,5 +8,7 @@ interface AudioRecordRepository {
 
     suspend fun addFile(file:File)
 
+    suspend fun getFileById(id:Int) : File?
+
     val fileList:Flow<List<AudioModel>>
 }

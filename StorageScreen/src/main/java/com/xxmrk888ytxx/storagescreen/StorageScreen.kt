@@ -19,6 +19,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,24 +33,28 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xxmrk888ytxx.coreandroid.milliSecondToString
 import com.xxmrk888ytxx.coreandroid.toDateString
 import com.xxmrk888ytxx.coreandroid.toTimeString
+import com.xxmrk888ytxx.corecompose.Shared.AudioPlayer
 import com.xxmrk888ytxx.corecompose.Shared.StyleCard
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeDimensions
 import com.xxmrk888ytxx.corecompose.themeTypography
 import com.xxmrk888ytxx.storagescreen.models.AudioFileModel
+import com.xxmrk888ytxx.storagescreen.models.AudioPlayerDialogState
+import com.xxmrk888ytxx.storagescreen.models.PlayerState
 import com.xxmrk888ytxx.storagescreen.models.StorageType
 import kotlinx.coroutines.launch
+import java.time.Duration
 
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("ResourceType")
 @Composable
 fun StorageScreen(
-    storageScreenViewModel: StorageScreenViewModel
+    storageScreenViewModel: StorageScreenViewModel,
 ) {
 
     val pageState = rememberPagerState()
     val scope = rememberCoroutineScope()
-    val pages:List<Pair<StorageType,@Composable () -> Unit>> = remember {
+    val pages: List<Pair<StorageType, @Composable () -> Unit>> = remember {
         listOf(
             StorageType(
                 label = R.string.Audio,
@@ -63,11 +68,12 @@ fun StorageScreen(
             ) to { VideoStorageList() },
         )
     }
+    val dialogState by storageScreenViewModel.dialogState.collectAsStateWithLifecycle()
 
     Scaffold(
         Modifier.fillMaxSize(),
         topBar = {
-            Topbar(pages.map { it.first },pageState.currentPage)
+            Topbar(pages.map { it.first }, pageState.currentPage)
         },
         backgroundColor = Color.Transparent
     ) { paddings ->
@@ -81,10 +87,22 @@ fun StorageScreen(
                     bottom = paddings.calculateBottomPadding()
                 )
         ) {
-            HorizontalPager(state = pageState,pageCount = 2) {
+            HorizontalPager(state = pageState, pageCount = 2) {
                 pages[it].second()
             }
         }
+    }
+
+    if(dialogState.audioPlayerDialogState is AudioPlayerDialogState.Showed) {
+        val playerState by (dialogState.audioPlayerDialogState as AudioPlayerDialogState.Showed)
+            .player.state.collectAsStateWithLifecycle(initialValue = PlayerState.Idle)
+        val maxDuration = (dialogState.audioPlayerDialogState as AudioPlayerDialogState.Showed).maxDuration
+
+        AudioPlayerDialog(
+            storageScreenViewModel = storageScreenViewModel,
+            playerState = playerState,
+            maxDuration = maxDuration
+        )
     }
 }
 
@@ -92,7 +110,6 @@ fun StorageScreen(
 fun AudioStorageList(storageScreenViewModel: StorageScreenViewModel) {
     val context = LocalContext.current
 
-    //Test
     val audioFiles by storageScreenViewModel.audioFiles.collectAsStateWithLifecycle()
 
     LazyColumn(Modifier.fillMaxSize()) {
@@ -100,7 +117,8 @@ fun AudioStorageList(storageScreenViewModel: StorageScreenViewModel) {
             StyleCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(themeDimensions.cardOutPaddings)
+                    .padding(themeDimensions.cardOutPaddings),
+                onClick = { storageScreenViewModel.showAudioDialogState(it) }
             ) {
                 Column(
                     Modifier
@@ -126,16 +144,48 @@ fun AudioStorageList(storageScreenViewModel: StorageScreenViewModel) {
 }
 
 @Composable
-fun VideoStorageList() { Text(text = "Видео") }
+fun VideoStorageList() {
+    Text(text = "Видео")
+}
+
+@Composable
+fun AudioPlayerDialog(
+    storageScreenViewModel: StorageScreenViewModel,
+    playerState: PlayerState,
+    maxDuration: Long,
+) {
+
+    val isPlay = playerState is PlayerState.Play
+
+    val fastStep = 5000
+
+    AudioPlayer(
+        currentDuration = playerState.currentDuration,
+        maxDuration = maxDuration,
+        isPlay = isPlay,
+        onHidePlayer = storageScreenViewModel::hideAudioPlayerDialog,
+        onSeekTo = storageScreenViewModel::seekTo,
+        onChangePlayState = {
+            if (isPlay) {
+                storageScreenViewModel.pause()
+            } else {
+                storageScreenViewModel.play()
+            }
+        },
+        onFastRewind = { storageScreenViewModel.seekTo(playerState.currentDuration - fastStep) },
+        onFastForward = { storageScreenViewModel.seekTo(playerState.currentDuration + fastStep) }
+    )
+
+}
 
 
 @SuppressLint("ResourceType")
 @Composable
-fun Topbar(storageTypes: List<StorageType>,currentPage:Int) {
+fun Topbar(storageTypes: List<StorageType>, currentPage: Int) {
     BottomNavigation(
         backgroundColor = themeColors.background
     ) {
-        storageTypes.forEachIndexed() { index,it ->
+        storageTypes.forEachIndexed() { index, it ->
             BottomNavigationItem(
                 selected = index == currentPage,
                 onClick = { it.onClick() },
@@ -147,11 +197,13 @@ fun Topbar(storageTypes: List<StorageType>,currentPage:Int) {
                         style = themeTypography.bottomBar
                     )
                 },
-                icon = { Icon(
-                    painter = painterResource(it.icon),
-                    contentDescription = null,
-                    modifier = Modifier.size(themeDimensions.iconSize)
-                ) }
+                icon = {
+                    Icon(
+                        painter = painterResource(it.icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(themeDimensions.iconSize)
+                    )
+                }
             )
         }
     }
