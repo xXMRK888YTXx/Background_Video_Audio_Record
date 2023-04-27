@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.storagescreen.AudioStorageList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.DeleteAudioFileContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.PlayerFactoryContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ProvideAudioFilesContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ProvideFileByAudioId
@@ -26,7 +27,8 @@ class AudioStorageListViewModel @AssistedInject constructor(
     private val provideAudioFilesContract: ProvideAudioFilesContract,
     private val playerFactoryContract: PlayerFactoryContract,
     @Assisted private val lockBlockerScreen: LockBlockerScreen,
-    private val provideFileByAudioId: ProvideFileByAudioId
+    private val provideFileByAudioId: ProvideFileByAudioId,
+    private val deleteAudioFileContract: DeleteAudioFileContract
 ) : ViewModel()  {
 
     val audioFiles = provideAudioFilesContract.files
@@ -94,6 +96,13 @@ class AudioStorageListViewModel @AssistedInject constructor(
                 player.stop()
                 player.destroy()
             }
+        }
+    }
+
+    fun removeAudioFile(file:AudioFileModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+            deleteAudioFileContract.execute(file.id.toInt())
+
         }
     }
 

@@ -46,6 +46,21 @@ class AudioRecordRepositoryImpl @Inject constructor(
         return@withContext if(file.exists()) file else null
     }
 
+    override suspend fun removeFile(id: Int):Unit = withContext(Dispatchers.IO) {
+        try {
+            File(audioDir,id.toString()).delete()
+
+            deleteFileFromFlow(id)
+        }catch (_:Exception) {}
+    }
+
+    private suspend fun deleteFileFromFlow(id:Int) {
+        _fileList.update {
+            it.toMutableList()
+            .filter { fileId -> fileId.id != id.toLong() }
+        }
+    }
+
     override val fileList: Flow<List<AudioModel>> = _fileList.asStateFlow().onStart {
         loadAllFiles()
     }
