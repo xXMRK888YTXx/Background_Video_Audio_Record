@@ -93,5 +93,10 @@ object Deps {
         const val adMob = "com.google.android.gms:play-services-ads:21.4.0"
     }
 
+    object Media3 {
+        private val media3_version = "1.0.1"
+        val exoPlayer = "androidx.media3:media3-exoplayer:$media3_version"
+    }
+
 
 }
