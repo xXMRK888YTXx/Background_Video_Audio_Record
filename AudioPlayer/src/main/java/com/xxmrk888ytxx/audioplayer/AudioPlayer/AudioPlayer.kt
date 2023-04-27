@@ -18,22 +18,30 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AudioPlayer private constructor (
     private val context:Context,
     private val screenLockBlocker: ScreenLockBlocker? = null,
     private val scope:CoroutineScope
-) : Player.Listener  {
+)  {
 
-    @Deprecated("Deprecated in Java")
-    @UnstableApi
-    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        if (playbackState == Player.STATE_ENDED) {
-            stop()
+    private val listener by lazy {
+        object : Player.Listener {
+            @Deprecated("Deprecated in Java")
+            @UnstableApi
+            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                if (playbackState == Player.STATE_ENDED) {
+                    stop()
+                }
+            }
         }
     }
 
     var isDestroy:Boolean = false
+        private set
+
+    var isPrepare = false
         private set
 
     private var exoPlayer:ExoPlayer? = null
@@ -54,6 +62,8 @@ class AudioPlayer private constructor (
             setMediaItem(MediaItem.fromUri(media))
 
             prepare()
+
+            isPrepare = true
         }
 
 
@@ -85,6 +95,7 @@ class AudioPlayer private constructor (
             stop()
 
             clearMediaItems()
+            isPrepare = false
         }
 
         toIdleState()
@@ -93,22 +104,32 @@ class AudioPlayer private constructor (
     fun destroy() = scope.launch {
         observeStateScope.cancel()
         exoPlayer?.run {
-            removeListener(this@AudioPlayer)
+            removeListener(listener)
             stop()
             release()
         }
         screenLockBlocker?.cancel()
         exoPlayer = null
         isDestroy = true
+        isPrepare = false
         _currentState.update { PlayerState.Destroy }
         scope.cancel()
     }
 
     fun seekTo(time:Long) = scope.launch {
         exoPlayer?.run {
-            if(!isPlaying) return@launch
+            if(!isPlaying) {
+                play()
+            }
 
             seekTo(time)
+            _currentState.update {
+                when(it) {
+                    is PlayerState.Play -> PlayerState.Play(time)
+
+                    else -> it
+                }
+            }
         }
     }
 
@@ -131,8 +152,13 @@ class AudioPlayer private constructor (
         observeStateScope.cancelChillersAndLaunch {
             while (true) {
                 if(isDestroy || exoPlayer == null) return@cancelChillersAndLaunch
-                _currentState.update { PlayerState.Play(exoPlayer!!.currentPosition) }
-                delay(900)
+
+                val currentPos = withContext(scope.coroutineContext) {
+                    exoPlayer!!.currentPosition
+                }
+
+                _currentState.update { PlayerState.Play(currentPos) }
+                delay(200)
             }
         }
     }
@@ -140,7 +166,7 @@ class AudioPlayer private constructor (
 
     init {
         scope.launch {
-            exoPlayer = ExoPlayer.Builder(context).build().apply { addListener(this@AudioPlayer) }
+            exoPlayer = ExoPlayer.Builder(context).build().apply { addListener(listener) }
         }
     }
 
