@@ -6,6 +6,7 @@ data class Typography(
     val bottomBar: TextStyle,
     val recordCounter: TextStyle,
     val permissionDescription: TextStyle,
-    val head:TextStyle,
-    val body:TextStyle
+    val head: TextStyle,
+    val body: TextStyle,
+    val playerText: TextStyle
 )

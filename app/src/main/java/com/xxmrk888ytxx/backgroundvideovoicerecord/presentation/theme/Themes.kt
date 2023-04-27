@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.W400
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.font.FontWeight.Companion.W900
 import androidx.compose.ui.unit.dp
@@ -78,6 +79,10 @@ object Themes {
                 body = TextStyle(
                     fontSize = 18.sp,
                     fontWeight = W600
+                ),
+                playerText = TextStyle(
+                    fontSize = 12.sp,
+                    fontWeight = W400
                 )
             )
         override val values: Values
