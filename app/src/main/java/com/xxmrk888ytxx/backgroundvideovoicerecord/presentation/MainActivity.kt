@@ -26,8 +26,9 @@ import com.xxmrk888ytxx.recordaudioscreen.RecordAudioViewModel
 import com.xxmrk888ytxx.recordvideoscreen.RecordVideoScreen
 import com.xxmrk888ytxx.recordvideoscreen.RecordVideoViewModel
 import com.xxmrk888ytxx.storagescreen.StorageScreen
-import com.xxmrk888ytxx.storagescreen.StorageScreenViewModel
-import com.xxmrk888ytxx.storagescreen.models.LockBlockerScreen
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.AudioStorageListViewModel
+import com.xxmrk888ytxx.storagescreen.VideoStorageList.VideoStorageListViewModel
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.LockBlockerScreen
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -40,7 +41,9 @@ class MainActivity : ComponentActivity(), LockBlockerScreen {
     lateinit var recordVideoViewModel: Provider<RecordVideoViewModel>
 
     @Inject
-    lateinit var storageScreenViewModel: StorageScreenViewModel.Factory
+    lateinit var audioStorageListViewModel: AudioStorageListViewModel.Factory
+
+    @Inject lateinit var videoStorageListViewModel: Provider<VideoStorageListViewModel>
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +89,10 @@ class MainActivity : ComponentActivity(), LockBlockerScreen {
                 title = getString(R.string.Storage),
                 icon = R.drawable.baseline_storage_24,
                 content = {
-                    StorageScreen(composeViewModel { storageScreenViewModel.create(this) })
+                    StorageScreen(
+                        audioStorageListViewModel = composeViewModel { audioStorageListViewModel.create(this) },
+                        videoStorageListViewModel = composeViewModel() { videoStorageListViewModel.get() }
+                    )
                 }
             ),
             BottomBarScreenModel(

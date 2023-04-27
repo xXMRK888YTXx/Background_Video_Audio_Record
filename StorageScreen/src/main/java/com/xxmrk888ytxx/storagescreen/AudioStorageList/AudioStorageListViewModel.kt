@@ -1,21 +1,19 @@
-package com.xxmrk888ytxx.storagescreen
+package com.xxmrk888ytxx.storagescreen.AudioStorageList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.xxmrk888ytxx.storagescreen.contracts.PlayerFactoryContract
-import com.xxmrk888ytxx.storagescreen.contracts.ProvideAudioFilesContract
-import com.xxmrk888ytxx.storagescreen.contracts.ProvideFileByAudioId
-import com.xxmrk888ytxx.storagescreen.models.AudioFileModel
-import com.xxmrk888ytxx.storagescreen.models.AudioPlayerDialogState
-import com.xxmrk888ytxx.storagescreen.models.DialogState
-import com.xxmrk888ytxx.storagescreen.models.LockBlockerScreen
-import com.xxmrk888ytxx.storagescreen.models.Player
-import com.xxmrk888ytxx.storagescreen.models.PlayerState
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.PlayerFactoryContract
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ProvideAudioFilesContract
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ProvideFileByAudioId
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.AudioFileModel
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.AudioPlayerDialogState
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.DialogState
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.LockBlockerScreen
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.PlayerState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,10 +21,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.File
-import javax.inject.Inject
 
-class StorageScreenViewModel @AssistedInject constructor(
+class AudioStorageListViewModel @AssistedInject constructor(
     private val provideAudioFilesContract: ProvideAudioFilesContract,
     private val playerFactoryContract: PlayerFactoryContract,
     @Assisted private val lockBlockerScreen: LockBlockerScreen,
@@ -104,6 +100,6 @@ class StorageScreenViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(lockBlockerScreen: LockBlockerScreen) : StorageScreenViewModel
+        fun create(lockBlockerScreen: LockBlockerScreen) : AudioStorageListViewModel
     }
 }

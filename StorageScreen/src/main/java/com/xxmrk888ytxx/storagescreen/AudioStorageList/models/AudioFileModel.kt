@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.storagescreen.models
+package com.xxmrk888ytxx.storagescreen.AudioStorageList.models
 
 data class AudioFileModel(
     val id:Long,

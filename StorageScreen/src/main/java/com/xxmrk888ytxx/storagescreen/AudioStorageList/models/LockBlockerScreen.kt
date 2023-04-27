@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.storagescreen.models
+package com.xxmrk888ytxx.storagescreen.AudioStorageList.models
 
 interface LockBlockerScreen {
 

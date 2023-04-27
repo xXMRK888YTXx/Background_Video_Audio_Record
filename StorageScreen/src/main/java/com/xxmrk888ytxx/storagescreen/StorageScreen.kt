@@ -6,11 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.BottomNavigation
@@ -19,37 +16,29 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.xxmrk888ytxx.coreandroid.milliSecondToString
-import com.xxmrk888ytxx.coreandroid.toDateString
-import com.xxmrk888ytxx.coreandroid.toTimeString
-import com.xxmrk888ytxx.corecompose.Shared.AudioPlayer
-import com.xxmrk888ytxx.corecompose.Shared.StyleCard
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeDimensions
 import com.xxmrk888ytxx.corecompose.themeTypography
-import com.xxmrk888ytxx.storagescreen.models.AudioFileModel
-import com.xxmrk888ytxx.storagescreen.models.AudioPlayerDialogState
-import com.xxmrk888ytxx.storagescreen.models.PlayerState
-import com.xxmrk888ytxx.storagescreen.models.StorageType
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.AudioStorageList
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.AudioStorageListViewModel
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.StorageType
+import com.xxmrk888ytxx.storagescreen.VideoStorageList.VideoStorageList
+import com.xxmrk888ytxx.storagescreen.VideoStorageList.VideoStorageListViewModel
 import kotlinx.coroutines.launch
-import java.time.Duration
 
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("ResourceType")
 @Composable
 fun StorageScreen(
-    storageScreenViewModel: StorageScreenViewModel,
+    audioStorageListViewModel: AudioStorageListViewModel,
+    videoStorageListViewModel: VideoStorageListViewModel
 ) {
 
     val pageState = rememberPagerState()
@@ -60,15 +49,14 @@ fun StorageScreen(
                 label = R.string.Audio,
                 icon = R.drawable.music,
                 onClick = { scope.launch { pageState.animateScrollToPage(0) } }
-            ) to { AudioStorageList(storageScreenViewModel) },
+            ) to { AudioStorageList(audioStorageListViewModel) },
             StorageType(
                 label = R.string.Video,
                 icon = R.drawable.video,
                 onClick = { scope.launch { pageState.animateScrollToPage(1) } }
-            ) to { VideoStorageList() },
+            ) to { VideoStorageList(videoStorageListViewModel) },
         )
     }
-    val dialogState by storageScreenViewModel.dialogState.collectAsStateWithLifecycle()
 
     Scaffold(
         Modifier.fillMaxSize(),
@@ -92,92 +80,7 @@ fun StorageScreen(
             }
         }
     }
-
-    if(dialogState.audioPlayerDialogState is AudioPlayerDialogState.Showed) {
-        val playerState by (dialogState.audioPlayerDialogState as AudioPlayerDialogState.Showed)
-            .player.state.collectAsStateWithLifecycle(initialValue = PlayerState.Idle)
-        val maxDuration = (dialogState.audioPlayerDialogState as AudioPlayerDialogState.Showed).maxDuration
-
-        AudioPlayerDialog(
-            storageScreenViewModel = storageScreenViewModel,
-            playerState = playerState,
-            maxDuration = maxDuration
-        )
-    }
 }
-
-@Composable
-fun AudioStorageList(storageScreenViewModel: StorageScreenViewModel) {
-    val context = LocalContext.current
-
-    val audioFiles by storageScreenViewModel.audioFiles.collectAsStateWithLifecycle()
-
-    LazyColumn(Modifier.fillMaxSize()) {
-        items(audioFiles) {
-            StyleCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(themeDimensions.cardOutPaddings),
-                onClick = { storageScreenViewModel.showAudioDialogState(it) }
-            ) {
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(themeDimensions.cardInPaddings)
-                ) {
-                    Text(
-                        text = "${it.created.toDateString(context)}, ${it.created.toTimeString()}",
-                        style = themeTypography.head,
-                        color = themeColors.primaryFontColor
-                    )
-
-                    Text(
-                        text = it.duration.milliSecondToString(),
-                        color = themeColors.secondFontColor,
-                        style = themeTypography.body
-                    )
-                }
-            }
-        }
-
-    }
-}
-
-@Composable
-fun VideoStorageList() {
-    Text(text = "Видео")
-}
-
-@Composable
-fun AudioPlayerDialog(
-    storageScreenViewModel: StorageScreenViewModel,
-    playerState: PlayerState,
-    maxDuration: Long,
-) {
-
-    val isPlay = playerState is PlayerState.Play
-
-    val fastStep = 5000
-
-    AudioPlayer(
-        currentDuration = playerState.currentDuration,
-        maxDuration = maxDuration,
-        isPlay = isPlay,
-        onHidePlayer = storageScreenViewModel::hideAudioPlayerDialog,
-        onSeekTo = storageScreenViewModel::seekTo,
-        onChangePlayState = {
-            if (isPlay) {
-                storageScreenViewModel.pause()
-            } else {
-                storageScreenViewModel.play()
-            }
-        },
-        onFastRewind = { storageScreenViewModel.seekTo(playerState.currentDuration - fastStep) },
-        onFastForward = { storageScreenViewModel.seekTo(playerState.currentDuration + fastStep) }
-    )
-
-}
-
 
 @SuppressLint("ResourceType")
 @Composable

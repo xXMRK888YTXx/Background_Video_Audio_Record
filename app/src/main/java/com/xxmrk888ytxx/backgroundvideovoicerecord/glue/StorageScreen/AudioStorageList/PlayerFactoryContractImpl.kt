@@ -1,12 +1,12 @@
-package com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen
+package com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.AudioStorageList
 
 import android.content.Context
 import androidx.core.net.toUri
 import com.xxmrk888ytxx.audioplayer.AudioPlayer.AudioPlayer
 import com.xxmrk888ytxx.audioplayer.AudioPlayer.ScreenLockBlocker
-import com.xxmrk888ytxx.storagescreen.contracts.PlayerFactoryContract
-import com.xxmrk888ytxx.storagescreen.models.Player
-import com.xxmrk888ytxx.storagescreen.models.PlayerState
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.PlayerFactoryContract
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.Player
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.PlayerState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.File
