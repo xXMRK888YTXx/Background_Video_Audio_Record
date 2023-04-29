@@ -1,10 +1,13 @@
 package com.xxmrk888ytxx.recordvideoscreen
 
+import android.annotation.SuppressLint
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -13,9 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -26,21 +27,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xxmrk888ytxx.corecompose.LocalTheme
 import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButton
 import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButtonHolderWidget
 import com.xxmrk888ytxx.corecompose.Shared.RecordStateWidget
+import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestPermissionDialog
+import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPermissionModel
 import com.xxmrk888ytxx.corecompose.Shared.StyleIcon
-import com.xxmrk888ytxx.corecompose.Shared.StyleIconButton
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeDimensions
-import com.xxmrk888ytxx.corecompose.themeShapes
 import com.xxmrk888ytxx.recordvideoscreen.models.RecordState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -49,6 +48,36 @@ import kotlinx.coroutines.launch
 fun RecordVideoScreen(
     recordVideoViewModel: RecordVideoViewModel,
 ) {
+
+    val requestRecordAudioPermissionContract = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = recordVideoViewModel::onRecordAudioPermissionResult
+    )
+
+    val requestCameraPermissionContract = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = recordVideoViewModel::onCameraPermissionResult
+    )
+
+    val requestPostNotificationPermissionContract = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = recordVideoViewModel::onPostNotificationPermissionResult
+        )
+    } else {
+        null
+    }
+
+    val dialogState by recordVideoViewModel.dialogState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = Unit, block = {
+        recordVideoViewModel.initActivityResultContracts(
+            requestAudioRecordPermissionContract = requestRecordAudioPermissionContract,
+            requestCameraPermissionContract = requestCameraPermissionContract,
+            requestPostNotificationPermissionContract = requestPostNotificationPermissionContract
+        )
+    })
+
     val recordState by recordVideoViewModel.currentRecordState.collectAsStateWithLifecycle()
 
     val currentWidgetGradientColor by recordVideoViewModel.currentWidgetColor.collectAsStateWithLifecycle()
@@ -173,4 +202,26 @@ fun RecordVideoScreen(
 
         }
     }
+
+    if(dialogState.isPermissionStateVisible) {
+        RequestPermissionDialog(
+            permissions = requestedPermission(recordVideoViewModel),
+            onDismissRequest = recordVideoViewModel::hidePermissionDialog
+        )
+    }
+}
+
+@SuppressLint("NewApi")
+@Composable
+fun requestedPermission(recordVideoViewModel:RecordVideoViewModel) : List<RequestedPermissionModel> {
+    val audioPermission by recordVideoViewModel.recordAudioPermissionState.collectAsStateWithLifecycle()
+
+    val cameraPermission by recordVideoViewModel.cameraPermissionState.collectAsStateWithLifecycle()
+
+    val postNotificationPermission by recordVideoViewModel
+        .postNotificationPermissionState.collectAsStateWithLifecycle()
+
+    return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        listOf(audioPermission,cameraPermission,postNotificationPermission)
+    else listOf(audioPermission,cameraPermission)
 }

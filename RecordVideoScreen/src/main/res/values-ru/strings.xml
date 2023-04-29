@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Audio_record_permission_description">Разрешение для записи аудио</string>
+    <string name="Post_notification_description">Разрешение для показа уведомлений</string>
+</resources>
