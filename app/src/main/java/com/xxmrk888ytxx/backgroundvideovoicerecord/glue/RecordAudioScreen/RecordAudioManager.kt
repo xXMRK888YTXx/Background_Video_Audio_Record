@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class RecordManager @Inject constructor(
+class RecordAudioManager @Inject constructor(
     private val audioRecordServiceManager: AudioRecordServiceManager
 ) : RecordStateProviderContract,RecordManageContract {
     override fun start() {

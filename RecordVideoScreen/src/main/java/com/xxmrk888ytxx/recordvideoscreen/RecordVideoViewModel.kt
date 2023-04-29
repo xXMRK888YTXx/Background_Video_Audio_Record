@@ -2,6 +2,9 @@ package com.xxmrk888ytxx.recordvideoscreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoManageContract
+import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoStateProviderContract
+import com.xxmrk888ytxx.recordvideoscreen.models.RecordState
 import com.xxmrk888ytxx.recordvideoscreen.models.RecordWidgetColor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -10,7 +13,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
-class RecordVideoViewModel @Inject constructor() : ViewModel() {
+class RecordVideoViewModel @Inject constructor(
+    private val recordVideoManageContract: RecordVideoManageContract,
+    private val recordVideoStateProviderContract: RecordVideoStateProviderContract
+) : ViewModel() {
 
     private val _currentWidgetColor = MutableStateFlow(RecordWidgetColor())
 
@@ -24,14 +30,22 @@ class RecordVideoViewModel @Inject constructor() : ViewModel() {
         _currentWidgetColor.update { it.newRecordGradient }
     }
 
-    //Temp
-    val isRecord = MutableStateFlow(false)
+    internal val currentRecordState = recordVideoStateProviderContract.currentState
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),RecordState.Idle)
 
     fun startRecord() {
-        isRecord.update { true }
+        recordVideoManageContract.start()
     }
 
     fun stopRecord() {
-        isRecord.update { false }
+        recordVideoManageContract.stop()
+    }
+
+    fun pauseRecord() {
+        recordVideoManageContract.pause()
+    }
+
+    fun resumeRecord() {
+        recordVideoManageContract.resume()
     }
 }

@@ -1,6 +1,8 @@
 package com.xxmrk888ytxx.corecompose.Shared
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeShapes
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ControlRecordButtonHolderWidget(
     modifier: Modifier = Modifier,
@@ -27,7 +30,7 @@ fun ControlRecordButtonHolderWidget(
         shape = themeShapes.card,
         backgroundColor = themeColors.cardColor
     ) {
-        Row(
+        FlowRow(
             Modifier
                 .fillMaxWidth()
                 .padding(15.dp),

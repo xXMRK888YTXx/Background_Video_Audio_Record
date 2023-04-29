@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.recordvideoscreen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -40,6 +41,7 @@ import com.xxmrk888ytxx.corecompose.Shared.StyleIconButton
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeDimensions
 import com.xxmrk888ytxx.corecompose.themeShapes
+import com.xxmrk888ytxx.recordvideoscreen.models.RecordState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -47,7 +49,7 @@ import kotlinx.coroutines.launch
 fun RecordVideoScreen(
     recordVideoViewModel: RecordVideoViewModel,
 ) {
-    val isRecord by recordVideoViewModel.isRecord.collectAsStateWithLifecycle()
+    val recordState by recordVideoViewModel.currentRecordState.collectAsStateWithLifecycle()
 
     val currentWidgetGradientColor by recordVideoViewModel.currentWidgetColor.collectAsStateWithLifecycle()
 
@@ -69,12 +71,12 @@ fun RecordVideoScreen(
         animationSpec = tween(themeValues.animationDuration)
     )
 
-    LaunchedEffect(key1 = isRecord, block = {
+    LaunchedEffect(key1 = recordState::class, block = {
         launch {
-            if (!isRecord) {
+            if (recordState is RecordState.Idle) {
                 alpha = 1f
             }
-            while (isRecord) {
+            while (recordState is RecordState.Recording) {
                 recordVideoViewModel.regenerateButtonGradientColor()
                 alpha = if (alpha == 1f) 0f else 1f
                 delay((themeValues.animationDuration + themeValues.additionalAnimationDuration).toLong())
@@ -101,7 +103,8 @@ fun RecordVideoScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             RecordStateWidget(
-                isRecordEnabled = isRecord,
+                isRecordEnabled = recordState !is RecordState.Idle,
+                recordTime = recordState.currentDuration,
                 modifier = Modifier
                     .fillMaxWidth(),
                 borderWhenRecordEnabled = animatedWidgetGradientColor,
@@ -129,14 +132,30 @@ fun RecordVideoScreen(
 
                 }
 
+                AnimatedVisibility(visible = recordState !is RecordState.Idle) {
+                    ControlRecordButton(
+                        painter = if(recordState is RecordState.Recording)
+                            painterResource(id = R.drawable.pause)
+                        else
+                            painterResource(id = R.drawable.play),
+                        background = themeColors.supportControlRecordButtonColor
+                    ) {
+                        if(recordState is RecordState.Recording) {
+                            recordVideoViewModel.pauseRecord()
+                        } else {
+                            recordVideoViewModel.resumeRecord()
+                        }
+                    }
+                }
+
                 ControlRecordButton(
                     painter = painterResource(
-                        id = if (!isRecord) R.drawable.videocam
+                        id = if (recordState !is RecordState.Recording) R.drawable.videocam
                         else R.drawable.baseline_stop_24
                     ),
                     background = themeColors.recordButtonColor
                 ) {
-                    if (isRecord) {
+                    if (recordState is RecordState.Recording) {
                         recordVideoViewModel.stopRecord()
                     } else {
                         recordVideoViewModel.startRecord()

@@ -5,6 +5,7 @@ import com.xxmrk888ytxx.audiorecordservice.RecordAudioParams
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.AudioRecordServiceModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.DomainModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordAudioScreenModule
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordVideoScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.ScopeModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.StorageScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.MainActivity
@@ -18,7 +19,8 @@ import dagger.Lazy
         DomainModule::class,
         RecordAudioScreenModule::class,
         AudioRecordServiceModule::class,
-        StorageScreenModule::class
+        StorageScreenModule::class,
+        RecordVideoScreenModule::class
     ]
 )
 @AppScope
