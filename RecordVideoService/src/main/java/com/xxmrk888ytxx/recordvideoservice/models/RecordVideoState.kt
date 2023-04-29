@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.audiorecordservice.models
+package com.xxmrk888ytxx.recordvideoservice.models
 
 /**
  * [Ru]
@@ -9,11 +9,11 @@ package com.xxmrk888ytxx.audiorecordservice.models
 
 /**
  * [En]
- * Service states for audio recording
+ * Service states for video recording
  *
  * @param recordDuration - time the service is already recording
  */
-sealed class RecordAudioState(open val recordDuration:Long) {
+sealed class RecordVideoState(open val recordDuration:Long) {
 
     /**
      * [Ru]
@@ -24,7 +24,7 @@ sealed class RecordAudioState(open val recordDuration:Long) {
      * [En]
      * In this state, the service is ready for recording and waiting for commands
      */
-    object Idle : RecordAudioState(-1)
+    object Idle : RecordVideoState(0)
 
     /**
      * [Ru]
@@ -35,16 +35,16 @@ sealed class RecordAudioState(open val recordDuration:Long) {
      * [En]
      * This state means that recording has started, but is currently paused
      */
-    data class Pause(override val recordDuration: Long) : RecordAudioState(recordDuration)
+    data class Pause(override val recordDuration: Long) : RecordVideoState(recordDuration)
 
-        /**
-         * [Ru]
-         * В данное состояние означает, что в данный момент идет запись
-         */
+    /**
+     * [Ru]
+     * В данное состояние означает, что в данный момент идет запись
+     */
 
     /**
      * [En]
      * In this state means that the recording is in progress
      */
-    data class Recording(override val recordDuration: Long) : RecordAudioState(recordDuration)
+    data class Recording(override val recordDuration: Long) : RecordVideoState(recordDuration)
 }
