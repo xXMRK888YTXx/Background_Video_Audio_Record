@@ -2,8 +2,10 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules
 
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.AppScope
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.ApplicationScopeQualifier
-import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.RecordStateObserverScopeQualifier
-import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.ServiceManagedScopeQualifier
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.RecordAudioStateObserverScopeQualifier
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.AudioServiceManagedScopeQualifier
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.RecordVideoStateObserverScopeQualifier
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.VideoServiceManagedScopeQualifier
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineScope
@@ -16,8 +18,8 @@ class ScopeModule {
 
     @Provides
     @AppScope
-    @RecordStateObserverScopeQualifier
-    fun provideRecordStateObserverScope() : CoroutineScope {
+    @RecordAudioStateObserverScopeQualifier
+    fun provideRecordAudioStateObserverScope() : CoroutineScope {
         return CoroutineScope(
             SupervisorJob() + Dispatchers.Default
         )
@@ -26,8 +28,8 @@ class ScopeModule {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Provides
     @AppScope
-    @ServiceManagedScopeQualifier
-    fun provideServiceManagedScope() : CoroutineScope {
+    @AudioServiceManagedScopeQualifier
+    fun provideAudioServiceManagedScope() : CoroutineScope {
         return CoroutineScope(
             SupervisorJob() + Dispatchers.Default.limitedParallelism(1)
         )
@@ -38,5 +40,24 @@ class ScopeModule {
     @ApplicationScopeQualifier
     fun provideApplicationScope() : CoroutineScope {
         return CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    }
+
+    @Provides
+    @AppScope
+    @RecordVideoStateObserverScopeQualifier
+    fun provideRecordVideoStateObserverScope() : CoroutineScope {
+        return CoroutineScope(
+            SupervisorJob() + Dispatchers.Default
+        )
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Provides
+    @AppScope
+    @VideoServiceManagedScopeQualifier
+    fun provideVideoServiceManagedScope() : CoroutineScope {
+        return CoroutineScope(
+            SupervisorJob() + Dispatchers.Default.limitedParallelism(1)
+        )
     }
 }
