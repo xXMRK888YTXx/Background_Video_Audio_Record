@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/RecordAudioScreen" />
             <option value="$PROJECT_DIR$/RecordVideoScreen" />
             <option value="$PROJECT_DIR$/StorageScreen" />
+            <option value="$PROJECT_DIR$/VideoRecorder" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/buildSrc" />
           </set>

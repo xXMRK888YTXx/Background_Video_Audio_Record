@@ -98,5 +98,15 @@ object Deps {
         val exoPlayer = "androidx.media3:media3-exoplayer:$media3_version"
     }
 
+    object CameraX {
+        private val camerax_version = "1.3.0-alpha06"
+        val core = "androidx.camera:camera-core:${camerax_version}"
+        val camera2 = "androidx.camera:camera-camera2:${camerax_version}"
+        val lifecycle = "androidx.camera:camera-lifecycle:${camerax_version}"
+        val video = "androidx.camera:camera-video:${camerax_version}"
+        val view = "androidx.camera:camera-view:${camerax_version}"
+        val extensions = "androidx.camera:camera-extensions:${camerax_version}"
+    }
+
 
 }
