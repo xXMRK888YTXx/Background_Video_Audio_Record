@@ -247,12 +247,12 @@ fun RecordVideoScreen(
 
                     ControlRecordButton(
                         painter = painterResource(
-                            id = if (recordState !is RecordState.Recording) R.drawable.videocam
+                            id = if (recordState is RecordState.Idle) R.drawable.videocam
                             else R.drawable.baseline_stop_24
                         ),
                         background = themeColors.recordButtonColor
                     ) {
-                        if (recordState is RecordState.Recording) {
+                        if (recordState !is RecordState.Idle) {
                             recordVideoViewModel.stopRecord()
                         } else {
                             recordVideoViewModel.startRecord()

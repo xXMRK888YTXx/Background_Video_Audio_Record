@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
@@ -12,15 +13,19 @@ import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPermissionModel
 import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoManageContract
 import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoStateProviderContract
+import com.xxmrk888ytxx.recordvideoscreen.exceptions.OtherRecordServiceStartedException
 import com.xxmrk888ytxx.recordvideoscreen.models.DialogState
 import com.xxmrk888ytxx.recordvideoscreen.models.RecordState
 import com.xxmrk888ytxx.recordvideoscreen.models.RecordWidgetColor
 import com.xxmrk888ytxx.recordvideoscreen.models.ViewType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RecordVideoViewModel @Inject constructor(
@@ -176,19 +181,28 @@ class RecordVideoViewModel @Inject constructor(
             return
         }
 
-        recordVideoManageContract.start()
+        viewModelScope.launch {
+            try {
+                recordVideoManageContract.start()
+            }catch (e: OtherRecordServiceStartedException) {
+                withContext(Dispatchers.Main) {
+                    //Temp
+                    Toast.makeText(context,"Запущен другой сервис записи",Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     fun stopRecord() {
-        recordVideoManageContract.stop()
+        viewModelScope.launch { recordVideoManageContract.stop() }
     }
 
     fun pauseRecord() {
-        recordVideoManageContract.pause()
+        viewModelScope.launch { recordVideoManageContract.pause() }
     }
 
     fun resumeRecord() {
-        recordVideoManageContract.resume()
+        viewModelScope.launch { recordVideoManageContract.resume() }
     }
     //
 

@@ -11,11 +11,11 @@ package com.xxmrk888ytxx.recordaudioscreen.contracts
  */
 interface RecordManageContract {
 
-    fun start()
+    suspend fun start()
 
-    fun pause()
+    suspend fun pause()
 
-    fun resume()
+    suspend fun resume()
 
-    fun stop()
+    suspend fun stop()
 }

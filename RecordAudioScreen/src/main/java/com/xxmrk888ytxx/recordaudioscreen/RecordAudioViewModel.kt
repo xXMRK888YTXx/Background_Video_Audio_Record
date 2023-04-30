@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
@@ -13,9 +14,11 @@ import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPermissionModel
 import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordManageContract
 import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordStateProviderContract
+import com.xxmrk888ytxx.recordaudioscreen.exceptions.OtherRecordStartedException
 import com.xxmrk888ytxx.recordaudioscreen.models.DialogState
 import com.xxmrk888ytxx.recordaudioscreen.models.RecordState
 import com.xxmrk888ytxx.recordaudioscreen.models.RecordWidgetColor
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,6 +27,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -102,19 +107,28 @@ class RecordAudioViewModel @Inject constructor(
             return
         }
 
-        recordManageContract.start()
+        viewModelScope.launch {
+            try {
+                recordManageContract.start()
+            }catch (e: OtherRecordStartedException) {
+                //Temp
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context,"Запись запущена в другом сервисе",Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     fun stopRecord() {
-        recordManageContract.stop()
+        viewModelScope.launch { recordManageContract.stop() }
     }
 
     fun pauseRecord() {
-        recordManageContract.pause()
+        viewModelScope.launch { recordManageContract.pause() }
     }
 
     fun resumeRecord() {
-        recordManageContract.resume()
+        viewModelScope.launch { recordManageContract.resume() }
     }
 
     private fun requestAudioPermission() {
