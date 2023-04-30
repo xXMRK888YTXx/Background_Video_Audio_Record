@@ -48,7 +48,8 @@ object Themes {
             get() = Dimensions(
                 iconSize = 30.dp,
                 controlButtonSize = 60.dp,
-                controlRecordButtonHolderWidgetOffset = 20.dp,
+                controlRecordButtonHolderWidgetPadding = 15.dp,
+                controlRecordButtonHolderCameraPreviewPadding = 70.dp,
                 cardOutPaddings = 10.dp,
                 cardInPaddings = 10.dp
             )

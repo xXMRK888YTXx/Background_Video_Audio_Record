@@ -15,6 +15,7 @@ import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoStateProviderContr
 import com.xxmrk888ytxx.recordvideoscreen.models.DialogState
 import com.xxmrk888ytxx.recordvideoscreen.models.RecordState
 import com.xxmrk888ytxx.recordvideoscreen.models.RecordWidgetColor
+import com.xxmrk888ytxx.recordvideoscreen.models.ViewType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +28,20 @@ class RecordVideoViewModel @Inject constructor(
     private val recordVideoStateProviderContract: RecordVideoStateProviderContract,
     private val context: Context
 ) : ViewModel() {
+
+    //View type
+    private val _viewType:MutableStateFlow<ViewType> = MutableStateFlow(ViewType.RecordWidget)
+
+    internal val viewType = _viewType.asStateFlow()
+
+    fun toRecordWidgetViewType() {
+        _viewType.update { ViewType.RecordWidget }
+    }
+
+    fun toCameraPreviewType() {
+        _viewType.update { ViewType.CameraPreview }
+    }
+    //
     
     //Widget color
     private val _currentWidgetColor = MutableStateFlow(RecordWidgetColor())
