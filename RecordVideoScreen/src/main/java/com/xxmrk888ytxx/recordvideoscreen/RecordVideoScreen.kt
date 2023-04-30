@@ -11,6 +11,9 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,6 +34,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xxmrk888ytxx.camerapreviewcompose.CameraPreview
 import com.xxmrk888ytxx.camerapreviewcompose.models.CameraType
@@ -42,12 +49,13 @@ import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPerm
 import com.xxmrk888ytxx.corecompose.Shared.StyleIcon
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeDimensions
+import com.xxmrk888ytxx.corecompose.themeTypography
 import com.xxmrk888ytxx.recordvideoscreen.models.RecordState
 import com.xxmrk888ytxx.recordvideoscreen.models.ViewType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun RecordVideoScreen(
     recordVideoViewModel: RecordVideoViewModel,
@@ -63,14 +71,15 @@ fun RecordVideoScreen(
         onResult = recordVideoViewModel::onCameraPermissionResult
     )
 
-    val requestPostNotificationPermissionContract = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission(),
-            onResult = recordVideoViewModel::onPostNotificationPermissionResult
-        )
-    } else {
-        null
-    }
+    val requestPostNotificationPermissionContract =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission(),
+                onResult = recordVideoViewModel::onPostNotificationPermissionResult
+            )
+        } else {
+            null
+        }
 
     val dialogState by recordVideoViewModel.dialogState.collectAsStateWithLifecycle()
 
@@ -121,8 +130,7 @@ fun RecordVideoScreen(
 
     Scaffold(
         Modifier
-            .fillMaxSize()
-        ,
+            .fillMaxSize(),
         backgroundColor = Color.Transparent
     ) { padding ->
         LazyColumn(
@@ -133,8 +141,7 @@ fun RecordVideoScreen(
                     start = padding.calculateStartPadding(LocalLayoutDirection.current),
                     end = padding.calculateEndPadding(LocalLayoutDirection.current),
                     bottom = padding.calculateBottomPadding()
-                )
-            ,
+                ),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -143,14 +150,13 @@ fun RecordVideoScreen(
                 AnimatedContent(
                     targetState = viewType
                 ) { state ->
-                    when(state) {
+                    when (state) {
                         is ViewType.RecordWidget -> {
                             RecordStateWidget(
                                 isRecordEnabled = recordState !is RecordState.Idle,
                                 recordTime = recordState.currentDuration,
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                ,
+                                    .fillMaxWidth(),
                                 borderWhenRecordEnabled = animatedWidgetGradientColor,
                                 icon = {
                                     StyleIcon(
@@ -167,9 +173,33 @@ fun RecordVideoScreen(
                         is ViewType.CameraPreview -> {
                             CameraPreview(
                                 cameraType = CameraType.Back,
-                                modifier = Modifier.fillMaxWidth()
-                                    .fillMaxHeight(0.5f)
-                            )
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.5f),
+                                isRecord = recordState is RecordState.Recording
+                            ) {
+                                FlowColumn(
+                                    Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    StyleIcon(
+                                        painter = painterResource(R.drawable.baseline_block_24),
+                                        size = themeDimensions.iconSize + 20.dp
+
+                                    )
+
+                                    Text(
+                                        text = stringResource(R.string.Preview_not_avalible),
+                                        color = themeColors.primaryFontColor,
+                                        style = themeTypography.body,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(10.dp),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -178,32 +208,36 @@ fun RecordVideoScreen(
             item {
                 ControlRecordButtonHolderWidget(
                     modifier = Modifier.padding(
-                        top = if(viewType is ViewType.RecordWidget)
+                        top = if (viewType is ViewType.RecordWidget)
                             themeDimensions.controlRecordButtonHolderWidgetPadding
                         else themeDimensions.controlRecordButtonHolderCameraPreviewPadding
                     )
                 ) {
 
-                    ControlRecordButton(
-                        painter = painterResource(id = R.drawable.baseline_visibility_24),
-                        background = themeColors.supportControlRecordButtonColor
-                    ) {
-                        if(viewType is ViewType.RecordWidget) {
-                            recordVideoViewModel.toCameraPreviewType()
-                        } else {
-                            recordVideoViewModel.toRecordWidgetViewType()
+                    if (recordState is RecordState.Idle || viewType is ViewType.CameraPreview) {
+                        ControlRecordButton(
+                            painter = if (viewType is ViewType.RecordWidget)
+                                painterResource(R.drawable.baseline_visibility_24)
+                            else painterResource(R.drawable.baseline_visibility_off_24),
+                            background = themeColors.supportControlRecordButtonColor
+                        ) {
+                            if (viewType is ViewType.RecordWidget) {
+                                recordVideoViewModel.toCameraPreviewType()
+                            } else {
+                                recordVideoViewModel.toRecordWidgetViewType()
+                            }
                         }
                     }
 
                     AnimatedVisibility(visible = recordState !is RecordState.Idle) {
                         ControlRecordButton(
-                            painter = if(recordState is RecordState.Recording)
+                            painter = if (recordState is RecordState.Recording)
                                 painterResource(id = R.drawable.pause)
                             else
                                 painterResource(id = R.drawable.play),
                             background = themeColors.supportControlRecordButtonColor
                         ) {
-                            if(recordState is RecordState.Recording) {
+                            if (recordState is RecordState.Recording) {
                                 recordVideoViewModel.pauseRecord()
                             } else {
                                 recordVideoViewModel.resumeRecord()
@@ -238,7 +272,7 @@ fun RecordVideoScreen(
         }
     }
 
-    if(dialogState.isPermissionStateVisible) {
+    if (dialogState.isPermissionStateVisible) {
         RequestPermissionDialog(
             permissions = requestedPermission(recordVideoViewModel),
             onDismissRequest = recordVideoViewModel::hidePermissionDialog
@@ -248,7 +282,7 @@ fun RecordVideoScreen(
 
 @SuppressLint("NewApi")
 @Composable
-fun requestedPermission(recordVideoViewModel:RecordVideoViewModel) : List<RequestedPermissionModel> {
+fun requestedPermission(recordVideoViewModel: RecordVideoViewModel): List<RequestedPermissionModel> {
     val audioPermission by recordVideoViewModel.recordAudioPermissionState.collectAsStateWithLifecycle()
 
     val cameraPermission by recordVideoViewModel.cameraPermissionState.collectAsStateWithLifecycle()
@@ -256,7 +290,7 @@ fun requestedPermission(recordVideoViewModel:RecordVideoViewModel) : List<Reques
     val postNotificationPermission by recordVideoViewModel
         .postNotificationPermissionState.collectAsStateWithLifecycle()
 
-    return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-        listOf(audioPermission,cameraPermission,postNotificationPermission)
-    else listOf(audioPermission,cameraPermission)
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        listOf(audioPermission, cameraPermission, postNotificationPermission)
+    else listOf(audioPermission, cameraPermission)
 }

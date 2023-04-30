@@ -39,6 +39,11 @@ class RecordVideoViewModel @Inject constructor(
     }
 
     fun toCameraPreviewType() {
+        if(!isCameraPermissionGranted) {
+            requestCameraPermission()
+
+            return
+        }
         _viewType.update { ViewType.CameraPreview }
     }
     //
