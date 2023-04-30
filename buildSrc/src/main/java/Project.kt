@@ -10,4 +10,5 @@ object Project {
     const val StorageScreen = ":StorageScreen"
     const val AudioPlayer = ":AudioPlayer"
     const val VideoRecorder = ":VideoRecorder"
+    const val CameraPreviewCompose = ":CameraPreviewCompose"
 }

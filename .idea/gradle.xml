@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/AudioPlayer" />
             <option value="$PROJECT_DIR$/AudioRecordService" />
             <option value="$PROJECT_DIR$/BottomBarScreen" />
+            <option value="$PROJECT_DIR$/CameraPreviewCompose" />
             <option value="$PROJECT_DIR$/CoreAndroid" />
             <option value="$PROJECT_DIR$/CoreCompose" />
             <option value="$PROJECT_DIR$/RecordAudioScreen" />
