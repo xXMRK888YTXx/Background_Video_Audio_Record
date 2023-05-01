@@ -32,7 +32,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
-class VideoRecorderImpl constructor(
+internal class VideoRecorderImpl constructor(
     private val context: Context,
     private val outputFile: File,
     private val lifecycleOwner: LifecycleOwner,
