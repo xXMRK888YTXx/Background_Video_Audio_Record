@@ -6,9 +6,11 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.AudioRecordService
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.DomainModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordAudioScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordVideoScreenModule
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordVideoServiceModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.ScopeModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.StorageScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.MainActivity
+import com.xxmrk888ytxx.recordvideoservice.RecordVideoParams
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Lazy
@@ -20,7 +22,8 @@ import dagger.Lazy
         RecordAudioScreenModule::class,
         AudioRecordServiceModule::class,
         StorageScreenModule::class,
-        RecordVideoScreenModule::class
+        RecordVideoScreenModule::class,
+        RecordVideoServiceModule::class
     ]
 )
 @AppScope
@@ -34,4 +37,6 @@ interface AppComponent {
     }
 
     val recordAudioParams:Lazy<RecordAudioParams>
+
+    val recordVideoParams:Lazy<RecordVideoParams>
 }

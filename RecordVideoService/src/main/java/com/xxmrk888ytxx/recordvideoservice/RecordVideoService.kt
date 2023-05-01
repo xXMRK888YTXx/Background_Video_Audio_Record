@@ -11,6 +11,7 @@ import androidx.lifecycle.LifecycleRegistry
 import com.xxmrk888ytxx.coreandroid.buildNotification
 import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.cancelChillersAndLaunch
+import com.xxmrk888ytxx.coredeps.DepsProvider.getDepsByApplication
 import com.xxmrk888ytxx.recordvideoservice.models.RecordVideoState
 import com.xxmrk888ytxx.videorecorder.VideoRecorder
 import com.xxmrk888ytxx.videorecorder.models.RecorderState
@@ -30,6 +31,12 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwner {
+
+    //Service params
+    private val recordVideoParams:RecordVideoParams by lazy {
+        applicationContext.getDepsByApplication()
+    }
+    //
 
     //Scopes
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -103,16 +110,13 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     //
 
     //Record control
-    override fun startRecord() {
+    override fun startRecord(outputFile: File) {
         videoRecordServiceScope.launch {
             if(recorder != null) return@launch
 
-            //Temp
-            val tempFile = File(cacheDir, "temp.mp4")
-
             recorder = VideoRecorder.Builder(
                 applicationContext,
-                tempFile,
+                outputFile,
                 this@RecordVideoService
             ).apply {
 
@@ -150,6 +154,8 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
             }
 
             recorder = null
+
+            recordVideoParams.saveRecordedVideoStrategy.saveRecord()
         }
     }
     //

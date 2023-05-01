@@ -8,6 +8,7 @@ import android.os.IBinder
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.RecordVideoStateObserverScopeQualifier
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.VideoServiceManagedScopeQualifier
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordAudioServiceUseCase.IsCanStartRecordAudioServiceUseCase
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordRepository.VideoRecordRepository
 import com.xxmrk888ytxx.coreandroid.cancelChillersAndLaunch
 import com.xxmrk888ytxx.recordvideoservice.RecordVideoService
 import com.xxmrk888ytxx.recordvideoservice.RecordVideoServiceController
@@ -26,7 +27,8 @@ import javax.inject.Inject
 class VideoRecordServiceManagerImpl @Inject constructor(
     private val context: Context,
     @RecordVideoStateObserverScopeQualifier private val recordStateObserverScope: CoroutineScope,
-    @VideoServiceManagedScopeQualifier private val serviceManagedScope: CoroutineScope
+    @VideoServiceManagedScopeQualifier private val serviceManagedScope: CoroutineScope,
+    private val videoRecordRepository: VideoRecordRepository
 ) : VideoRecordServiceManager,ServiceConnection {
     //Record state
     private val _currentRecordState:MutableStateFlow<RecordVideoState> = MutableStateFlow(RecordVideoState.Idle)
@@ -109,7 +111,7 @@ class VideoRecordServiceManagerImpl @Inject constructor(
                 return@launch
             }
 
-            controller?.startRecord()
+            controller?.startRecord(videoRecordRepository.getFileForRecord())
         }
     }
 

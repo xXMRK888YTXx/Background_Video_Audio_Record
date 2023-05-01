@@ -15,6 +15,7 @@ class App : DepsProviderApp() {
     override val depsMap: Map<KClass<*>, () -> Any> by lazy {
         mapOf(
             appComponent.recordAudioParams.toProvidedDeps(),
+            appComponent.recordVideoParams.toProvidedDeps()
         )
     }
 }

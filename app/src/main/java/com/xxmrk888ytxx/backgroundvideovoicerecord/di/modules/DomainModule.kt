@@ -9,6 +9,8 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordAudioS
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordAudioServiceUseCase.IsCanStartRecordAudioServiceUseCaseImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordVideoServiceUseCase.IsCanStartRecordVideoServiceUseCase
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordVideoServiceUseCase.IsCanStartRecordVideoServiceUseCaseImpl
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordRepository.VideoRecordRepository
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordRepository.VideoRecordRepositoryImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordServiceManager.VideoRecordServiceManager
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordServiceManager.VideoRecordServiceManagerImpl
 import dagger.Binds
@@ -44,4 +46,10 @@ interface DomainModule {
     fun bindIsCanStartRecordVideoServiceUseCase(
         IsCanStartRecordVideoServiceUseCaseImpl: IsCanStartRecordVideoServiceUseCaseImpl
     ) : IsCanStartRecordVideoServiceUseCase
+
+    @Binds
+    @AppScope
+    fun bindVideoRecordRepository(
+        VideoRecordRepository: VideoRecordRepositoryImpl
+    ) : VideoRecordRepository
 }
