@@ -61,6 +61,7 @@ dependencies {
     implementation(project(Project.RecordVideoService))
     implementation(project(Project.StorageScreen))
     implementation(project(Project.AudioPlayer))
+    implementation(project(Project.PreferencesStorage))
 
     //Dagger
     kapt(Deps.Dagger.DaggerKaptCompiler)

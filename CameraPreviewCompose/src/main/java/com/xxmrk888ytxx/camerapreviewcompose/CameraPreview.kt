@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -37,15 +38,28 @@ fun CameraPreview(
     val cameraProvider = rememberCameraProvider()
     val preview = rememberPreview()
 
+    LaunchedEffect(key1 = cameraType, block = {
+
+        if(cameraProvider.isBound(preview) && !isRecord) {
+            cameraProvider.unbind(preview)
+        }
+
+        cameraProvider.bindToLifecycle(
+            localLifecycleOwner, cameraType.cameraSelector, preview
+        )
+    })
+
     AnimatedContent(targetState = isRecord) { isRecording ->
         if(!isRecording) {
             AndroidView(
                 factory = {
                     val view = PreviewView(it)
 
-                    cameraProvider.bindToLifecycle(
-                        localLifecycleOwner, cameraType.cameraSelector, preview
-                    )
+                    if(!cameraProvider.isBound(preview) && !isRecord) {
+                        cameraProvider.bindToLifecycle(
+                            localLifecycleOwner, cameraType.cameraSelector, preview
+                        )
+                    }
 
                     preview.setSurfaceProvider(view.surfaceProvider)
 

@@ -5,6 +5,8 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioRecordRepository.
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioRecordRepository.AudioRecordRepositoryImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioRecordServiceManager.AudioRecordServiceManager
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioRecordServiceManager.AudioRecordServiceManagerImpl
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.CameraConfigManager
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.CameraConfigManagerImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordAudioServiceUseCase.IsCanStartRecordAudioServiceUseCase
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordAudioServiceUseCase.IsCanStartRecordAudioServiceUseCaseImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordVideoServiceUseCase.IsCanStartRecordVideoServiceUseCase
@@ -13,6 +15,8 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordRepository.
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordRepository.VideoRecordRepositoryImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordServiceManager.VideoRecordServiceManager
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordServiceManager.VideoRecordServiceManagerImpl
+import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.RecordVideoScreen.ManageCameraTypeContractImpl
+import com.xxmrk888ytxx.recordvideoscreen.contract.ManageCameraTypeContract
 import dagger.Binds
 import dagger.Module
 
@@ -22,34 +26,40 @@ interface DomainModule {
     @Binds
     @AppScope
     fun bindAudioRecordServiceManager(
-        audioRecordServiceManager: AudioRecordServiceManagerImpl
+        audioRecordServiceManager: AudioRecordServiceManagerImpl,
     ): AudioRecordServiceManager
 
     @Binds
     @AppScope
     fun bindAudioRecordRepository(
-        AudioRecordRepositoryImpl: AudioRecordRepositoryImpl
-    ) : AudioRecordRepository
+        AudioRecordRepositoryImpl: AudioRecordRepositoryImpl,
+    ): AudioRecordRepository
 
     @Binds
     @AppScope
     fun bindsVideoRecordServiceManager(
-        videoRecordServiceManager: VideoRecordServiceManagerImpl
-    ) :VideoRecordServiceManager
+        videoRecordServiceManager: VideoRecordServiceManagerImpl,
+    ): VideoRecordServiceManager
 
     @Binds
     fun bindIsCanStartRecordAudioServiceUseCase(
-        IsCanStartRecordAudioServiceUseCaseImpl: IsCanStartRecordAudioServiceUseCaseImpl
-    ) : IsCanStartRecordAudioServiceUseCase
+        IsCanStartRecordAudioServiceUseCaseImpl: IsCanStartRecordAudioServiceUseCaseImpl,
+    ): IsCanStartRecordAudioServiceUseCase
 
     @Binds
     fun bindIsCanStartRecordVideoServiceUseCase(
-        IsCanStartRecordVideoServiceUseCaseImpl: IsCanStartRecordVideoServiceUseCaseImpl
-    ) : IsCanStartRecordVideoServiceUseCase
+        IsCanStartRecordVideoServiceUseCaseImpl: IsCanStartRecordVideoServiceUseCaseImpl,
+    ): IsCanStartRecordVideoServiceUseCase
 
     @Binds
     @AppScope
     fun bindVideoRecordRepository(
-        VideoRecordRepository: VideoRecordRepositoryImpl
-    ) : VideoRecordRepository
+        VideoRecordRepository: VideoRecordRepositoryImpl,
+    ): VideoRecordRepository
+
+    @Binds
+    fun bindCameraConfigManager(CameraConfigManager: CameraConfigManagerImpl): CameraConfigManager
+
+    @Binds
+    fun bindManageCameraTypeContract(ManageCameraTypeContract: ManageCameraTypeContractImpl): ManageCameraTypeContract
 }

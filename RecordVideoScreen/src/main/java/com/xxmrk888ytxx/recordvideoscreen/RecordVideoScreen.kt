@@ -51,6 +51,7 @@ import com.xxmrk888ytxx.corecompose.Shared.StyleIcon
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeDimensions
 import com.xxmrk888ytxx.corecompose.themeTypography
+import com.xxmrk888ytxx.recordvideoscreen.models.CurrentSelectedCameraModel
 import com.xxmrk888ytxx.recordvideoscreen.models.RecordState
 import com.xxmrk888ytxx.recordvideoscreen.models.ViewType
 import kotlinx.coroutines.delay
@@ -105,6 +106,8 @@ fun RecordVideoScreen(
     val themeValues = LocalTheme.current.values
 
     val viewType by recordVideoViewModel.viewType.collectAsStateWithLifecycle()
+
+    val currentSelectedCamera by recordVideoViewModel.currentCamera.collectAsStateWithLifecycle()
 
     val animatedWidgetGradientColor by animateColorAsState(
         targetValue = currentWidgetGradientColor.color,
@@ -180,11 +183,13 @@ fun RecordVideoScreen(
 
                         is ViewType.CameraPreview -> {
                             CameraPreview(
-                                cameraType = CameraType.Back,
+                                cameraType = if (currentSelectedCamera is CurrentSelectedCameraModel.Back) {
+                                    CameraType.Back
+                                } else CameraType.Front,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .fillMaxHeight(0.5f),
-                                isRecord = recordState is RecordState.Recording
+                                isRecord = recordState is RecordState.Recording,
                             ) {
                                 FlowColumn(
                                     Modifier.fillMaxWidth(),
@@ -267,11 +272,13 @@ fun RecordVideoScreen(
                         }
                     }
 
-                    ControlRecordButton(
-                        painter = painterResource(id = R.drawable.rotation),
-                        background = themeColors.supportControlRecordButtonColor
-                    ) {
-
+                    AnimatedVisibility(visible = recordState is RecordState.Idle) {
+                        ControlRecordButton(
+                            painter = painterResource(id = R.drawable.rotation),
+                            background = themeColors.supportControlRecordButtonColor
+                        ) {
+                            recordVideoViewModel.changeCurrentSelectedCamera(currentSelectedCamera)
+                        }
                     }
                 }
             }

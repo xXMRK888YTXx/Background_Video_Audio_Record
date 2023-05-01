@@ -12,9 +12,11 @@ import androidx.compose.material.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPermissionModel
+import com.xxmrk888ytxx.recordvideoscreen.contract.ManageCameraTypeContract
 import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoManageContract
 import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoStateProviderContract
 import com.xxmrk888ytxx.recordvideoscreen.exceptions.OtherRecordServiceStartedException
+import com.xxmrk888ytxx.recordvideoscreen.models.CurrentSelectedCameraModel
 import com.xxmrk888ytxx.recordvideoscreen.models.DialogState
 import com.xxmrk888ytxx.recordvideoscreen.models.RecordState
 import com.xxmrk888ytxx.recordvideoscreen.models.RecordWidgetColor
@@ -32,8 +34,29 @@ import javax.inject.Inject
 class RecordVideoViewModel @Inject constructor(
     private val recordVideoManageContract: RecordVideoManageContract,
     private val recordVideoStateProviderContract: RecordVideoStateProviderContract,
-    private val context: Context
+    private val context: Context,
+    private val manageCameraTypeContract: ManageCameraTypeContract,
 ) : ViewModel() {
+
+    //Manage Camera Type
+
+    internal val currentCamera = manageCameraTypeContract.cameraType
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            CurrentSelectedCameraModel.Back
+        )
+
+    internal fun changeCurrentSelectedCamera(currentCamera: CurrentSelectedCameraModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (currentCamera is CurrentSelectedCameraModel.Back) {
+                manageCameraTypeContract.setCurrentSelectedCamera(CurrentSelectedCameraModel.Front)
+            } else {
+                manageCameraTypeContract.setCurrentSelectedCamera(CurrentSelectedCameraModel.Back)
+            }
+        }
+    }
+    //
 
     //Snackbar
     private var snackBarHostState: SnackbarHostState? = null
@@ -44,7 +67,7 @@ class RecordVideoViewModel @Inject constructor(
     //
 
     //View type
-    private val _viewType:MutableStateFlow<ViewType> = MutableStateFlow(ViewType.RecordWidget)
+    private val _viewType: MutableStateFlow<ViewType> = MutableStateFlow(ViewType.RecordWidget)
 
     internal val viewType = _viewType.asStateFlow()
 
@@ -53,7 +76,7 @@ class RecordVideoViewModel @Inject constructor(
     }
 
     fun toCameraPreviewType() {
-        if(!isCameraPermissionGranted) {
+        if (!isCameraPermissionGranted) {
             requestCameraPermission()
 
             return
@@ -61,7 +84,7 @@ class RecordVideoViewModel @Inject constructor(
         _viewType.update { ViewType.CameraPreview }
     }
     //
-    
+
     //Widget color
     private val _currentWidgetColor = MutableStateFlow(RecordWidgetColor())
 
@@ -92,7 +115,7 @@ class RecordVideoViewModel @Inject constructor(
         _dialogState.update { it.copy(isPermissionStateVisible = false) }
     }
     //
-    
+
     //Permissions state
 
     private val isAllPermissionGranted: Boolean
@@ -103,10 +126,10 @@ class RecordVideoViewModel @Inject constructor(
     private val isRecordAudioPermissionGranted: Boolean
         get() = context.checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
 
-    private val isCameraPermissionGranted:Boolean
+    private val isCameraPermissionGranted: Boolean
         get() = context.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
 
-    private val isPostNotificationPermissionGranted:Boolean
+    private val isPostNotificationPermissionGranted: Boolean
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
         } else {
@@ -114,32 +137,35 @@ class RecordVideoViewModel @Inject constructor(
         }
 
     @SuppressLint("ResourceType")
-    private val _recordAudioPermissionState:MutableStateFlow<RequestedPermissionModel> = MutableStateFlow(
-        RequestedPermissionModel(
-            description = R.string.Audio_record_permission_description,
-            isGranted = isRecordAudioPermissionGranted,
-            onRequest = ::requestAudioPermission
+    private val _recordAudioPermissionState: MutableStateFlow<RequestedPermissionModel> =
+        MutableStateFlow(
+            RequestedPermissionModel(
+                description = R.string.Audio_record_permission_description,
+                isGranted = isRecordAudioPermissionGranted,
+                onRequest = ::requestAudioPermission
+            )
         )
-    )
 
     @SuppressLint("ResourceType")
-    private val _cameraPermissionState:MutableStateFlow<RequestedPermissionModel> = MutableStateFlow(
-        RequestedPermissionModel(
-            description = R.string.Audio_record_permission_description,
-            isGranted = isCameraPermissionGranted,
-            onRequest = ::requestCameraPermission
+    private val _cameraPermissionState: MutableStateFlow<RequestedPermissionModel> =
+        MutableStateFlow(
+            RequestedPermissionModel(
+                description = R.string.Audio_record_permission_description,
+                isGranted = isCameraPermissionGranted,
+                onRequest = ::requestCameraPermission
+            )
         )
-    )
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @SuppressLint("ResourceType")
-    private val _postNotificationPermissionState:MutableStateFlow<RequestedPermissionModel> = MutableStateFlow(
-        RequestedPermissionModel(
-            description = R.string.Post_notification_description,
-            isGranted = isPostNotificationPermissionGranted,
-            onRequest = ::requestPostNotificationPermission
+    private val _postNotificationPermissionState: MutableStateFlow<RequestedPermissionModel> =
+        MutableStateFlow(
+            RequestedPermissionModel(
+                description = R.string.Post_notification_description,
+                isGranted = isPostNotificationPermissionGranted,
+                onRequest = ::requestPostNotificationPermission
+            )
         )
-    )
 
     internal val recordAudioPermissionState = _recordAudioPermissionState.asStateFlow()
 
@@ -148,7 +174,7 @@ class RecordVideoViewModel @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     internal val postNotificationPermissionState = _postNotificationPermissionState.asStateFlow()
     //
-    
+
     //Permission request
     private fun requestAudioPermission() {
         requestAudioRecordPermissionContract?.launch(Manifest.permission.RECORD_AUDIO)
@@ -165,26 +191,26 @@ class RecordVideoViewModel @Inject constructor(
     //
 
     //Permission handle result
-    fun onRecordAudioPermissionResult(isGranted:Boolean) {
+    fun onRecordAudioPermissionResult(isGranted: Boolean) {
         _recordAudioPermissionState.update { it.copy(isGranted = isGranted) }
     }
 
-    fun onCameraPermissionResult(isGranted:Boolean) {
+    fun onCameraPermissionResult(isGranted: Boolean) {
         _cameraPermissionState.update { it.copy(isGranted = isGranted) }
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    fun onPostNotificationPermissionResult(isGranted:Boolean) {
+    fun onPostNotificationPermissionResult(isGranted: Boolean) {
         _postNotificationPermissionState.update { it.copy(isGranted = isGranted) }
     }
     //
-    
+
     //Record
     internal val currentRecordState = recordVideoStateProviderContract.currentState
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),RecordState.Idle)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RecordState.Idle)
 
     fun startRecord() {
-        if(!isAllPermissionGranted) {
+        if (!isAllPermissionGranted) {
             showPermissionDialog()
 
             return
@@ -193,7 +219,7 @@ class RecordVideoViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 recordVideoManageContract.start()
-            }catch (e: OtherRecordServiceStartedException) {
+            } catch (e: OtherRecordServiceStartedException) {
                 snackBarHostState?.showSnackbar(context.getString(R.string.Audio_recording_is_started))
             }
         }
@@ -222,12 +248,12 @@ class RecordVideoViewModel @Inject constructor(
     fun initActivityResultContracts(
         requestAudioRecordPermissionContract: ActivityResultLauncher<String>,
         requestCameraPermissionContract: ActivityResultLauncher<String>,
-        requestPostNotificationPermissionContract: ActivityResultLauncher<String>?
+        requestPostNotificationPermissionContract: ActivityResultLauncher<String>?,
     ) {
         this.requestAudioRecordPermissionContract = requestAudioRecordPermissionContract
         this.requestCameraPermissionContract = requestCameraPermissionContract
         this.requestPostNotificationPermissionContract = requestPostNotificationPermissionContract
     }
     //
-    
+
 }
