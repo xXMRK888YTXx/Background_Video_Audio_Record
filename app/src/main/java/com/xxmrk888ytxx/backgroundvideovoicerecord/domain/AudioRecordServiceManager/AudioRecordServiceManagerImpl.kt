@@ -10,6 +10,7 @@ import com.xxmrk888ytxx.audiorecordservice.AudioRecordServiceController
 import com.xxmrk888ytxx.audiorecordservice.models.RecordAudioState
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.RecordAudioStateObserverScopeQualifier
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.AudioServiceManagedScopeQualifier
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioRecordRepository.AudioRecordRepository
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordAudioServiceUseCase.IsCanStartRecordAudioServiceUseCase
 import com.xxmrk888ytxx.coreandroid.cancelChillersAndLaunch
 import kotlinx.coroutines.CoroutineScope
@@ -26,7 +27,8 @@ import javax.inject.Inject
 class AudioRecordServiceManagerImpl @Inject constructor(
     private val context: Context,
     @RecordAudioStateObserverScopeQualifier private val recordStateObserverScope:CoroutineScope,
-    @AudioServiceManagedScopeQualifier private val serviceManagedScope:CoroutineScope
+    @AudioServiceManagedScopeQualifier private val serviceManagedScope:CoroutineScope,
+    private val audioRecordRepository: AudioRecordRepository
 ) : AudioRecordServiceManager,ServiceConnection {
 
     private val _currentRecordState:MutableStateFlow<RecordAudioState> = MutableStateFlow(
@@ -48,7 +50,7 @@ class AudioRecordServiceManagerImpl @Inject constructor(
                 return@launch
             }
 
-            recordServiceController?.startRecord()
+            recordServiceController?.startRecord(audioRecordRepository.getFileForRecord())
 
         }
     }

@@ -16,17 +16,6 @@ interface SaveAudioRecordStrategy {
 
     /**
      * [Ru]
-     * [CoroutineScope] на котором будет выполняться эта стратегия
-     */
-
-    /**
-     * [En]
-     * [CoroutineScope] on which this strategy will be executed
-     */
-    val scope: CoroutineScope
-
-    /**
-     * [Ru]
      * Метод для выполния стратегии
      *
      * @param recordedFile - расположение записаного файла
@@ -37,5 +26,5 @@ interface SaveAudioRecordStrategy {
      *
      * @param recordedFile - location of recorded file
      */
-    suspend fun saveRecord(recordedFile: File)
+    suspend fun saveRecord()
 }

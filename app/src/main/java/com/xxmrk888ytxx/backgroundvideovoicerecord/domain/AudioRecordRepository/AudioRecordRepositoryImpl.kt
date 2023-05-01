@@ -12,8 +12,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import javax.inject.Inject
 
 class AudioRecordRepositoryImpl @Inject constructor(
@@ -22,22 +20,12 @@ class AudioRecordRepositoryImpl @Inject constructor(
 
     private val _fileList = MutableStateFlow(emptyList<AudioModel>())
 
-    override suspend fun addFile(file: File) {
-        val buffer = ByteArray(4096)
-        var bytesRead: Int
-        val newAudioFile = newFile
-
-        withContext(Dispatchers.IO) {
-            FileInputStream(file).use { inputStream ->
-                FileOutputStream(newAudioFile).use { outputStream ->
-                    while (inputStream.read(buffer).also { bytesRead = it } > 0) {
-                        outputStream.write(buffer, 0, bytesRead)
-                    }
-                }
-            }
+    override suspend fun addFileFromRecorded() {
+        if(fileForRecord.exists()) {
+            val newFilePath = newFile
+            fileForRecord.renameTo(newFilePath)
+            loadNewFile(newFilePath)
         }
-
-        loadNewFile(file)
     }
 
     override suspend fun getFileById(id: Int): File? = withContext(Dispatchers.IO) {
@@ -65,6 +53,18 @@ class AudioRecordRepositoryImpl @Inject constructor(
         loadAllFiles()
     }
 
+    private val fileForRecord:File
+        get() = File(audioDir,"recorded")
+
+    override suspend fun getFileForRecord(): File {
+        if(fileForRecord.exists()) {
+            addFileFromRecorded()
+        }
+
+        return fileForRecord
+    }
+
+
     private val newFile:File
         get() {
             val files = audioDir.listFiles() ?: emptyArray()
@@ -90,7 +90,14 @@ class AudioRecordRepositoryImpl @Inject constructor(
     private suspend fun loadAllFiles() = withContext(Dispatchers.IO) {
         val files = audioDir.listFiles()?.filterNotNull() ?: return@withContext
 
-        _fileList.update { _ -> files.map { it.toAudioModel() }.sortedByDescending { it.created } }
+
+
+        _fileList.update { _ ->
+            files
+                .map { it.toAudioModel() }
+                .filter { it.id != -1L }
+                .sortedByDescending { it.created }
+        }
     }
 
     private suspend fun loadNewFile(file: File) = withContext(Dispatchers.IO) {

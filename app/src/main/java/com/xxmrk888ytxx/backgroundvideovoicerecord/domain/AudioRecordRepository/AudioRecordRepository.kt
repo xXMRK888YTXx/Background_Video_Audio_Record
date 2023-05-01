@@ -14,11 +14,13 @@ import java.io.File
  */
 interface AudioRecordRepository {
 
-    suspend fun addFile(file:File)
+    suspend fun addFileFromRecorded()
 
     suspend fun getFileById(id:Int) : File?
 
     suspend fun removeFile(id:Int)
 
     val fileList:Flow<List<AudioModel>>
+
+    suspend fun getFileForRecord() : File
 }

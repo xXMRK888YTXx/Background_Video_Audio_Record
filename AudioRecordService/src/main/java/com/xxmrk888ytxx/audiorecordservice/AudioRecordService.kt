@@ -32,10 +32,6 @@ class AudioRecordService : Service(), AudioRecordServiceController {
         applicationContext.getDepsByApplication()
     }
 
-    private val cacheFile by lazy {
-        File(recordAudioParams.recordAudioConfig.tempRecordPath)
-    }
-
     private var mediaRecorder: MediaRecorder? = null
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -66,13 +62,9 @@ class AudioRecordService : Service(), AudioRecordServiceController {
         startForeground(NOTIFICATION_ID, foregroundNotification)
     }
 
-    override fun startRecord() {
+    override fun startRecord(recordFileOutput:File) {
         audioRecordServiceScope.launch {
             if (mediaRecorder != null) return@launch
-
-            try {
-                cacheFile.delete()
-            }catch (_:Exception) {}
 
             mediaRecorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                 MediaRecorder(applicationContext)
@@ -83,7 +75,7 @@ class AudioRecordService : Service(), AudioRecordServiceController {
                     setAudioSource(MediaRecorder.AudioSource.MIC)
                     setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
                     setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-                    setOutputFile(cacheFile.absolutePath)
+                    setOutputFile(recordFileOutput.absolutePath)
                     prepare()
                     start()
                 }
@@ -130,13 +122,8 @@ class AudioRecordService : Service(), AudioRecordServiceController {
 
             toIdleState()
 
-            recordAudioParams.saveAudioRecordStrategy.scope.launch {
-                recordAudioParams.saveAudioRecordStrategy.saveRecord(cacheFile)
 
-                try {
-                    cacheFile.delete()
-                }catch (_:Exception) {}
-            }.join()
+            recordAudioParams.saveAudioRecordStrategy.saveRecord()
         }
     }
 

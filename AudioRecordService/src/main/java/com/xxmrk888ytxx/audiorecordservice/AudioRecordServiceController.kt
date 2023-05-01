@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.audiorecordservice
 
 import com.xxmrk888ytxx.audiorecordservice.models.RecordAudioState
 import kotlinx.coroutines.flow.Flow
+import java.io.File
 
 /**
  * [Ru]
@@ -27,7 +28,7 @@ interface AudioRecordServiceController {
      *
      * Sets the state in [RecordAudioState.Recording]
      */
-    fun startRecord()
+    fun startRecord(recordFileOutput: File)
 
     /**
      * [Ru]

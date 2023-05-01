@@ -40,9 +40,10 @@ fun AudioStorageList(audioStorageListViewModel: AudioStorageListViewModel) {
     val dialogState by audioStorageListViewModel.dialogState.collectAsStateWithLifecycle()
 
     LazyColumn(Modifier.fillMaxSize()) {
-        items(audioFiles) {
+        items(audioFiles, key = { it.id }) {
             StyleCard(
                 modifier = Modifier
+                    .animateItemPlacement()
                     .fillMaxWidth()
                     .padding(themeDimensions.cardOutPaddings),
             ) {
