@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,6 +50,12 @@ import kotlinx.coroutines.launch
 fun RecordAudioScreen(
     recordAudioViewModel: RecordAudioViewModel,
 ) {
+
+    val scaffoldState = rememberScaffoldState()
+
+    LaunchedEffect(key1 = scaffoldState, block = {
+        recordAudioViewModel.initSnackBarHostState(scaffoldState.snackbarHostState)
+    })
 
     val requestAudioRecordPermissionContract = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
@@ -117,7 +124,8 @@ fun RecordAudioScreen(
     Scaffold(
         Modifier
             .fillMaxSize(),
-        backgroundColor = Color.Transparent
+        backgroundColor = Color.Transparent,
+        scaffoldState = scaffoldState
     ) { padding ->
         LazyColumn(
             Modifier

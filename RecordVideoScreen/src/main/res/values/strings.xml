@@ -3,4 +3,5 @@
     <string name="Audio_record_permission_description">Разрешение для записи аудио</string>
     <string name="Post_notification_description">Разрешение для показа уведомлений</string>
     <string name="Preview_not_avalible">Предпросмотр не доступен, во время записи</string>
+    <string name="Audio_recording_is_started">Audio recording is started. Unable to start video recording as well</string>
 </resources>

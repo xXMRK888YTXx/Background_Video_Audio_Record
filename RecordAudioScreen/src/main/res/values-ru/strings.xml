@@ -2,4 +2,5 @@
 <resources>
     <string name="Record_audio_description">Разрешение для записи аудио</string>
     <string name="Post_notification_permission_descrption">Разрешение для показа уведомлений</string>
+    <string name="Video_recording_has_started">Запущена запись видео. Невозможно запустить ещё и запись аудио</string>
 </resources>

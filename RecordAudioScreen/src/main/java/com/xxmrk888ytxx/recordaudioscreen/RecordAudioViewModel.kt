@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
+import androidx.compose.material.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPermissionModel
@@ -37,6 +38,14 @@ class RecordAudioViewModel @Inject constructor(
     private val recordStateProviderContract: RecordStateProviderContract,
     private val context: Context,
 ) : ViewModel() {
+
+    //Snackbar
+    private var snackBarHostState: SnackbarHostState? = null
+
+    internal fun initSnackBarHostState(snackBarHostState: SnackbarHostState) {
+        this.snackBarHostState = snackBarHostState
+    }
+    //
 
     private var requestAudioRecordPermissionContract: ActivityResultLauncher<String>? = null
 
@@ -111,10 +120,7 @@ class RecordAudioViewModel @Inject constructor(
             try {
                 recordManageContract.start()
             }catch (e: OtherRecordStartedException) {
-                //Temp
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context,"Запись запущена в другом сервисе",Toast.LENGTH_SHORT).show()
-                }
+               snackBarHostState?.showSnackbar(context.getString(R.string.Video_recording_has_started))
             }
         }
     }
