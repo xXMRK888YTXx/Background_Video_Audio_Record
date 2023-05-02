@@ -4,18 +4,22 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.core.net.toUri
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.xxmrk888ytxx.backgroundvideovoicerecord.R
-import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.theme.setContentWithAppTheme
+import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.theme.setContentWithAppThemeAndNavigator
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.theme.Themes
+import com.xxmrk888ytxx.backgroundvideovoicerecord.utils.Const.VIDEO_URI_KEY
 import com.xxmrk888ytxx.backgroundvideovoicerecord.utils.appComponent
 import com.xxmrk888ytxx.backgroundvideovoicerecord.utils.composeViewModel
 import com.xxmrk888ytxx.bottombarscreen.BottomBarScreen
@@ -29,10 +33,12 @@ import com.xxmrk888ytxx.storagescreen.StorageScreen
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.AudioStorageListViewModel
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.VideoStorageListViewModel
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.LockBlockerScreen
+import com.xxmrk888ytxx.videoplayerscreen.VideoPlayerScreen
+import com.xxmrk888ytxx.videoplayerscreen.VideoPlayerViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 
-class MainActivity : ComponentActivity(), LockBlockerScreen {
+internal class MainActivity : ComponentActivity(), LockBlockerScreen {
 
     @Inject
     lateinit var recordAudioViewModel: Provider<RecordAudioViewModel>
@@ -45,13 +51,27 @@ class MainActivity : ComponentActivity(), LockBlockerScreen {
 
     @Inject lateinit var videoStorageListViewModel: Provider<VideoStorageListViewModel>
 
+    @Inject
+    lateinit var videoPlayerViewModel: VideoPlayerViewModel.Factory
+
+    @Inject
+    lateinit var activityViewModelFactory: ActivityViewModel.Factory
+
+    private val activityViewModel by viewModels<ActivityViewModel> { activityViewModelFactory }
+
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
-        setContentWithAppTheme(appTheme = Themes.dark) {
+        setContentWithAppThemeAndNavigator(
+            appTheme = Themes.dark,
+            navigator = activityViewModel
+        ) {
             val navController = rememberNavController()
 
+            LaunchedEffect(key1 = navController, block = {
+                activityViewModel.navController = navController
+            })
 
             NavHost(
                 navController = navController,
@@ -63,6 +83,17 @@ class MainActivity : ComponentActivity(), LockBlockerScreen {
                 composable(Screen.MainScreen.route) {
                     BottomBarScreen(
                         bottomBarScreens = bottomScreens
+                    )
+                }
+
+                composable(Screen.VideoPlayerScreen.route) {
+                    val uri = it.arguments?.getString(VIDEO_URI_KEY) ?: return@composable
+
+                    VideoPlayerScreen(
+                        modifier = Modifier.fillMaxSize(),
+                        videoPlayerViewModel = composeViewModel() {
+                            videoPlayerViewModel.create(uri.toUri())
+                        }
                     )
                 }
             }

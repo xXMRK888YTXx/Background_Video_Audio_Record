@@ -29,7 +29,7 @@ import dagger.Lazy
     ]
 )
 @AppScope
-interface AppComponent {
+internal interface AppComponent {
 
     fun inject(mainActivity: MainActivity)
 

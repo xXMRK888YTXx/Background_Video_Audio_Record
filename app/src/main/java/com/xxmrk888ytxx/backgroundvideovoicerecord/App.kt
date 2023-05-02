@@ -5,7 +5,7 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.di.DaggerAppComponent
 import com.xxmrk888ytxx.coreandroid.DepsProvider.DepsProviderApp
 import kotlin.reflect.KClass
 
-class App : DepsProviderApp() {
+internal class App : DepsProviderApp() {
 
     val appComponent by lazy {
         DaggerAppComponent.factory().create(applicationContext)

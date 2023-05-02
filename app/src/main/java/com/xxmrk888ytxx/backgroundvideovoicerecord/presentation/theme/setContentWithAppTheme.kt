@@ -5,12 +5,15 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.corecompose.AppTheme
+import com.xxmrk888ytxx.corecompose.LocalNavigator
 import com.xxmrk888ytxx.corecompose.LocalTheme
 
 
-fun ComponentActivity.setContentWithAppTheme(
+fun ComponentActivity.setContentWithAppThemeAndNavigator(
     appTheme: AppTheme,
+    navigator: Navigator,
     content: @Composable () -> Unit
 ) {
     setContent {
@@ -21,6 +24,7 @@ fun ComponentActivity.setContentWithAppTheme(
 
         CompositionLocalProvider(
             LocalTheme provides appTheme,
+            LocalNavigator provides navigator,
             content = content
         )
     }
