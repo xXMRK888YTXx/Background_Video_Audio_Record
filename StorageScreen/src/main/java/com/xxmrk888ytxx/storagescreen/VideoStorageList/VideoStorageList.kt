@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.xxmrk888ytxx.corecompose.LocalNavigator
 import com.xxmrk888ytxx.storagescreen.MediaFileItem.MediaFileItem
 import com.xxmrk888ytxx.storagescreen.MediaFileItem.models.MediaFileButton
 import com.xxmrk888ytxx.storagescreen.R
@@ -22,6 +23,8 @@ import com.xxmrk888ytxx.storagescreen.Stub
 @Composable
 fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
     val videoFiles by videoStorageListViewModel.videoFiles.collectAsStateWithLifecycle()
+
+    val navigator = LocalNavigator.current
 
     LaunchedEffect(key1 = videoFiles, block = {
         Log.d("MyLog",videoFiles.toString())
@@ -37,6 +40,10 @@ fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
             items(videoFiles, key = { it.id }) {
                 val buttons = remember {
                     listOf(
+                        MediaFileButton(
+                            icon = R.drawable.baseline_play_arrow_24,
+                            onClick = { videoStorageListViewModel.openVideo(it.id,navigator) }
+                        ),
                         MediaFileButton(
                             icon = R.drawable.baseline_delete_24,
                             onClick = { videoStorageListViewModel.removeFile(it.id) }

@@ -94,8 +94,9 @@ object Deps {
     }
 
     object Media3 {
-        private val media3_version = "1.0.1"
-        val exoPlayer = "androidx.media3:media3-exoplayer:$media3_version"
+        private const val media3_version = "1.0.1"
+        const val exoPlayer = "androidx.media3:media3-exoplayer:$media3_version"
+        const val ui = "androidx.media3:media3-ui:$media3_version"
     }
 
     object CameraX {

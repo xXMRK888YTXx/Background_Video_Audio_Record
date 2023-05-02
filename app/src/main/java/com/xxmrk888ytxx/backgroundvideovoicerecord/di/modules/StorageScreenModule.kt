@@ -5,12 +5,14 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.AudioStora
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.AudioStorageList.ProvideAudioFilesContractImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.AudioStorageList.ProvideFileByAudioIdImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.VideoStorageList.DeleteVideoFileContractImpl
+import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.VideoStorageList.OpenVideoContactImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.VideoStorageList.ProvideVideoFilesContractImpl
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.DeleteAudioFileContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.PlayerFactoryContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ProvideAudioFilesContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ProvideFileByAudioId
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.DeleteVideoFileContract
+import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.OpenVideoContract
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.ProvideVideoFilesContract
 import dagger.Binds
 import dagger.Module
@@ -41,4 +43,7 @@ interface StorageScreenModule {
 
     @Binds
     fun bindProvideVideoFilesContract(ProvideVideoFilesContract: ProvideVideoFilesContractImpl) : ProvideVideoFilesContract
+
+    @Binds
+    fun bindOpenVideoContract(OpenVideoContract: OpenVideoContactImpl) : OpenVideoContract
 }
