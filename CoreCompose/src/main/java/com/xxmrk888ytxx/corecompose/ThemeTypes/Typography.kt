@@ -8,5 +8,6 @@ data class Typography(
     val permissionDescription: TextStyle,
     val head: TextStyle,
     val body: TextStyle,
-    val playerText: TextStyle
+    val playerText: TextStyle,
+    val stub:TextStyle
 )

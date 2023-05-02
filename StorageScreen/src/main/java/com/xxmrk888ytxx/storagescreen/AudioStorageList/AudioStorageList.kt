@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.storagescreen.AudioStorageList
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xxmrk888ytxx.coreandroid.milliSecondToString
@@ -34,6 +36,7 @@ import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.PlayerState
 import com.xxmrk888ytxx.storagescreen.MediaFileItem.MediaFileItem
 import com.xxmrk888ytxx.storagescreen.MediaFileItem.models.MediaFileButton
 import com.xxmrk888ytxx.storagescreen.R
+import com.xxmrk888ytxx.storagescreen.Stub
 
 @SuppressLint("ResourceType")
 @OptIn(ExperimentalFoundationApi::class)
@@ -42,28 +45,31 @@ fun AudioStorageList(audioStorageListViewModel: AudioStorageListViewModel) {
     val audioFiles by audioStorageListViewModel.audioFiles.collectAsStateWithLifecycle()
     val dialogState by audioStorageListViewModel.dialogState.collectAsStateWithLifecycle()
 
-    LazyColumn(Modifier.fillMaxSize()) {
-        items(audioFiles, key = { it.id }) {
-            val mediaButtons = remember {
-                listOf(
-                    MediaFileButton(
-                        icon = R.drawable.baseline_play_arrow_24,
-                        onClick = { audioStorageListViewModel.showAudioDialogState(it) }
-                    ),
-                    MediaFileButton(
-                        icon = R.drawable.baseline_delete_24,
-                        onClick = { audioStorageListViewModel.removeAudioFile(it) }
+    if(audioFiles.isEmpty()) {
+        Stub(text = stringResource(R.string.Audios_missing))
+    } else {
+        LazyColumn(Modifier.fillMaxSize()) {
+            items(audioFiles, key = { it.id }) {
+                val mediaButtons = remember {
+                    listOf(
+                        MediaFileButton(
+                            icon = R.drawable.baseline_play_arrow_24,
+                            onClick = { audioStorageListViewModel.showAudioDialogState(it) }
+                        ),
+                        MediaFileButton(
+                            icon = R.drawable.baseline_delete_24,
+                            onClick = { audioStorageListViewModel.removeAudioFile(it) }
+                        )
                     )
+                }
+
+                MediaFileItem(
+                    duration = it.duration,
+                    created = it.created,
+                    buttons = mediaButtons
                 )
             }
-
-            MediaFileItem(
-                duration = it.duration,
-                created = it.created,
-                buttons = mediaButtons
-            )
         }
-
     }
 
     if (dialogState.audioPlayerDialogState is AudioPlayerDialogState.Showed) {

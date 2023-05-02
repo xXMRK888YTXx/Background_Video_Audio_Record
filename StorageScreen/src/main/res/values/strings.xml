@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="Audio">Аудио</string>
-    <string name="Video">Видео</string>
+    <string name="Audio">Audio</string>
+    <string name="Video">Video</string>
+    <string name="Videos_missing">No video files available</string>
+    <string name="Audios_missing">There are no audio recordings</string>
 </resources>

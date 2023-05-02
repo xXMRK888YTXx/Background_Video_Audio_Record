@@ -84,6 +84,10 @@ object Themes {
                 playerText = TextStyle(
                     fontSize = 12.sp,
                     fontWeight = W400
+                ),
+                stub = TextStyle(
+                    fontSize = 26.sp,
+                    fontWeight = W900
                 )
             )
         override val values: Values
