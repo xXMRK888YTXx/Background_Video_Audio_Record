@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
@@ -18,6 +19,7 @@ import com.xxmrk888ytxx.videorecorder.models.RecorderState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
@@ -60,7 +62,21 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         val controller: RecordVideoServiceController = this@RecordVideoService
     }
 
-    override fun onBind(intent: Intent?): IBinder = LocalBinder()
+    override fun onBind(intent: Intent?): IBinder {
+        Log.i(LOG_TAG,"onBind")
+        return LocalBinder()
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        Log.i(LOG_TAG,"onUnbind")
+        return super.onUnbind(intent)
+    }
+
+    override fun onRebind(intent: Intent?) {
+        Log.i(LOG_TAG,"onRebind")
+        super.onRebind(intent)
+    }
+
     //
 
     //State
@@ -80,13 +96,14 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     //Start service
     override fun onCreate() {
         super.onCreate()
+        Log.i(LOG_TAG,"onCreate")
         applicationContext.buildNotificationChannel(
             id = NOTIFICATION_CHANNEL_ID,
             name = getString(R.string.Channel_name)
         )
 
         startForeground(NOTIFICATION_ID, foregroundNotification)
-
+        Log.i(LOG_TAG,"foreground started")
         videoRecordServiceScope.launch {
             withContext(Dispatchers.Main) {
                 lifecycleRegistry.currentState = Lifecycle.State.RESUMED
@@ -98,6 +115,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     //Destroy service
     override fun onDestroy() {
         super.onDestroy()
+        Log.i(LOG_TAG,"onDestroy")
         videoRecordServiceScope.launch {
             stopRecord()
             withContext(Dispatchers.Main) {
@@ -112,8 +130,8 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
 
     //Record control
     override fun startRecord(outputFile: File) {
+        if(recorder != null) return
         videoRecordServiceScope.launch {
-            if(recorder != null) return@launch
 
             recorder = VideoRecorder.Builder(
                 applicationContext,
@@ -128,26 +146,34 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
             recorder?.run {
                 startRecord()
             }
+            Log.i(LOG_TAG,"startRecord")
         }
     }
 
     override fun pauseRecord() {
+        if(recorder == null) return
         videoRecordServiceScope.launch {
             recorder?.run {
                 pauseRecord()
             }
+
+            Log.i(LOG_TAG,"pauseRecord")
         }
     }
 
     override fun resumeRecord() {
+        if(recorder == null) return
         videoRecordServiceScope.launch {
             recorder?.run {
                 resumeRecord()
             }
+
+            Log.i(LOG_TAG,"resumeRecord")
         }
     }
 
     override fun stopRecord() {
+        if(recorder == null) return
         videoRecordServiceScope.launch {
             stopRecordObserver()
             recorder?.run {
@@ -156,7 +182,12 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
 
             recorder = null
 
-            recordVideoParams.saveRecordedVideoStrategy.saveRecord()
+            Log.i(LOG_TAG,"stopRecord")
+
+            withContext(NonCancellable) {
+                recordVideoParams.saveRecordedVideoStrategy.saveRecord()
+                Log.i(LOG_TAG,"record saved")
+            }
         }
     }
     //
@@ -198,5 +229,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         const val NOTIFICATION_CHANNEL_ID = "VideoRecordServiceNotificationChannel"
 
         const val NOTIFICATION_ID = 2
+
+        const val LOG_TAG = "RecordVideoService"
     }
 }

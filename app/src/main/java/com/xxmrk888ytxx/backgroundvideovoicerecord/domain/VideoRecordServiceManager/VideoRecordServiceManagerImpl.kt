@@ -5,8 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.util.Log
+import com.xxmrk888ytxx.audiorecordservice.models.RecordAudioState
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.RecordVideoStateObserverScopeQualifier
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.qualifiers.VideoServiceManagedScopeQualifier
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioRecordServiceManager.AudioRecordServiceManagerImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordAudioServiceUseCase.IsCanStartRecordAudioServiceUseCase
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordRepository.VideoRecordRepository
 import com.xxmrk888ytxx.coreandroid.cancelChillersAndLaunch
@@ -56,6 +59,7 @@ class VideoRecordServiceManagerImpl @Inject constructor(
     private val delayedManageRequest: Queue<() -> Unit> = LinkedList()
 
     private suspend fun executeDelayedRequests() {
+        Log.i(LOG_TAG,"Execute delayed requests")
         while (delayedManageRequest.isNotEmpty()) {
             delayedManageRequest.poll()?.invoke()
         }
@@ -66,6 +70,7 @@ class VideoRecordServiceManagerImpl @Inject constructor(
 
     override fun onServiceConnected(name: ComponentName?, serviceBinder: IBinder?) {
         serviceManagedScope.launch {
+            Log.i(LOG_TAG,"Connected to service")
             val binder = (serviceBinder as? RecordVideoService.LocalBinder)
 
             controller = binder?.controller
@@ -77,6 +82,7 @@ class VideoRecordServiceManagerImpl @Inject constructor(
 
     override fun onServiceDisconnected(name: ComponentName?) {
         serviceManagedScope.launch {
+            Log.i(LOG_TAG,"Disconnected from service")
             controller = null
 
             stopObserver()
@@ -87,6 +93,7 @@ class VideoRecordServiceManagerImpl @Inject constructor(
         get() = controller != null
 
     private suspend fun connectToService() {
+        Log.i(LOG_TAG,"Connecting request")
         Intent(context, RecordVideoService::class.java).apply {
             context.bindService(
                 this,
@@ -95,6 +102,28 @@ class VideoRecordServiceManagerImpl @Inject constructor(
             )
         }
     }
+
+    private suspend fun disconnectFromService() {
+        try {
+            Log.i(LOG_TAG,"Disconnect request")
+            context.unbindService(this)
+            clearServiceConnection()
+        }catch (e:Exception) {
+            Log.d(LOG_TAG,"Error when unbind from service" + e.stackTraceToString())
+        }
+    }
+
+    private suspend fun clearServiceConnection() {
+        Log.i(LOG_TAG,"Clear Service Connection")
+
+        controller = null
+
+        delayedManageRequest.clear()
+
+        recordStateObserverScope.coroutineContext.cancelChildren()
+
+        _currentRecordState.update { RecordVideoState.Idle }
+    }
     //
 
     //Control
@@ -102,6 +131,7 @@ class VideoRecordServiceManagerImpl @Inject constructor(
     private var controller: RecordVideoServiceController? = null
 
     override fun startRecord() {
+        Log.i(LOG_TAG,"request start record")
         serviceManagedScope.launch {
             if(!isConnected) {
                 delayedManageRequest.add(::startRecord)
@@ -116,6 +146,7 @@ class VideoRecordServiceManagerImpl @Inject constructor(
     }
 
     override fun pauseRecord() {
+        Log.i(LOG_TAG,"request pause record")
         serviceManagedScope.launch {
             if(!isConnected) {
                 delayedManageRequest.add(::pauseRecord)
@@ -130,6 +161,7 @@ class VideoRecordServiceManagerImpl @Inject constructor(
     }
 
     override fun resumeRecord() {
+        Log.i(LOG_TAG,"request resume record")
         serviceManagedScope.launch {
             if(!isConnected) {
                 delayedManageRequest.add(::resumeRecord)
@@ -144,6 +176,7 @@ class VideoRecordServiceManagerImpl @Inject constructor(
     }
 
     override fun stopRecord() {
+        Log.i(LOG_TAG,"request stop record")
         serviceManagedScope.launch {
             if(!isConnected) {
                 delayedManageRequest.add(::stopRecord)
@@ -154,8 +187,14 @@ class VideoRecordServiceManagerImpl @Inject constructor(
             }
 
             controller?.stopRecord()
+
+            disconnectFromService()
         }
     }
 
     //
+
+    companion object {
+        const val LOG_TAG = "VideoRecordServiceManagerImpl"
+    }
 }
