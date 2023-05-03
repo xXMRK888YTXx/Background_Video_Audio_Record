@@ -36,6 +36,10 @@ class VideoPlayerViewModel @AssistedInject constructor(
         player.play()
     }
 
+    internal fun pause() {
+        player.pause()
+    }
+
     override fun onCleared() {
         super.onCleared()
         player.stop()
