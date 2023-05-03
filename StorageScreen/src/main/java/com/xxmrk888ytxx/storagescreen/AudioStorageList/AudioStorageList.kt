@@ -2,40 +2,23 @@ package com.xxmrk888ytxx.storagescreen.AudioStorageList
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.xxmrk888ytxx.coreandroid.milliSecondToString
-import com.xxmrk888ytxx.coreandroid.toDateString
-import com.xxmrk888ytxx.coreandroid.toTimeString
 import com.xxmrk888ytxx.corecompose.Shared.AudioPlayer
-import com.xxmrk888ytxx.corecompose.Shared.StyleCard
-import com.xxmrk888ytxx.corecompose.Shared.StyleIconButton
-import com.xxmrk888ytxx.corecompose.themeColors
-import com.xxmrk888ytxx.corecompose.themeDimensions
-import com.xxmrk888ytxx.corecompose.themeTypography
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.AudioPlayerDialogState
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.PlayerState
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.RenameDialogState
 import com.xxmrk888ytxx.storagescreen.MediaFileItem.MediaFileItem
 import com.xxmrk888ytxx.storagescreen.MediaFileItem.models.MediaFileButton
 import com.xxmrk888ytxx.storagescreen.R
+import com.xxmrk888ytxx.storagescreen.RenameDialog
 import com.xxmrk888ytxx.storagescreen.Stub
 
 @SuppressLint("ResourceType")
@@ -59,6 +42,10 @@ fun AudioStorageList(audioStorageListViewModel: AudioStorageListViewModel) {
                         MediaFileButton(
                             icon = R.drawable.baseline_delete_24,
                             onClick = { audioStorageListViewModel.removeAudioFile(it) }
+                        ),
+                        MediaFileButton(
+                            icon = R.drawable.remame,
+                            onClick = { audioStorageListViewModel.showRenameDialog(it) }
                         )
                     )
                 }
@@ -82,6 +69,16 @@ fun AudioStorageList(audioStorageListViewModel: AudioStorageListViewModel) {
             audioStorageListViewModel = audioStorageListViewModel,
             playerState = playerState,
             maxDuration = maxDuration
+        )
+    }
+
+    if(dialogState.renameDialogState is RenameDialogState.Showed) {
+
+        val state = (dialogState.renameDialogState as RenameDialogState.Showed)
+        RenameDialog(
+            initialName = state.initialName,
+            onDismiss = audioStorageListViewModel::hideRenameDialog,
+            onRenamed = { audioStorageListViewModel.changeAudioFileName(state.audioId,it) }
         )
     }
 }

@@ -11,6 +11,7 @@ import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.AudioPlayerDialogS
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.DialogState
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.LockBlockerScreen
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.PlayerState
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.RenameDialogState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -37,6 +38,25 @@ class AudioStorageListViewModel @AssistedInject constructor(
     private val _dialogState = MutableStateFlow(DialogState())
 
     internal val dialogState = _dialogState.asStateFlow()
+
+    internal fun showRenameDialog(audio: AudioFileModel) {
+        _dialogState.update { it.copy(
+            renameDialogState = RenameDialogState.Showed(
+                audioId = audio.id,
+                initialName = audio.name ?: ""
+            )
+        ) }
+    }
+
+    internal fun hideRenameDialog() {
+        _dialogState.update { it.copy(
+            renameDialogState = RenameDialogState.Hidden
+        ) }
+    }
+
+    internal fun changeAudioFileName(audioId:Long,newName:String) {
+        //TODO
+    }
 
     fun showAudioDialogState(audio: AudioFileModel) {
         viewModelScope.launch(Dispatchers.IO) {

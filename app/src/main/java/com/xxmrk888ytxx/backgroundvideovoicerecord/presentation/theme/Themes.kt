@@ -37,7 +37,9 @@ object Themes {
                 borderRecordWidgetWhenRecordDisabled = Color(0xFFD40415),
                 cardColor = Color(0xFF303F4F),
                 recordButtonColor = Color.Red,
-                supportControlRecordButtonColor = Color(0xFF5849C2)
+                supportControlRecordButtonColor = Color(0xFF5849C2),
+                cancelButtonColor = Color(0xFF303F4F),
+                yesButtonColor = Color(0xFF5849C2)
             )
         override val gradients: Gradients
             get() = Gradients(
@@ -57,7 +59,8 @@ object Themes {
             get() = Shapes(
                 card = RoundedCornerShape(20.dp),
                 controlButtonShape = RoundedCornerShape(100),
-                permissionDialog = RoundedCornerShape(15.dp)
+                permissionDialog = RoundedCornerShape(15.dp),
+                outlineButtonShape = RoundedCornerShape(80)
             )
         override val typography: Typography
             get() = Typography(

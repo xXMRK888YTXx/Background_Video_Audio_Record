@@ -4,4 +4,5 @@
     <string name="Video">Видео</string>
     <string name="Videos_missing">Видеофайлы отсутствуют</string>
     <string name="Audios_missing">Аудиозаписи отсутствуют</string>
+    <string name="New_file_name">Новое имя файла</string>
 </resources>

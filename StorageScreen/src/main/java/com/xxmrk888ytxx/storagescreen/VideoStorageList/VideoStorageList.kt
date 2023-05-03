@@ -17,12 +17,16 @@ import com.xxmrk888ytxx.corecompose.LocalNavigator
 import com.xxmrk888ytxx.storagescreen.MediaFileItem.MediaFileItem
 import com.xxmrk888ytxx.storagescreen.MediaFileItem.models.MediaFileButton
 import com.xxmrk888ytxx.storagescreen.R
+import com.xxmrk888ytxx.storagescreen.RenameDialog
 import com.xxmrk888ytxx.storagescreen.Stub
+import com.xxmrk888ytxx.storagescreen.VideoStorageList.models.RenameDialogState
 
 @SuppressLint("ResourceType")
 @Composable
 fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
     val videoFiles by videoStorageListViewModel.videoFiles.collectAsStateWithLifecycle()
+
+    val dialogState by videoStorageListViewModel.dialogState.collectAsStateWithLifecycle()
 
     val navigator = LocalNavigator.current
 
@@ -47,6 +51,10 @@ fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
                         MediaFileButton(
                             icon = R.drawable.baseline_delete_24,
                             onClick = { videoStorageListViewModel.removeFile(it.id) }
+                        ),
+                        MediaFileButton(
+                            icon = R.drawable.remame,
+                            onClick = { videoStorageListViewModel.showRenameDialog(it) }
                         )
                     )
                 }
@@ -58,5 +66,15 @@ fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
                 )
             }
         }
+    }
+
+    if(dialogState.renameDialogState is RenameDialogState.Showed) {
+        val state = dialogState.renameDialogState as RenameDialogState.Showed
+
+        RenameDialog(
+            initialName = state.initialName,
+            onDismiss = videoStorageListViewModel::hideRenameDialog,
+            onRenamed = { videoStorageListViewModel.changeFileName(state.videoId,it) }
+        )
     }
 }
