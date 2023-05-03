@@ -7,6 +7,7 @@ import android.media.MediaRecorder
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import com.xxmrk888ytxx.audiorecordservice.models.RecordAudioState
 import com.xxmrk888ytxx.coreandroid.buildNotification
 import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
@@ -15,6 +16,7 @@ import com.xxmrk888ytxx.coredeps.DepsProvider.getDepsByApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
@@ -24,6 +26,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class AudioRecordService : Service(), AudioRecordServiceController {
@@ -47,25 +50,40 @@ class AudioRecordService : Service(), AudioRecordServiceController {
         val controller: AudioRecordServiceController = this@AudioRecordService
     }
 
-    override fun onBind(intent: Intent?): IBinder = LocalBinder()
+    override fun onBind(intent: Intent?): IBinder {
+        Log.i(LOG_TAG,"onBind")
+        return LocalBinder()
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        Log.i(LOG_TAG,"onUnbind")
+        return super.onUnbind(intent)
+    }
+
+    override fun onRebind(intent: Intent?) {
+        Log.i(LOG_TAG,"onRebind")
+        super.onRebind(intent)
+    }
 
     private val _currentState: MutableStateFlow<RecordAudioState> =
         MutableStateFlow(RecordAudioState.Idle)
 
     override fun onCreate() {
         super.onCreate()
+        Log.i(LOG_TAG,"onCreate")
         applicationContext.buildNotificationChannel(
             NOTIFICATION_CHANNEL_ID,
             getString(R.string.Channel_name),
         )
 
         startForeground(NOTIFICATION_ID, foregroundNotification)
+
+        Log.i(LOG_TAG,"foreground started")
     }
 
     override fun startRecord(recordFileOutput:File) {
+        if (mediaRecorder != null) return
         audioRecordServiceScope.launch {
-            if (mediaRecorder != null) return@launch
-
             mediaRecorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                 MediaRecorder(applicationContext)
             else MediaRecorder()
@@ -82,10 +100,12 @@ class AudioRecordService : Service(), AudioRecordServiceController {
             }
 
             toRecordingState()
+            Log.i(LOG_TAG,"record started")
         }
     }
 
     override fun pauseRecord() {
+        if (mediaRecorder == null) return
         audioRecordServiceScope.launch {
             mediaRecorder?.let { recorder ->
                 recorder.apply {
@@ -94,22 +114,26 @@ class AudioRecordService : Service(), AudioRecordServiceController {
             }
 
             toPauseState()
+            Log.i(LOG_TAG,"record paused")
         }
     }
 
     override fun resumeRecord() {
+        if (mediaRecorder == null) return
         audioRecordServiceScope.launch {
             mediaRecorder?.let { recorder ->
                 recorder.apply {
                     resume()
 
                     toRecordingState()
+                    Log.i(LOG_TAG,"record resumed")
                 }
             }
         }
     }
 
     override fun stopRecord() {
+        if (mediaRecorder == null) return
         audioRecordServiceScope.launch {
             mediaRecorder?.let { recorder ->
                 recorder.apply {
@@ -122,13 +146,17 @@ class AudioRecordService : Service(), AudioRecordServiceController {
 
             toIdleState()
 
-
-            recordAudioParams.saveAudioRecordStrategy.saveRecord()
+            Log.i(LOG_TAG,"record stoped")
+            withContext(NonCancellable) {
+                recordAudioParams.saveAudioRecordStrategy.saveRecord()
+                Log.i(LOG_TAG,"record saved")
+            }
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.i(LOG_TAG,"onDestroy")
         audioRecordServiceScope.launch {
             stopRecord()
             durationObserverScope.cancel()
@@ -186,5 +214,7 @@ class AudioRecordService : Service(), AudioRecordServiceController {
         const val NOTIFICATION_CHANNEL_ID = "AudioRecordServiceNotificationChannel"
 
         const val NOTIFICATION_ID = 1
+
+        const val LOG_TAG = "AudioRecordService"
     }
 }
