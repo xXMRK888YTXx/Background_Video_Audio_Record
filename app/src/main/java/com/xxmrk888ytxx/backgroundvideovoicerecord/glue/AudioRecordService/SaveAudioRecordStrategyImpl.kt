@@ -2,7 +2,7 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.glue.AudioRecordService
 
 import android.content.Context
 import com.xxmrk888ytxx.audiorecordservice.SaveAudioRecordStrategy
-import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioRecordRepository.AudioRecordRepository
+import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.AudioRecordRepository.AudioRecordRepository
 import javax.inject.Inject
 
 class SaveAudioRecordStrategyImpl @Inject constructor(

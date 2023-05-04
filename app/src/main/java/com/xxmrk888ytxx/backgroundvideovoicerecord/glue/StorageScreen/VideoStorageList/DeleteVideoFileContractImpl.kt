@@ -1,6 +1,6 @@
 package com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.VideoStorageList
 
-import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordRepository.VideoRecordRepository
+import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecordRepository.VideoRecordRepository
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.DeleteVideoFileContract
 import javax.inject.Inject
 

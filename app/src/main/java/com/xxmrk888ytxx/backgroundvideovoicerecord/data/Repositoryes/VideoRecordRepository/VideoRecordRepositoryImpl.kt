@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordRepository
+package com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecordRepository
 
 import android.content.Context
 import android.content.ContextWrapper
@@ -6,7 +6,7 @@ import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
 import android.util.Log
-import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordRepository.models.VideoModel
+import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecordRepository.models.VideoModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

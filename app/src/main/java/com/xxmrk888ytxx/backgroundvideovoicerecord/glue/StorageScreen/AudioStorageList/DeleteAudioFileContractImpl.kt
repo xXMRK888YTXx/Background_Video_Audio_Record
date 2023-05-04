@@ -1,7 +1,7 @@
 package com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.AudioStorageList
 
-import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioRecordRepository.AudioRecordRepository
-import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioRecordRepository.AudioRecordRepositoryImpl
+import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.AudioRecordRepository.AudioRecordRepository
+import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.AudioRecordRepository.AudioRecordRepositoryImpl
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.DeleteAudioFileContract
 import javax.inject.Inject
 

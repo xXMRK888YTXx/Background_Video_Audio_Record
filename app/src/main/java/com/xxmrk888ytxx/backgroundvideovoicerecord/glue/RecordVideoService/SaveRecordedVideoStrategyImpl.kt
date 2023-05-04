@@ -1,6 +1,6 @@
 package com.xxmrk888ytxx.backgroundvideovoicerecord.glue.RecordVideoService
 
-import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordRepository.VideoRecordRepository
+import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecordRepository.VideoRecordRepository
 import com.xxmrk888ytxx.recordvideoservice.SaveRecordedVideoStrategy
 import javax.inject.Inject
 

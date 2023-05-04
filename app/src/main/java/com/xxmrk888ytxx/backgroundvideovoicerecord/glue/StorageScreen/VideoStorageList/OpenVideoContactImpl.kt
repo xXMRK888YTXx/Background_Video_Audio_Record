@@ -1,7 +1,7 @@
 package com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.VideoStorageList
 
 import androidx.core.net.toUri
-import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordRepository.VideoRecordRepository
+import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecordRepository.VideoRecordRepository
 import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.OpenVideoContract
 import javax.inject.Inject
