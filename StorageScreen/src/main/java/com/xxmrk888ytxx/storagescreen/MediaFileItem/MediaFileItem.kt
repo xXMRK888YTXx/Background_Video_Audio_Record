@@ -36,6 +36,7 @@ import java.io.File
 fun LazyItemScope.MediaFileItem(
     duration: Long,
     created:Long,
+    name:String,
     buttons:List<MediaFileButton>
 ) {
 
@@ -51,6 +52,14 @@ fun LazyItemScope.MediaFileItem(
                 .fillMaxWidth()
                 .padding(themeDimensions.cardInPaddings)
         ) {
+            if(name.isNotEmpty()) {
+                Text(
+                    text = name,
+                    style = themeTypography.head,
+                    color = themeColors.secondFontColor
+                )
+            }
+
             Text(
                 text = "${created.toDateString(context)}, ${created.toTimeString()}",
                 style = themeTypography.head,

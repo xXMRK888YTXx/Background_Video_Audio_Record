@@ -12,6 +12,6 @@ class ProvideAudioFilesContractImpl @Inject constructor(
 ) : ProvideAudioFilesContract {
 
     override val files: Flow<List<AudioFileModel>> = audioRecordRepository.fileList.map { list ->
-        list.map { AudioFileModel(it.id,it.duration,it.created) }
+        list.map { AudioFileModel(it.id,it.duration,it.created,it.name) }
     }
 }

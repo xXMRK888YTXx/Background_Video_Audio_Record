@@ -3,5 +3,6 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecor
 data class VideoModel(
     val id:Long,
     val duration:Long,
-    val created:Long
+    val created:Long,
+    val name:String? = null
 )

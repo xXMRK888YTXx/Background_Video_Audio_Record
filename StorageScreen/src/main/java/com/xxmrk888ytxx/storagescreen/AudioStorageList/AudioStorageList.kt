@@ -33,26 +33,25 @@ fun AudioStorageList(audioStorageListViewModel: AudioStorageListViewModel) {
     } else {
         LazyColumn(Modifier.fillMaxSize()) {
             items(audioFiles, key = { it.id }) {
-                val mediaButtons = remember {
-                    listOf(
-                        MediaFileButton(
-                            icon = R.drawable.baseline_play_arrow_24,
-                            onClick = { audioStorageListViewModel.showAudioDialogState(it) }
-                        ),
-                        MediaFileButton(
-                            icon = R.drawable.baseline_delete_24,
-                            onClick = { audioStorageListViewModel.removeAudioFile(it) }
-                        ),
-                        MediaFileButton(
-                            icon = R.drawable.remame,
-                            onClick = { audioStorageListViewModel.showRenameDialog(it) }
-                        )
+                val mediaButtons = listOf(
+                    MediaFileButton(
+                        icon = R.drawable.baseline_play_arrow_24,
+                        onClick = { audioStorageListViewModel.showAudioDialogState(it) }
+                    ),
+                    MediaFileButton(
+                        icon = R.drawable.baseline_delete_24,
+                        onClick = { audioStorageListViewModel.removeAudioFile(it) }
+                    ),
+                    MediaFileButton(
+                        icon = R.drawable.remame,
+                        onClick = { audioStorageListViewModel.showRenameDialog(it) }
                     )
-                }
+                )
 
                 MediaFileItem(
                     duration = it.duration,
                     created = it.created,
+                    name = it.name ?: "",
                     buttons = mediaButtons
                 )
             }

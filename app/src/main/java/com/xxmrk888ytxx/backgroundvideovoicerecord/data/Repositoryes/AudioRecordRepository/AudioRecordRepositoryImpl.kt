@@ -3,19 +3,23 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.AudioRecor
 import android.content.Context
 import android.content.ContextWrapper
 import android.media.MediaMetadataRetriever
+import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.AudioFileNameRepository.AudioFileNameRepository
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.AudioRecordRepository.models.AudioModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
 class AudioRecordRepositoryImpl @Inject constructor(
-    private val context:Context
+    private val context:Context,
+    private val audioFileNameRepository: AudioFileNameRepository
 ) : AudioRecordRepository {
 
     private val _fileList = MutableStateFlow(emptyList<AudioModel>())
@@ -39,6 +43,8 @@ class AudioRecordRepositoryImpl @Inject constructor(
             File(audioDir,id.toString()).delete()
 
             deleteFileFromFlow(id)
+
+            audioFileNameRepository.removeName(id.toLong())
         }catch (_:Exception) {}
     }
 
@@ -49,9 +55,14 @@ class AudioRecordRepositoryImpl @Inject constructor(
         }
     }
 
-    override val fileList: Flow<List<AudioModel>> = _fileList.asStateFlow().onStart {
-        loadAllFiles()
-    }
+    override val fileList: Flow<List<AudioModel>> = _fileList
+        .asStateFlow()
+        .onStart {
+            loadAllFiles()
+        }
+        .combine(audioFileNameRepository.audioNamesMapFlow) { list,nameMap ->
+            list.map { it.copy(name = nameMap[it.id]?.name) }
+        }
 
     private val fileForRecord:File
         get() = File(audioDir,"recorded")

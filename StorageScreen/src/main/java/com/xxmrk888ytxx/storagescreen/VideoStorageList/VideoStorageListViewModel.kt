@@ -1,8 +1,10 @@
 package com.xxmrk888ytxx.storagescreen.VideoStorageList
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.Navigator
+import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.ChangeVideoFileNameContract
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.DeleteVideoFileContract
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.OpenVideoContract
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.ProvideVideoFilesContract
@@ -21,7 +23,8 @@ import javax.inject.Inject
 class VideoStorageListViewModel @Inject constructor(
     private val deleteVideoFileContract: DeleteVideoFileContract,
     private val provideVideoFileContract: ProvideVideoFilesContract,
-    private val openVideoContract: OpenVideoContract
+    private val openVideoContract: OpenVideoContract,
+    private val changeVideoFileNameContract: ChangeVideoFileNameContract
 ) : ViewModel() {
 
     //Dialogs
@@ -30,6 +33,7 @@ class VideoStorageListViewModel @Inject constructor(
     internal val dialogState = _dialogState.asStateFlow()
 
     internal fun showRenameDialog(file:VideoFileModel) {
+
         _dialogState.update {
             it.copy(renameDialogState = RenameDialogState.Showed(
                 file.id,
@@ -56,7 +60,10 @@ class VideoStorageListViewModel @Inject constructor(
     }
 
     fun changeFileName(videoId: Long,newName:String) {
-        //TODO
+        hideRenameDialog()
+        viewModelScope.launch(Dispatchers.IO) {
+            changeVideoFileNameContract.changeFileName(videoId,newName)
+        }
     }
     //
 

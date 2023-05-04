@@ -12,6 +12,6 @@ class ProvideVideoFilesContractImpl @Inject constructor(
 ) : ProvideVideoFilesContract {
 
     override val videoFiles: Flow<List<VideoFileModel>> = videoRecordRepository.fileList.map { list ->
-        list.map { VideoFileModel(it.id,it.duration,it.created) }
+        list.map { VideoFileModel(it.id,it.duration,it.created,it.name) }
     }
 }

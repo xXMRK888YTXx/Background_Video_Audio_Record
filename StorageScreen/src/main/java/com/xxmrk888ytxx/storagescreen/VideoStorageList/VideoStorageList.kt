@@ -42,26 +42,25 @@ fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
             modifier = Modifier.fillMaxSize()
         ) {
             items(videoFiles, key = { it.id }) {
-                val buttons = remember {
-                    listOf(
-                        MediaFileButton(
-                            icon = R.drawable.baseline_play_arrow_24,
-                            onClick = { videoStorageListViewModel.openVideo(it.id,navigator) }
-                        ),
-                        MediaFileButton(
-                            icon = R.drawable.baseline_delete_24,
-                            onClick = { videoStorageListViewModel.removeFile(it.id) }
-                        ),
-                        MediaFileButton(
-                            icon = R.drawable.remame,
-                            onClick = { videoStorageListViewModel.showRenameDialog(it) }
-                        )
+                val buttons = listOf(
+                    MediaFileButton(
+                        icon = R.drawable.baseline_play_arrow_24,
+                        onClick = { videoStorageListViewModel.openVideo(it.id,navigator) }
+                    ),
+                    MediaFileButton(
+                        icon = R.drawable.baseline_delete_24,
+                        onClick = { videoStorageListViewModel.removeFile(it.id) }
+                    ),
+                    MediaFileButton(
+                        icon = R.drawable.remame,
+                        onClick = { videoStorageListViewModel.showRenameDialog(it) }
                     )
-                }
+                )
 
                 MediaFileItem(
                     duration = it.duration,
                     created = it.created,
+                    name = it.name ?: "",
                     buttons = buttons
                 )
             }

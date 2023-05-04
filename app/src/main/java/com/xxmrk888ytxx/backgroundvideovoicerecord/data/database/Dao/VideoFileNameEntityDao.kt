@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Entity.AudioFileNameEntity
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Entity.VideoFileNameEntity
@@ -16,7 +17,7 @@ interface VideoFileNameEntityDao {
     @Query("SELECT * FROM VIDEOFILENAMEENTITY WHERE id = :id")
     suspend fun getNameById(id:Long) : VideoFileNameEntity?
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertName(videoFileNameEntity: VideoFileNameEntity)
 
     @Query("DELETE FROM VIDEOFILENAMEENTITY WHERE id = :id")

@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Entity.AudioFileNameEntity
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +16,7 @@ interface AudioFileNameEntityDao {
     @Query("SELECT * FROM AudioFileNameEntity WHERE id = :id")
     suspend fun getNameById(id:Long) : AudioFileNameEntity?
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertName(audioFileNameEntity: AudioFileNameEntity)
 
     @Query("DELETE FROM AUDIOFILENAMEENTITY WHERE id = :id")

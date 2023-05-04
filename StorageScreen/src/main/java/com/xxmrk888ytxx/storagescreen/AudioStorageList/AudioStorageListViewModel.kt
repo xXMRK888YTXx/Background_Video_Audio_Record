@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.storagescreen.AudioStorageList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ChangeAudioFileNameContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.DeleteAudioFileContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.PlayerFactoryContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ProvideAudioFilesContract
@@ -29,7 +30,8 @@ class AudioStorageListViewModel @AssistedInject constructor(
     private val playerFactoryContract: PlayerFactoryContract,
     @Assisted private val lockBlockerScreen: LockBlockerScreen,
     private val provideFileByAudioId: ProvideFileByAudioId,
-    private val deleteAudioFileContract: DeleteAudioFileContract
+    private val deleteAudioFileContract: DeleteAudioFileContract,
+    private val changeAudioFileNameContract: ChangeAudioFileNameContract
 ) : ViewModel()  {
 
     val audioFiles = provideAudioFilesContract.files
@@ -55,7 +57,11 @@ class AudioStorageListViewModel @AssistedInject constructor(
     }
 
     internal fun changeAudioFileName(audioId:Long,newName:String) {
-        //TODO
+        hideRenameDialog()
+
+        viewModelScope.launch(Dispatchers.IO) {
+            changeAudioFileNameContract.changeFileName(audioId,newName)
+        }
     }
 
     fun showAudioDialogState(audio: AudioFileModel) {

@@ -6,6 +6,7 @@ import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
 import android.util.Log
+import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoFileNameRepository.VideoFileNameRepository
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecordRepository.models.VideoModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,8 +15,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -24,6 +27,7 @@ import javax.inject.Inject
 
 class VideoRecordRepositoryImpl @Inject constructor(
     private val context: Context,
+    private val videoFileNameRepository: VideoFileNameRepository
 ) : VideoRecordRepository {
 
     //file list
@@ -49,12 +53,19 @@ class VideoRecordRepositoryImpl @Inject constructor(
             File(videoDir,id.toString()).delete()
 
             deleteFileFromFlow(id)
+
+            videoFileNameRepository.removeName(id)
         }catch (_:Exception) {}
     }
 
-    override val fileList: Flow<List<VideoModel>> = _fileList.asStateFlow().onStart {
-        loadAllFiles()
-    }
+    override val fileList: Flow<List<VideoModel>> = _fileList
+        .asStateFlow()
+        .onStart {
+            loadAllFiles()
+        }
+        .combine(videoFileNameRepository.videoNamesMapFlow) { list,nameMap ->
+            list.map { it.copy(name = nameMap[it.id]?.name) }
+        }
 
     override suspend fun getFileForRecord(): File {
         if(fileForRecord.exists()) {
