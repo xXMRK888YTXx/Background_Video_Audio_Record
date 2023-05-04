@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.di
 import android.content.Context
 import com.xxmrk888ytxx.audiorecordservice.RecordAudioParams
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.AudioRecordServiceModule
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.DatabaseModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.DomainModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.PreferencesStorageModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordAudioScreenModule
@@ -25,7 +26,8 @@ import dagger.Lazy
         StorageScreenModule::class,
         RecordVideoScreenModule::class,
         RecordVideoServiceModule::class,
-        PreferencesStorageModule::class
+        PreferencesStorageModule::class,
+        DatabaseModule::class
     ]
 )
 @AppScope

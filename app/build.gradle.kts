@@ -45,6 +45,11 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = Deps.Compose.ComposeKotlinCompiler
     }
+    kapt {
+        arguments {
+            arg("room.schemaLocation","$projectDir/schemas")
+        }
+    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -63,6 +68,11 @@ dependencies {
     implementation(project(Project.AudioPlayer))
     implementation(project(Project.PreferencesStorage))
     implementation(project(Project.VideoPlayerScreen))
+
+    //Database
+    implementation(Deps.Room.RoomKTX)
+    implementation(Deps.Room.RoomRuntime)
+    kapt (Deps.Room.KaptCompiler)
 
     //Dagger
     kapt(Deps.Dagger.DaggerKaptCompiler)
