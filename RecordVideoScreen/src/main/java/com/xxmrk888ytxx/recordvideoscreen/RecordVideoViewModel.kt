@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.material.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPermissionModel
 import com.xxmrk888ytxx.recordvideoscreen.contract.ManageCameraTypeContract
 import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoManageContract
@@ -36,7 +37,19 @@ class RecordVideoViewModel @Inject constructor(
     private val recordVideoStateProviderContract: RecordVideoStateProviderContract,
     private val context: Context,
     private val manageCameraTypeContract: ManageCameraTypeContract,
+    private val toastManager: ToastManager
 ) : ViewModel() {
+
+    //Setup delay record
+    fun setupDelayRecord(time:Long) {
+        //TODO
+    }
+
+    fun showToast(text:Int) {
+        toastManager.showToast(text)
+    }
+
+    //
 
     //Manage Camera Type
 
@@ -115,6 +128,24 @@ class RecordVideoViewModel @Inject constructor(
         _dialogState.update { it.copy(isPermissionStateVisible = false) }
     }
     //
+
+    //DelayStartRecordConfigurationDialog
+    internal fun showDelayStartRecordConfigurationDialog() {
+        if(!isAllPermissionGranted) {
+            showPermissionDialog()
+
+            return
+        }
+
+        _dialogState.update { it.copy(isDelayStartRecordConfigurationDialogVisible = true) }
+    }
+
+    internal fun hideDelayStartRecordConfigurationDialog() {
+        _dialogState.update { it.copy(isDelayStartRecordConfigurationDialogVisible = false) }
+    }
+
+    //
+
 
     //Permissions state
 

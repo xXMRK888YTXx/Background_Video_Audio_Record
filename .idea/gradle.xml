@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/CameraPreviewCompose" />
             <option value="$PROJECT_DIR$/CoreAndroid" />
             <option value="$PROJECT_DIR$/CoreCompose" />
+            <option value="$PROJECT_DIR$/DelayStartRecordConfigurationDialog" />
             <option value="$PROJECT_DIR$/PreferencesStorage" />
             <option value="$PROJECT_DIR$/RecordAudioScreen" />
             <option value="$PROJECT_DIR$/RecordVideoScreen" />

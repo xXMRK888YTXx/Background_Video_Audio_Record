@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.xxmrk888ytxx.recordaudioscreen"
+    namespace = "com.xxmrk888ytxx.delaystartrecordconfigurationdialog"
     compileSdk = Config.compileSdk
 
     defaultConfig {
@@ -48,5 +48,6 @@ android {
 
 dependencies {
     implementation(project(Project.CoreCompose))
-    implementation(project(Project.DelayStartRecordConfigurationDialog))
+
+    implementation(Deps.MaterialDialog.materialDialogs)
 }

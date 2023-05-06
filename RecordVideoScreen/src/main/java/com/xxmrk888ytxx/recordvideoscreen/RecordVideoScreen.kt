@@ -51,6 +51,7 @@ import com.xxmrk888ytxx.corecompose.Shared.StyleIcon
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeDimensions
 import com.xxmrk888ytxx.corecompose.themeTypography
+import com.xxmrk888ytxx.delaystartrecordconfigurationdialog.DelayStartRecordConfigurationDialog
 import com.xxmrk888ytxx.recordvideoscreen.models.CurrentSelectedCameraModel
 import com.xxmrk888ytxx.recordvideoscreen.models.RecordState
 import com.xxmrk888ytxx.recordvideoscreen.models.ViewType
@@ -227,7 +228,17 @@ fun RecordVideoScreen(
                     )
                 ) {
 
-                    if (recordState is RecordState.Idle || viewType is ViewType.CameraPreview) {
+                    AnimatedVisibility(visible = recordState is RecordState.Idle) {
+                        ControlRecordButton(
+                            painter = painterResource(id = R.drawable.baseline_access_time_24),
+                            background = themeColors.supportControlRecordButtonColor,
+                            onClick = recordVideoViewModel::showDelayStartRecordConfigurationDialog
+                        )
+                    }
+
+                    AnimatedVisibility(
+                        recordState is RecordState.Idle || viewType is ViewType.CameraPreview
+                    ) {
                         ControlRecordButton(
                             painter = if (viewType is ViewType.RecordWidget)
                                 painterResource(R.drawable.baseline_visibility_24)
@@ -291,6 +302,15 @@ fun RecordVideoScreen(
         RequestPermissionDialog(
             permissions = requestedPermission(recordVideoViewModel),
             onDismissRequest = recordVideoViewModel::hidePermissionDialog
+        )
+    }
+
+    if(dialogState.isDelayStartRecordConfigurationDialogVisible) {
+        DelayStartRecordConfigurationDialog(
+            title = stringResource(R.string.Delayed_start_of_video_recording),
+            onDismiss = recordVideoViewModel::hideDelayStartRecordConfigurationDialog,
+            onDelayTimePicked = recordVideoViewModel::setupDelayRecord,
+            onInvalidInput = { recordVideoViewModel.showToast(R.string.The_entered_date_is_less_than_the_current_date) }
         )
     }
 }

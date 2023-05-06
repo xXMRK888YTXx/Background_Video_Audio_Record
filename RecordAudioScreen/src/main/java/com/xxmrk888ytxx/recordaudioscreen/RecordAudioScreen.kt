@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.recordaudioscreen
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -10,6 +11,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xxmrk888ytxx.corecompose.LocalTheme
 import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButton
@@ -40,8 +43,10 @@ import com.xxmrk888ytxx.corecompose.Shared.RecordStateWidget
 import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestPermissionDialog
 import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPermissionModel
 import com.xxmrk888ytxx.corecompose.Shared.StyleIcon
+import com.xxmrk888ytxx.corecompose.Shared.StyleIconButton
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeDimensions
+import com.xxmrk888ytxx.delaystartrecordconfigurationdialog.DelayStartRecordConfigurationDialog
 import com.xxmrk888ytxx.recordaudioscreen.models.RecordState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -194,6 +199,14 @@ fun RecordAudioScreen(
                             recordAudioViewModel.startRecord()
                         }
                     }
+
+                    AnimatedVisibility(visible = recordState is RecordState.Idle) {
+                        ControlRecordButton(
+                            painter = painterResource(id = R.drawable.baseline_access_time_24),
+                            background = themeColors.supportControlRecordButtonColor,
+                            onClick = recordAudioViewModel::showDelayStartRecordConfigurationDialog
+                        )
+                    }
                 }
             }
         }
@@ -203,6 +216,17 @@ fun RecordAudioScreen(
         RequestPermissionDialog(
             permissions = requestedPermissions(recordAudioViewModel),
             onDismissRequest = recordAudioViewModel::hideRequestPermissionDialog
+        )
+    }
+
+    if(dialogState.isDelayStartRecordConfigurationDialogVisible) {
+        DelayStartRecordConfigurationDialog(
+            title = stringResource(R.string.Delayed_start_of_audio_recording),
+            onDismiss = recordAudioViewModel::hideDelayStartRecordConfigurationDialog,
+            onDelayTimePicked = recordAudioViewModel::setupDelayRecord,
+            onInvalidInput = {
+                recordAudioViewModel.showToast(R.string.The_entered_date_is_less_than_the_current_date)
+            }
         )
     }
 

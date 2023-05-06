@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.material.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPermissionModel
 import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordManageContract
 import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordStateProviderContract
@@ -37,7 +38,24 @@ class RecordAudioViewModel @Inject constructor(
     private val recordManageContract: RecordManageContract,
     private val recordStateProviderContract: RecordStateProviderContract,
     private val context: Context,
+    private val toastManager: ToastManager
 ) : ViewModel() {
+
+    //DelayStartRecordConfigurationDialog
+    fun showDelayStartRecordConfigurationDialog() {
+        if(!isAllPermissionGranted) {
+            _dialogState.update { it.copy(isPermissionDialogVisible = true) }
+
+            return
+        }
+
+        _dialogState.update { it.copy(isDelayStartRecordConfigurationDialogVisible = true) }
+    }
+
+    fun hideDelayStartRecordConfigurationDialog() {
+        _dialogState.update { it.copy(isDelayStartRecordConfigurationDialogVisible = false) }
+    }
+    //
 
     //Snackbar
     private var snackBarHostState: SnackbarHostState? = null
@@ -169,6 +187,14 @@ class RecordAudioViewModel @Inject constructor(
     ) {
         this.requestAudioRecordPermissionContract = requestAudioRecordPermissionContract
         this.requestPostNotificationPermissionContract = requestPostNotificationPermissionContract
+    }
+
+    fun showToast(text: Int) {
+        toastManager.showToast(text)
+    }
+
+    fun setupDelayRecord(time: Long) {
+        hideDelayStartRecordConfigurationDialog()
     }
 
     internal var lastRecordState: RecordState = RecordState.Idle

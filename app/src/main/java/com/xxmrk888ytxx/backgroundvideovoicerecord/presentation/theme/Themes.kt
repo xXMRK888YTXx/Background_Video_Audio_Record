@@ -38,7 +38,7 @@ object Themes {
                 cardColor = Color(0xFF303F4F),
                 recordButtonColor = Color.Red,
                 supportControlRecordButtonColor = Color(0xFF5849C2),
-                cancelButtonColor = Color(0xFF303F4F),
+                cancelButtonColor = Color(0xFF303F4F).copy(0.7f),
                 yesButtonColor = Color(0xFF5849C2)
             )
         override val gradients: Gradients

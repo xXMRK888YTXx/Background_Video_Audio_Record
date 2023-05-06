@@ -4,4 +4,6 @@
     <string name="Post_notification_description">Разрешение для показа уведомлений</string>
     <string name="Preview_not_avalible">Предпросмотр не доступен, во время записи</string>
     <string name="Audio_recording_is_started">Audio recording is started. Unable to start video recording as well</string>
+    <string name="The_entered_date_is_less_than_the_current_date">Введённая дата меньше текущей. Введите корректное значение</string>
+    <string name="Delayed_start_of_video_recording">Отложенный запуск записи видео</string>
 </resources>

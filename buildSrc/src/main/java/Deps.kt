@@ -109,5 +109,9 @@ object Deps {
         val extensions = "androidx.camera:camera-extensions:${camerax_version}"
     }
 
+    object MaterialDialog {
+        const val materialDialogs = "io.github.vanpra.compose-material-dialogs:datetime:0.9.0"
+    }
+
 
 }

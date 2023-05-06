@@ -3,4 +3,6 @@
     <string name="Record_audio_description">Разрешение для записи аудио</string>
     <string name="Post_notification_permission_descrption">Разрешение для показа уведомлений</string>
     <string name="Video_recording_has_started">Video recording has started. Unable to start audio recording as well</string>
+    <string name="The_entered_date_is_less_than_the_current_date">Введённая дата меньше текущей. Введите корректное значение</string>
+    <string name="Delayed_start_of_audio_recording">Отложенный запуск записи звука</string>
 </resources>

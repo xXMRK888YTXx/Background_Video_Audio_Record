@@ -13,9 +13,11 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordVideoS
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordVideoServiceUseCase.IsCanStartRecordVideoServiceUseCaseImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecordRepository.VideoRecordRepository
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecordRepository.VideoRecordRepositoryImpl
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.ToastManager.ToastManagerImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordServiceManager.VideoRecordServiceManager
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordServiceManager.VideoRecordServiceManagerImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.RecordVideoScreen.ManageCameraTypeContractImpl
+import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.recordvideoscreen.contract.ManageCameraTypeContract
 import dagger.Binds
 import dagger.Module
@@ -62,4 +64,7 @@ interface DomainModule {
 
     @Binds
     fun bindManageCameraTypeContract(ManageCameraTypeContract: ManageCameraTypeContractImpl): ManageCameraTypeContract
+
+    @Binds
+    fun bindToastManager(toastManager: ToastManagerImpl) : ToastManager
 }
