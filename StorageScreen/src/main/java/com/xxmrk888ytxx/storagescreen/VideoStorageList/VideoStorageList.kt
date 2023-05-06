@@ -30,11 +30,6 @@ fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
 
     val navigator = LocalNavigator.current
 
-    LaunchedEffect(key1 = videoFiles, block = {
-        Log.d("MyLog",videoFiles.toString())
-    })
-
-
     if(videoFiles.isEmpty()) {
         Stub(text = stringResource(R.string.Videos_missing))
     } else {

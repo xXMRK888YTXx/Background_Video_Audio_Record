@@ -2,7 +2,7 @@
 <resources>
     <string name="Audio_record_permission_description">Разрешение для записи аудио</string>
     <string name="Post_notification_description">Разрешение для показа уведомлений</string>
-    <string name="Preview_not_avalible">Предпросмотр не доступен, во время записи</string>
+    <string name="Preview_not_avalible">Предпросмотр недоступен, во время записи</string>
     <string name="Audio_recording_is_started">Запущена запись аудио. Невозможно запустить ещё и запись видео</string>
     <string name="The_entered_date_is_less_than_the_current_date">Введённая дата меньше текущей. Введите корректное значение</string>
     <string name="Delayed_start_of_video_recording">Отложенный запуск записи видео</string>

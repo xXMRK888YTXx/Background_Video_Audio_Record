@@ -4,8 +4,8 @@
     <string name="Cancel">Отмена</string>
     <string name="Date_not_setuped">Дата не выбрана</string>
     <string name="Seleted_date">Выбраная дата</string>
-    <string name="Select_date">Выбрать дату</string>
+    <string name="Select_date">Выбранная дата</string>
     <string name="Time_not_setuped">Время не выбрано</string>
-    <string name="Selected_time">Выбраное время</string>
+    <string name="Selected_time">Выбранное время</string>
     <string name="Select_time">Выбрать время</string>
 </resources>
