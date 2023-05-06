@@ -16,6 +16,7 @@ import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPerm
 import com.xxmrk888ytxx.recordvideoscreen.contract.ManageCameraTypeContract
 import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoManageContract
 import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoStateProviderContract
+import com.xxmrk888ytxx.recordvideoscreen.contract.SetupDelayVideoRecordContract
 import com.xxmrk888ytxx.recordvideoscreen.exceptions.OtherRecordServiceStartedException
 import com.xxmrk888ytxx.recordvideoscreen.models.CurrentSelectedCameraModel
 import com.xxmrk888ytxx.recordvideoscreen.models.DialogState
@@ -37,12 +38,18 @@ class RecordVideoViewModel @Inject constructor(
     private val recordVideoStateProviderContract: RecordVideoStateProviderContract,
     private val context: Context,
     private val manageCameraTypeContract: ManageCameraTypeContract,
-    private val toastManager: ToastManager
+    private val toastManager: ToastManager,
+    private val setupDelayVideoRecordContract: SetupDelayVideoRecordContract
 ) : ViewModel() {
 
     //Setup delay record
     fun setupDelayRecord(time:Long) {
-        //TODO
+
+        hideDelayStartRecordConfigurationDialog()
+
+        viewModelScope.launch(Dispatchers.Default) {
+            setupDelayVideoRecordContract.setDelayRecord(time)
+        }
     }
 
     fun showToast(text:Int) {

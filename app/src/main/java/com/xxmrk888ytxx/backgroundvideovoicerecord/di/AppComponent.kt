@@ -13,6 +13,7 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordVideoService
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.ScopeModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.StorageScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.MainActivity
+import com.xxmrk888ytxx.backgroundvideovoicerecord.receivers.ExecuteDelayRecordTaskReceiver
 import com.xxmrk888ytxx.recordvideoservice.RecordVideoParams
 import dagger.BindsInstance
 import dagger.Component
@@ -36,6 +37,7 @@ import dagger.Lazy
 internal interface AppComponent {
 
     fun inject(mainActivity: MainActivity)
+    fun inject(executeDelayRecordTaskReceiver: ExecuteDelayRecordTaskReceiver)
 
     @Component.Factory
     interface Factory {

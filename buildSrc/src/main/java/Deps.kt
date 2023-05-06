@@ -3,6 +3,8 @@
 object Deps {
     private const val MockkVersion = "1.13.4"
 
+    const val KotlinVersion = "1.8.20"
+
     object Compose {
         const val ComposeKotlinCompiler = "1.4.5"
         const val ComposeBom = "androidx.compose:compose-bom:2023.04.00"
@@ -111,6 +113,13 @@ object Deps {
 
     object MaterialDialog {
         const val materialDialogs = "io.github.vanpra.compose-material-dialogs:datetime:0.9.0"
+    }
+
+    object KolinSerialization {
+        private const val version = "1.4.1"
+        const val plugin = "kotlinx-serialization"
+        const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:$version"
+        const val classPath = "org.jetbrains.kotlin:kotlin-serialization:$KotlinVersion"
     }
 
 

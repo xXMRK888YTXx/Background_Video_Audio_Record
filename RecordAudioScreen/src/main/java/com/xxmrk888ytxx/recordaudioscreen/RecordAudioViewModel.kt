@@ -16,6 +16,7 @@ import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPermissionModel
 import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordManageContract
 import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordStateProviderContract
+import com.xxmrk888ytxx.recordaudioscreen.contracts.SetupDelayAudioRecordContract
 import com.xxmrk888ytxx.recordaudioscreen.exceptions.OtherRecordStartedException
 import com.xxmrk888ytxx.recordaudioscreen.models.DialogState
 import com.xxmrk888ytxx.recordaudioscreen.models.RecordState
@@ -38,7 +39,8 @@ class RecordAudioViewModel @Inject constructor(
     private val recordManageContract: RecordManageContract,
     private val recordStateProviderContract: RecordStateProviderContract,
     private val context: Context,
-    private val toastManager: ToastManager
+    private val toastManager: ToastManager,
+    private val setupDelayAudioRecordContract: SetupDelayAudioRecordContract
 ) : ViewModel() {
 
     //DelayStartRecordConfigurationDialog
@@ -195,7 +197,9 @@ class RecordAudioViewModel @Inject constructor(
 
     fun setupDelayRecord(time: Long) {
         hideDelayStartRecordConfigurationDialog()
-    }
 
-    internal var lastRecordState: RecordState = RecordState.Idle
+        viewModelScope.launch(Dispatchers.Default) {
+            setupDelayAudioRecordContract.setDelayRecord(time)
+        }
+    }
 }
