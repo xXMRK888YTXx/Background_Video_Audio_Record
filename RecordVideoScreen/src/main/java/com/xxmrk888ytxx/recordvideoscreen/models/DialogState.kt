@@ -1,6 +1,5 @@
 package com.xxmrk888ytxx.recordvideoscreen.models
 
 data class DialogState(
-    val isPermissionStateVisible:Boolean = false,
-    val isDelayStartRecordConfigurationDialogVisible:Boolean = false
+    val isPermissionStateVisible:Boolean = false
 )

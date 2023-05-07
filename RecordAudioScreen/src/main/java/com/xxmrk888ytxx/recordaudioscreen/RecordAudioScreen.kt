@@ -46,7 +46,6 @@ import com.xxmrk888ytxx.corecompose.Shared.StyleIcon
 import com.xxmrk888ytxx.corecompose.Shared.StyleIconButton
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeDimensions
-import com.xxmrk888ytxx.delaystartrecordconfigurationdialog.DelayStartRecordConfigurationDialog
 import com.xxmrk888ytxx.recordaudioscreen.models.RecordState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -199,14 +198,6 @@ fun RecordAudioScreen(
                             recordAudioViewModel.startRecord()
                         }
                     }
-
-                    AnimatedVisibility(visible = recordState is RecordState.Idle) {
-                        ControlRecordButton(
-                            painter = painterResource(id = R.drawable.baseline_access_time_24),
-                            background = themeColors.supportControlRecordButtonColor,
-                            onClick = recordAudioViewModel::showDelayStartRecordConfigurationDialog
-                        )
-                    }
                 }
             }
         }
@@ -216,17 +207,6 @@ fun RecordAudioScreen(
         RequestPermissionDialog(
             permissions = requestedPermissions(recordAudioViewModel),
             onDismissRequest = recordAudioViewModel::hideRequestPermissionDialog
-        )
-    }
-
-    if(dialogState.isDelayStartRecordConfigurationDialogVisible) {
-        DelayStartRecordConfigurationDialog(
-            title = stringResource(R.string.Delayed_start_of_audio_recording),
-            onDismiss = recordAudioViewModel::hideDelayStartRecordConfigurationDialog,
-            onDelayTimePicked = recordAudioViewModel::setupDelayRecord,
-            onInvalidInput = {
-                recordAudioViewModel.showToast(R.string.The_entered_date_is_less_than_the_current_date)
-            }
         )
     }
 

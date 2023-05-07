@@ -49,5 +49,4 @@ android {
 dependencies {
     implementation(project(Project.CoreCompose))
     implementation(project(Project.CameraPreviewCompose))
-    implementation(project(Project.DelayStartRecordConfigurationDialog))
 }

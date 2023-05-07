@@ -2,7 +2,6 @@ plugins {
     id ("com.android.application")
     id ("org.jetbrains.kotlin.android")
     id (Deps.Dagger.DaggerKaptPlugin)
-    id (Deps.KolinSerialization.plugin)
 }
 
 android {
@@ -82,6 +81,4 @@ dependencies {
     implementation(Deps.Compose.Navigation)
     implementation(Deps.Compose.SystemUiController)
 
-    //Serialization
-    implementation(Deps.KolinSerialization.serialization)
 }

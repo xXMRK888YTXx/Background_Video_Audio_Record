@@ -1,7 +1,5 @@
 buildscript {
-    dependencies {
-        classpath(Deps.KolinSerialization.classPath)
-    }
+    dependencies {}
 }
 plugins {
     id ("com.android.application") version "8.0.0" apply false

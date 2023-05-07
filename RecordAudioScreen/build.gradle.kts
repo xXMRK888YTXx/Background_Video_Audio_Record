@@ -48,5 +48,4 @@ android {
 
 dependencies {
     implementation(project(Project.CoreCompose))
-    implementation(project(Project.DelayStartRecordConfigurationDialog))
 }

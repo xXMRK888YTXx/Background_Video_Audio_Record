@@ -13,8 +13,6 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordVideoS
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordVideoServiceUseCase.IsCanStartRecordVideoServiceUseCaseImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecordRepository.VideoRecordRepository
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecordRepository.VideoRecordRepositoryImpl
-import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.DelayStartRecordManager.DelayStartRecordManager
-import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.DelayStartRecordManager.DelayStartRecordManagerImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.ToastManager.ToastManagerImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordServiceManager.VideoRecordServiceManager
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordServiceManager.VideoRecordServiceManagerImpl
@@ -70,6 +68,4 @@ interface DomainModule {
     @Binds
     fun bindToastManager(toastManager: ToastManagerImpl) : ToastManager
 
-    @Binds
-    fun bindDelayStartRecordManager(delayStartRecordManager: DelayStartRecordManagerImpl) : DelayStartRecordManager
 }

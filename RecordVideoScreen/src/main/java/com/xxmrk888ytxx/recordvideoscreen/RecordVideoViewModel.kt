@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
 import androidx.compose.material.SnackbarHostState
@@ -16,7 +15,6 @@ import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPerm
 import com.xxmrk888ytxx.recordvideoscreen.contract.ManageCameraTypeContract
 import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoManageContract
 import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoStateProviderContract
-import com.xxmrk888ytxx.recordvideoscreen.contract.SetupDelayVideoRecordContract
 import com.xxmrk888ytxx.recordvideoscreen.exceptions.OtherRecordServiceStartedException
 import com.xxmrk888ytxx.recordvideoscreen.models.CurrentSelectedCameraModel
 import com.xxmrk888ytxx.recordvideoscreen.models.DialogState
@@ -30,7 +28,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RecordVideoViewModel @Inject constructor(
@@ -38,24 +35,13 @@ class RecordVideoViewModel @Inject constructor(
     private val recordVideoStateProviderContract: RecordVideoStateProviderContract,
     private val context: Context,
     private val manageCameraTypeContract: ManageCameraTypeContract,
-    private val toastManager: ToastManager,
-    private val setupDelayVideoRecordContract: SetupDelayVideoRecordContract
+    private val toastManager: ToastManager
 ) : ViewModel() {
 
-    //Setup delay record
-    fun setupDelayRecord(time:Long) {
-
-        hideDelayStartRecordConfigurationDialog()
-
-        viewModelScope.launch(Dispatchers.Default) {
-            setupDelayVideoRecordContract.setDelayRecord(time)
-        }
-    }
-
+    //Show toast
     fun showToast(text:Int) {
         toastManager.showToast(text)
     }
-
     //
 
     //Manage Camera Type
@@ -135,24 +121,6 @@ class RecordVideoViewModel @Inject constructor(
         _dialogState.update { it.copy(isPermissionStateVisible = false) }
     }
     //
-
-    //DelayStartRecordConfigurationDialog
-    internal fun showDelayStartRecordConfigurationDialog() {
-        if(!isAllPermissionGranted) {
-            showPermissionDialog()
-
-            return
-        }
-
-        _dialogState.update { it.copy(isDelayStartRecordConfigurationDialogVisible = true) }
-    }
-
-    internal fun hideDelayStartRecordConfigurationDialog() {
-        _dialogState.update { it.copy(isDelayStartRecordConfigurationDialogVisible = false) }
-    }
-
-    //
-
 
     //Permissions state
 

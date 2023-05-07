@@ -5,8 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.widget.Toast
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
 import androidx.compose.material.SnackbarHostState
@@ -16,48 +14,25 @@ import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPermissionModel
 import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordManageContract
 import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordStateProviderContract
-import com.xxmrk888ytxx.recordaudioscreen.contracts.SetupDelayAudioRecordContract
 import com.xxmrk888ytxx.recordaudioscreen.exceptions.OtherRecordStartedException
 import com.xxmrk888ytxx.recordaudioscreen.models.DialogState
 import com.xxmrk888ytxx.recordaudioscreen.models.RecordState
 import com.xxmrk888ytxx.recordaudioscreen.models.RecordWidgetColor
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.reflect.KClass
 
 class RecordAudioViewModel @Inject constructor(
     private val recordManageContract: RecordManageContract,
     private val recordStateProviderContract: RecordStateProviderContract,
     private val context: Context,
-    private val toastManager: ToastManager,
-    private val setupDelayAudioRecordContract: SetupDelayAudioRecordContract
+    private val toastManager: ToastManager
 ) : ViewModel() {
-
-    //DelayStartRecordConfigurationDialog
-    fun showDelayStartRecordConfigurationDialog() {
-        if(!isAllPermissionGranted) {
-            _dialogState.update { it.copy(isPermissionDialogVisible = true) }
-
-            return
-        }
-
-        _dialogState.update { it.copy(isDelayStartRecordConfigurationDialogVisible = true) }
-    }
-
-    fun hideDelayStartRecordConfigurationDialog() {
-        _dialogState.update { it.copy(isDelayStartRecordConfigurationDialogVisible = false) }
-    }
-    //
 
     //Snackbar
     private var snackBarHostState: SnackbarHostState? = null
@@ -193,13 +168,5 @@ class RecordAudioViewModel @Inject constructor(
 
     fun showToast(text: Int) {
         toastManager.showToast(text)
-    }
-
-    fun setupDelayRecord(time: Long) {
-        hideDelayStartRecordConfigurationDialog()
-
-        viewModelScope.launch(Dispatchers.Default) {
-            setupDelayAudioRecordContract.setDelayRecord(time)
-        }
     }
 }
