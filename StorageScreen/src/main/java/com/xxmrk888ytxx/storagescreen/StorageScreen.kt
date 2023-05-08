@@ -31,6 +31,9 @@ import com.xxmrk888ytxx.storagescreen.AudioStorageList.AudioStorageListViewModel
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.StorageType
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.VideoStorageList
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.VideoStorageListViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -43,8 +46,8 @@ fun StorageScreen(
 
     val pageState = rememberPagerState()
     val scope = rememberCoroutineScope()
-    val pages: List<Pair<StorageType, @Composable () -> Unit>> = remember {
-        listOf(
+    val pages: ImmutableList<Pair<StorageType, @Composable () -> Unit>> = remember {
+        persistentListOf(
             StorageType(
                 label = R.string.Audio,
                 icon = R.drawable.music,
@@ -61,7 +64,7 @@ fun StorageScreen(
     Scaffold(
         Modifier.fillMaxSize(),
         topBar = {
-            Topbar(pages.map { it.first }, pageState.currentPage)
+            Topbar(pages.map { it.first }.toImmutableList(), pageState.currentPage)
         },
         backgroundColor = Color.Transparent
     ) { paddings ->
@@ -84,7 +87,7 @@ fun StorageScreen(
 
 @SuppressLint("ResourceType")
 @Composable
-fun Topbar(storageTypes: List<StorageType>, currentPage: Int) {
+fun Topbar(storageTypes: ImmutableList<StorageType>, currentPage: Int) {
     BottomNavigation(
         backgroundColor = themeColors.background
     ) {

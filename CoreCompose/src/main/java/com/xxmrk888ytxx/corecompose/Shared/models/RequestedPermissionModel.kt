@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog
+package com.xxmrk888ytxx.corecompose.Shared.models
 
 import androidx.annotation.IdRes
 import java.io.FileDescriptor

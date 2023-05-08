@@ -18,15 +18,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.xxmrk888ytxx.corecompose.Shared.GradientButton
 import com.xxmrk888ytxx.corecompose.Shared.StyleCard
+import com.xxmrk888ytxx.corecompose.Shared.models.RequestedPermissionModel
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeDimensions
 import com.xxmrk888ytxx.corecompose.themeGradients
 import com.xxmrk888ytxx.corecompose.themeShapes
 import com.xxmrk888ytxx.corecompose.themeTypography
+import kotlinx.collections.immutable.ImmutableList
 
 @SuppressLint("ResourceType")
 @Composable
-fun RequestPermissionDialog(permissions:List<RequestedPermissionModel>, onDismissRequest:() -> Unit) {
+fun RequestPermissionDialog(permissions:ImmutableList<RequestedPermissionModel>, onDismissRequest:() -> Unit) {
     Dialog(onDismissRequest = onDismissRequest) {
         StyleCard(
             modifier = Modifier

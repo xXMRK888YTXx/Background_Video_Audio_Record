@@ -21,6 +21,7 @@ import com.xxmrk888ytxx.corecompose.Shared.SelectDialog
 import com.xxmrk888ytxx.corecompose.Shared.models.SelectDialogModel
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraTypeSelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraType
+import kotlinx.collections.immutable.persistentListOf
 
 @SuppressLint("ResourceType")
 @Composable
@@ -78,7 +79,7 @@ fun CameraTypeSelectDialog(
             settingsViewModel.hideCameraTypeSelectDialog()
         },
         onCancel = settingsViewModel::hideCameraTypeSelectDialog,
-        items = listOf(
+        items = persistentListOf(
             SelectDialogModel(
                 title = stringResource(R.string.Front_camera),
                 isSelected = currentSelectedCameraType == CameraType.Front.id,

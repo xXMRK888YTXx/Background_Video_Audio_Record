@@ -122,5 +122,9 @@ object Deps {
         const val classPath = "org.jetbrains.kotlin:kotlin-serialization:$KotlinVersion"
     }
 
+    object ImmutableCollection {
+        const val collectionsImmutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
+    }
+
 
 }

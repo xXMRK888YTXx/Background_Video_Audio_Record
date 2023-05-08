@@ -37,6 +37,8 @@ import com.xxmrk888ytxx.storagescreen.VideoStorageList.VideoStorageListViewModel
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.LockBlockerScreen
 import com.xxmrk888ytxx.videoplayerscreen.VideoPlayerScreen
 import com.xxmrk888ytxx.videoplayerscreen.VideoPlayerViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -105,8 +107,8 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen {
         }
     }
 
-    private val bottomScreens:List<BottomBarScreenModel>
-        @SuppressLint("ResourceType") @Composable get() = listOf(
+    private val bottomScreens:ImmutableList<BottomBarScreenModel>
+        @SuppressLint("ResourceType") @Composable get() = persistentListOf(
             BottomBarScreenModel(
                 title = stringResource(R.string.Sound_record),
                 icon = R.drawable.microphone,

@@ -20,6 +20,7 @@ import com.xxmrk888ytxx.storagescreen.R
 import com.xxmrk888ytxx.storagescreen.RenameDialog
 import com.xxmrk888ytxx.storagescreen.Stub
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.models.RenameDialogState
+import kotlinx.collections.immutable.persistentListOf
 
 @SuppressLint("ResourceType")
 @Composable
@@ -37,7 +38,7 @@ fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
             modifier = Modifier.fillMaxSize()
         ) {
             items(videoFiles, key = { it.id }) {
-                val buttons = listOf(
+                val buttons = persistentListOf(
                     MediaFileButton(
                         icon = R.drawable.baseline_play_arrow_24,
                         onClick = { videoStorageListViewModel.openVideo(it.id,navigator) }

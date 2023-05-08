@@ -16,6 +16,7 @@ import com.xxmrk888ytxx.bottombarscreen.models.BottomBarScreenModel
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeDimensions
 import com.xxmrk888ytxx.corecompose.themeTypography
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
 /**
@@ -36,7 +37,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BottomBarScreen(
-    bottomBarScreens:List<BottomBarScreenModel>,
+    bottomBarScreens:ImmutableList<BottomBarScreenModel>,
     bannerAd: @Composable (() -> Unit)? = null
 ) {
     val pager = rememberPagerState()

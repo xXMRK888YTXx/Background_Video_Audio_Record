@@ -28,6 +28,7 @@ import com.xxmrk888ytxx.corecompose.themeDimensions
 import com.xxmrk888ytxx.corecompose.themeTypography
 import com.xxmrk888ytxx.storagescreen.MediaFileItem.models.MediaFileButton
 import com.xxmrk888ytxx.storagescreen.R
+import kotlinx.collections.immutable.ImmutableList
 import java.io.File
 
 @SuppressLint("ResourceType")
@@ -37,7 +38,7 @@ fun LazyItemScope.MediaFileItem(
     duration: Long,
     created:Long,
     name:String,
-    buttons:List<MediaFileButton>
+    buttons:ImmutableList<MediaFileButton>
 ) {
 
     val context = LocalContext.current

@@ -11,7 +11,6 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -46,7 +45,7 @@ import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButton
 import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButtonHolderWidget
 import com.xxmrk888ytxx.corecompose.Shared.RecordStateWidget
 import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestPermissionDialog
-import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPermissionModel
+import com.xxmrk888ytxx.corecompose.Shared.models.RequestedPermissionModel
 import com.xxmrk888ytxx.corecompose.Shared.StyleIcon
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeDimensions
@@ -54,6 +53,8 @@ import com.xxmrk888ytxx.corecompose.themeTypography
 import com.xxmrk888ytxx.recordvideoscreen.models.CurrentSelectedCameraModel
 import com.xxmrk888ytxx.recordvideoscreen.models.RecordState
 import com.xxmrk888ytxx.recordvideoscreen.models.ViewType
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -299,7 +300,7 @@ fun RecordVideoScreen(
 
 @SuppressLint("NewApi")
 @Composable
-fun requestedPermission(recordVideoViewModel: RecordVideoViewModel): List<RequestedPermissionModel> {
+fun requestedPermission(recordVideoViewModel: RecordVideoViewModel): ImmutableList<RequestedPermissionModel> {
     val audioPermission by recordVideoViewModel.recordAudioPermissionState.collectAsStateWithLifecycle()
 
     val cameraPermission by recordVideoViewModel.cameraPermissionState.collectAsStateWithLifecycle()
@@ -308,6 +309,6 @@ fun requestedPermission(recordVideoViewModel: RecordVideoViewModel): List<Reques
         .postNotificationPermissionState.collectAsStateWithLifecycle()
 
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-        listOf(audioPermission, cameraPermission, postNotificationPermission)
-    else listOf(audioPermission, cameraPermission)
+        persistentListOf(audioPermission, cameraPermission, postNotificationPermission)
+    else persistentListOf(audioPermission, cameraPermission)
 }

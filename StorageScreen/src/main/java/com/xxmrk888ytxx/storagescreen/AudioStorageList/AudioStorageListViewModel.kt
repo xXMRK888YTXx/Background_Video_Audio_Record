@@ -16,6 +16,7 @@ import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.RenameDialogState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,7 +36,7 @@ class AudioStorageListViewModel @AssistedInject constructor(
 ) : ViewModel()  {
 
     val audioFiles = provideAudioFilesContract.files
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), persistentListOf())
 
     private val _dialogState = MutableStateFlow(DialogState())
 

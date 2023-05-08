@@ -11,6 +11,7 @@ import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.ProvideVideoFile
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.models.DialogState
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.models.RenameDialogState
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.models.VideoFileModel
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -51,7 +52,7 @@ class VideoStorageListViewModel @Inject constructor(
 
     //files
     internal val videoFiles = provideVideoFileContract.videoFiles
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), persistentListOf())
 
     fun removeFile(id:Long) {
         viewModelScope.launch(Dispatchers.IO) {

@@ -20,6 +20,7 @@ import com.xxmrk888ytxx.storagescreen.MediaFileItem.models.MediaFileButton
 import com.xxmrk888ytxx.storagescreen.R
 import com.xxmrk888ytxx.storagescreen.RenameDialog
 import com.xxmrk888ytxx.storagescreen.Stub
+import kotlinx.collections.immutable.persistentListOf
 
 @SuppressLint("ResourceType")
 @OptIn(ExperimentalFoundationApi::class)
@@ -33,7 +34,7 @@ fun AudioStorageList(audioStorageListViewModel: AudioStorageListViewModel) {
     } else {
         LazyColumn(Modifier.fillMaxSize()) {
             items(audioFiles, key = { it.id }) {
-                val mediaButtons = listOf(
+                val mediaButtons = persistentListOf(
                     MediaFileButton(
                         icon = R.drawable.baseline_play_arrow_24,
                         onClick = { audioStorageListViewModel.showAudioDialogState(it) }

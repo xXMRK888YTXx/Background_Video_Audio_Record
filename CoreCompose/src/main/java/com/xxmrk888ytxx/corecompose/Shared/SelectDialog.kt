@@ -25,6 +25,7 @@ import com.xxmrk888ytxx.corecompose.Shared.models.SelectDialogModel
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeDimensions
 import com.xxmrk888ytxx.corecompose.themeTypography
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun SelectDialog(
@@ -33,7 +34,7 @@ fun SelectDialog(
     isConfirmButtonEnabled:Boolean = true,
     onConfirm:() -> Unit,
     onCancel:() -> Unit,
-    items:List<SelectDialogModel>
+    items:ImmutableList<SelectDialogModel>
 ) {
     Dialog(onDismissRequest = onCancel) {
         StyleCard(

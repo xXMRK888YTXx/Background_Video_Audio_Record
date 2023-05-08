@@ -11,7 +11,7 @@ import androidx.compose.material.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.ToastManager
-import com.xxmrk888ytxx.corecompose.Shared.RequestPermissionDialog.RequestedPermissionModel
+import com.xxmrk888ytxx.corecompose.Shared.models.RequestedPermissionModel
 import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordManageContract
 import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordStateProviderContract
 import com.xxmrk888ytxx.recordaudioscreen.exceptions.OtherRecordStartedException

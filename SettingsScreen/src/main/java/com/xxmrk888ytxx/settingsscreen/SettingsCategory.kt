@@ -21,11 +21,12 @@ import com.xxmrk888ytxx.corecompose.themeDimensions
 import com.xxmrk888ytxx.corecompose.themeTypography
 import com.xxmrk888ytxx.settingsscreen.models.SettingsParamShape
 import com.xxmrk888ytxx.settingsscreen.models.SettingsParamType
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun SettingsCategory(
     categoryName: String,
-    settingsParams: List<SettingsParamType>,
+    settingsParams: ImmutableList<SettingsParamType>,
 ) {
     Column(
         modifier = Modifier
