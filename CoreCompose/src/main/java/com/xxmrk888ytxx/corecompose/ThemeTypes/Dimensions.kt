@@ -7,6 +7,9 @@ data class Dimensions(
     val controlButtonSize: Dp,
     val controlRecordButtonHolderWidgetPadding: Dp,
     val controlRecordButtonHolderCameraPreviewPadding: Dp,
-    val cardOutPaddings:Dp,
-    val cardInPaddings:Dp,
+    val cardOutPaddings: Dp,
+    val cardInPaddings: Dp,
+    val paddingBetweenLabelAndSettingsField: Dp,
+    val categoryPadding: Dp,
+    val settingsParamShape: Dp,
 )

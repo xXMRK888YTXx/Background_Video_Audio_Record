@@ -11,6 +11,7 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordAudioScreenM
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordVideoScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordVideoServiceModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.ScopeModule
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.SettingsScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.StorageScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.MainActivity
 import com.xxmrk888ytxx.recordvideoservice.RecordVideoParams
@@ -29,7 +30,8 @@ import dagger.Lazy
         RecordVideoServiceModule::class,
         PreferencesStorageModule::class,
         DatabaseModule::class,
-        DataModule::class
+        DataModule::class,
+        SettingsScreenModule::class
     ]
 )
 @AppScope

@@ -13,5 +13,6 @@ object Project {
     const val CameraPreviewCompose = ":CameraPreviewCompose"
     const val PreferencesStorage = ":PreferencesStorage"
     const val VideoPlayerScreen = ":VideoPlayerScreen"
+    const val SettingsScreen = ":SettingsScreen"
    // const val DelayStartRecordConfigurationDialog = ":DelayStartRecordConfigurationDialog"
 }

@@ -29,6 +29,8 @@ import com.xxmrk888ytxx.recordaudioscreen.RecordAudioScreen
 import com.xxmrk888ytxx.recordaudioscreen.RecordAudioViewModel
 import com.xxmrk888ytxx.recordvideoscreen.RecordVideoScreen
 import com.xxmrk888ytxx.recordvideoscreen.RecordVideoViewModel
+import com.xxmrk888ytxx.settingsscreen.SettingsScreen
+import com.xxmrk888ytxx.settingsscreen.SettingsViewModel
 import com.xxmrk888ytxx.storagescreen.StorageScreen
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.AudioStorageListViewModel
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.VideoStorageListViewModel
@@ -56,6 +58,9 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen {
 
     @Inject
     lateinit var activityViewModelFactory: ActivityViewModel.Factory
+
+    @Inject
+    lateinit var settingsScreenViewModel: Provider<SettingsViewModel>
 
     private val activityViewModel by viewModels<ActivityViewModel> { activityViewModelFactory }
 
@@ -130,9 +135,9 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen {
                 title = getString(R.string.Settings),
                 icon = R.drawable.settings,
                 content = {
-                    Box(Modifier.fillMaxSize()) {
-
-                    }
+                    SettingsScreen(
+                        composeViewModel { settingsScreenViewModel.get() }
+                    )
                 }
             ),
         )

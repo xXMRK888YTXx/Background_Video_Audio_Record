@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Front_camera">Front camera</string>
+    <string name="Back_camera">Back camera</string>
+    <string name="Camera">Camera</string>
+    <string name="Camera_type">Camera Type</string>
+</resources>

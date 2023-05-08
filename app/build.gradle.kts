@@ -68,6 +68,7 @@ dependencies {
     implementation(project(Project.AudioPlayer))
     implementation(project(Project.PreferencesStorage))
     implementation(project(Project.VideoPlayerScreen))
+    implementation(project(Project.SettingsScreen))
 
     //Database
     implementation(Deps.Room.RoomKTX)

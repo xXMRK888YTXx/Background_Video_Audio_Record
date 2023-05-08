@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/RecordAudioScreen" />
             <option value="$PROJECT_DIR$/RecordVideoScreen" />
             <option value="$PROJECT_DIR$/RecordVideoService" />
+            <option value="$PROJECT_DIR$/SettingsScreen" />
             <option value="$PROJECT_DIR$/StorageScreen" />
             <option value="$PROJECT_DIR$/VideoPlayerScreen" />
             <option value="$PROJECT_DIR$/VideoRecorder" />

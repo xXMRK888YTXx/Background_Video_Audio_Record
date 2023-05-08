@@ -16,7 +16,6 @@ fun StyleCard(
     modifier: Modifier = Modifier,
     backgroundColor:Color = themeColors.cardColor,
     shape:Shape = themeShapes.card,
-    onClick:() -> Unit = {},
     content:@Composable () -> Unit
 ) {
     Card(
@@ -24,6 +23,5 @@ fun StyleCard(
         backgroundColor = backgroundColor,
         shape = shape,
         content = content,
-        onClick = onClick
     )
 }

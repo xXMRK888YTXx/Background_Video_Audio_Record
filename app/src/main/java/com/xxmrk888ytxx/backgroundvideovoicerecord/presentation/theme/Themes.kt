@@ -7,7 +7,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W400
+import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
+import androidx.compose.ui.text.font.FontWeight.Companion.W700
 import androidx.compose.ui.text.font.FontWeight.Companion.W900
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,7 +41,9 @@ object Themes {
                 recordButtonColor = Color.Red,
                 supportControlRecordButtonColor = Color(0xFF5849C2),
                 cancelButtonColor = Color(0xFF303F4F).copy(0.7f),
-                yesButtonColor = Color(0xFF5849C2)
+                yesButtonColor = Color(0xFF5849C2),
+                primaryColor = Color(0xFF5849C2),
+                disableColor = Color(0xFF303F4F)
             )
         override val gradients: Gradients
             get() = Gradients(
@@ -53,7 +57,10 @@ object Themes {
                 controlRecordButtonHolderWidgetPadding = 15.dp,
                 controlRecordButtonHolderCameraPreviewPadding = 70.dp,
                 cardOutPaddings = 10.dp,
-                cardInPaddings = 10.dp
+                cardInPaddings = 10.dp,
+                paddingBetweenLabelAndSettingsField = 10.dp,
+                categoryPadding = 15.dp,
+                settingsParamShape = 10.dp,
             )
         override val shapes: Shapes
             get() = Shapes(
@@ -91,7 +98,19 @@ object Themes {
                 stub = TextStyle(
                     fontSize = 26.sp,
                     fontWeight = W900
-                )
+                ),
+                settingCategory = TextStyle(
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.W500
+                ),
+                settingsParam = TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = W700
+                ),
+                selectDialog = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = W500
+                ),
             )
         override val values: Values
             get() = Values(

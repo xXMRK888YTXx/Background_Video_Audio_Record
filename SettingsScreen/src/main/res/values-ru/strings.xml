@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Front_camera">Фронтальная камера</string>
+    <string name="Back_camera">Задняя камера</string>
+    <string name="Camera">Камера</string>
+    <string name="Camera_type">Тип камеры</string>
+</resources>

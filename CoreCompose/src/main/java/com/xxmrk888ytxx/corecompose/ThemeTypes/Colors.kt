@@ -17,5 +17,7 @@ data class Colors(
     val recordButtonColor: Color,
     val supportControlRecordButtonColor: Color,
     val cancelButtonColor: Color,
-    val yesButtonColor: Color
+    val yesButtonColor: Color,
+    val primaryColor: Color,
+    val disableColor: Color
 )

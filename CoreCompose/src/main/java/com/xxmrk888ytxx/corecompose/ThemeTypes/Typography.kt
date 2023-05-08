@@ -9,5 +9,8 @@ data class Typography(
     val head: TextStyle,
     val body: TextStyle,
     val playerText: TextStyle,
-    val stub:TextStyle
+    val stub: TextStyle,
+    val settingCategory: TextStyle,
+    val settingsParam: TextStyle,
+    val selectDialog: TextStyle
 )
