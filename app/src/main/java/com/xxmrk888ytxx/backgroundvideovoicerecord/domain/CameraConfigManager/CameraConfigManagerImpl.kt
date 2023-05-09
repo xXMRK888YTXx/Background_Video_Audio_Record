@@ -20,29 +20,25 @@ class CameraConfigManagerImpl @Inject constructor(
 
     private val cameraMaxQualityKey = intPreferencesKey("cameraMaxQualityKey")
 
-    private val cameraTypeFlow by lazy {
-        preferencesStorage.getProperty(cameraTypeKey,CameraType.Back.id).map {
-            when(it) {
-                CameraType.Back.id -> CameraType.Back
+    private val cameraTypeFlow = preferencesStorage.getProperty(cameraTypeKey,CameraType.Back.id).map {
+        when(it) {
+            CameraType.Back.id -> CameraType.Back
 
-                CameraType.Front.id -> CameraType.Front
+            CameraType.Front.id -> CameraType.Front
 
-                else -> error("Not valid camera type")
-            }
+            else -> error("Not valid camera type")
         }
     }
 
-    private val cameraMaxQualityFlow by lazy {
-        preferencesStorage.getProperty(cameraMaxQualityKey,MaxQuality.HD.id).map {
-            when(it) {
-                MaxQuality.SD.id -> MaxQuality.SD
+    private val cameraMaxQualityFlow = preferencesStorage.getProperty(cameraMaxQualityKey,MaxQuality.HD.id).map {
+        when(it) {
+            MaxQuality.SD.id -> MaxQuality.SD
 
-                MaxQuality.HD.id -> MaxQuality.HD
+            MaxQuality.HD.id -> MaxQuality.HD
 
-                MaxQuality.FHD.id -> MaxQuality.FHD
+            MaxQuality.FHD.id -> MaxQuality.FHD
 
-                else -> error("Not valid camera max quality")
-            }
+            else -> error("Not valid camera max quality")
         }
     }
 

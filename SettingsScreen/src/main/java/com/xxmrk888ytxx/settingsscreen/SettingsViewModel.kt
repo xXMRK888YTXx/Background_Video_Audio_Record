@@ -1,11 +1,13 @@
 package com.xxmrk888ytxx.settingsscreen
 
-import android.graphics.Camera
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.settingsscreen.contracts.ManageCameraConfigContract
+import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraMaxQualitySelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraTypeSelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogState
+import com.xxmrk888ytxx.settingsscreen.models.configs.CameraConfig
+import com.xxmrk888ytxx.settingsscreen.models.configs.CameraMaxQuality
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,12 +24,17 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
 
     //Camera config
-    internal val cameraType = manageCameraConfigContract.currentCameraType
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CameraType.Back)
+    private val cameraConfig = manageCameraConfigContract.cameraConfig
 
     internal fun changeCurrentCameraType(newCameraType: CameraType) {
         viewModelScope.launch(Dispatchers.IO) {
             manageCameraConfigContract.setupCameraType(newCameraType)
+        }
+    }
+
+    internal fun changeCurrentCameraMaxQuality(maxQuality: CameraMaxQuality) {
+        viewModelScope.launch(Dispatchers.IO) {
+            manageCameraConfigContract.setupCameraMaxQuality(maxQuality)
         }
     }
     //
@@ -38,13 +45,35 @@ class SettingsViewModel @Inject constructor(
     internal val dialogState = _dialogState.asStateFlow()
     //
 
+    //CameraMaxQualitySelectDialog
+    internal fun showCameraMaxQualitySelectDialogState() {
+        viewModelScope.launch {
+            _dialogState.update {
+                it.copy(
+                    cameraMaxQualitySelectDialogState = CameraMaxQualitySelectDialogState.Showed(
+                        cameraConfig.first().cameraMaxQuality
+                    )
+                )
+            }
+        }
+    }
+
+    internal fun hideCameraMaxQualitySelectDialogState() {
+        _dialogState.update {
+            it.copy(
+                cameraMaxQualitySelectDialogState = CameraMaxQualitySelectDialogState.Hidden
+            )
+        }
+    }
+    //
+
     //CameraTypeSelectDialog
     internal fun showCameraTypeSelectDialog() {
         viewModelScope.launch {
             _dialogState.update {
                 it.copy(
-                    isCameraTypeSelectDialogVisible = CameraTypeSelectDialogState.Showed(
-                        cameraType.first()
+                    cameraTypeSelectDialogState = CameraTypeSelectDialogState.Showed(
+                        cameraConfig.first().cameraType
                     )
                 )
             }
@@ -52,7 +81,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     internal fun hideCameraTypeSelectDialog() {
-        _dialogState.update { it.copy(isCameraTypeSelectDialogVisible = CameraTypeSelectDialogState.Hidden) }
+        _dialogState.update { it.copy(cameraTypeSelectDialogState = CameraTypeSelectDialogState.Hidden) }
     }
 
     //

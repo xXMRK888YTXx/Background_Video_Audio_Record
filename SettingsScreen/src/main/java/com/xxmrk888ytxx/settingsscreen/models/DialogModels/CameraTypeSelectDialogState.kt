@@ -9,5 +9,5 @@ sealed class CameraTypeSelectDialogState {
     object Hidden : CameraTypeSelectDialogState()
 
     @Immutable
-    data class Showed(val currentSelected:CameraType) : CameraTypeSelectDialogState()
+    data class Showed(val currentSetup:CameraType) : CameraTypeSelectDialogState()
 }

@@ -16,6 +16,11 @@ internal fun cameraParams(settingsViewModel: SettingsViewModel) : ImmutableList<
             stringResource(R.string.Camera_type),
             icon = R.drawable.camera_type,
             onClick = settingsViewModel::showCameraTypeSelectDialog
-        )
+        ),
+        SettingsParamType.Button(
+            stringResource(R.string.Record_quality),
+            icon = R.drawable.camera_type,
+            onClick = settingsViewModel::showCameraMaxQualitySelectDialogState
+        ),
     )
 }

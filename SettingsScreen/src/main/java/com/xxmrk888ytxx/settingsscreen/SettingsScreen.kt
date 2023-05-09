@@ -10,6 +10,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -19,9 +20,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xxmrk888ytxx.corecompose.Shared.SelectDialog
 import com.xxmrk888ytxx.corecompose.Shared.models.SelectDialogModel
+import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraMaxQualitySelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraTypeSelectDialogState
+import com.xxmrk888ytxx.settingsscreen.models.configs.CameraMaxQuality
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraType
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @SuppressLint("ResourceType")
 @Composable
@@ -49,17 +53,53 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
         }
     }
 
-    if (dialogState.isCameraTypeSelectDialogVisible is CameraTypeSelectDialogState.Showed) {
+    if (dialogState.cameraTypeSelectDialogState is CameraTypeSelectDialogState.Showed) {
         CameraTypeSelectDialog(
             settingsViewModel = settingsViewModel,
-            initialCameraType = (dialogState.isCameraTypeSelectDialogVisible as CameraTypeSelectDialogState.Showed)
-                    .currentSelected
+            initialCameraType = (dialogState.cameraTypeSelectDialogState
+                    as CameraTypeSelectDialogState.Showed)
+                    .currentSetup
+        )
+    }
+
+    if(dialogState.cameraMaxQualitySelectDialogState is CameraMaxQualitySelectDialogState.Showed) {
+        CameraMaxQualitySelectDialog(
+            settingsViewModel = settingsViewModel,
+            initialCameraMaxQuality = (dialogState.cameraMaxQualitySelectDialogState as CameraMaxQualitySelectDialogState.Showed).currentSetup
         )
     }
 }
 
+
 @Composable
-fun CameraTypeSelectDialog(
+fun CameraMaxQualitySelectDialog(
+    settingsViewModel: SettingsViewModel,
+    initialCameraMaxQuality: CameraMaxQuality
+) {
+    var currentSelectedCameraMaxQuality by rememberSaveable {
+        mutableStateOf(initialCameraMaxQuality.id)
+    }
+
+    SelectDialog(
+        onConfirm = { settingsViewModel.changeCurrentCameraMaxQuality(
+            CameraMaxQuality.fromID(currentSelectedCameraMaxQuality)
+        )
+
+        settingsViewModel.hideCameraMaxQualitySelectDialogState()
+        },
+        onCancel = settingsViewModel::hideCameraMaxQualitySelectDialogState,
+        items = CameraMaxQuality.allCameraQualities.map {
+            SelectDialogModel(
+                title = it::class.simpleName ?: "",
+                isSelected = currentSelectedCameraMaxQuality == it.id,
+                onClick = { currentSelectedCameraMaxQuality = it.id }
+            )
+        }.toImmutableList()
+    )
+}
+
+@Composable
+internal fun CameraTypeSelectDialog(
     settingsViewModel: SettingsViewModel,
     initialCameraType: CameraType,
 ) {
