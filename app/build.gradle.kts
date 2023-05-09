@@ -54,6 +54,7 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+        resources.excludes.add("META-INF/*")
     }
 }
 
@@ -81,5 +82,22 @@ dependencies {
     //Compose
     implementation(Deps.Compose.Navigation)
     implementation(Deps.Compose.SystemUiController)
+
+    //Instrumental Test
+    androidTestImplementation (Deps.InstrumentalTest.espresso)
+    androidTestImplementation (Deps.InstrumentalTest.testRunner)
+    androidTestImplementation (Deps.InstrumentalTest.testCore)
+    androidTestImplementation (Deps.InstrumentalTest.jUnit)
+    androidTestImplementation (Deps.InstrumentalTest.testRules)
+    androidTestImplementation(Deps.TestAndroid.MockkAndroid)
+    androidTestImplementation(Deps.TestAndroid.MockkAgent)
+    androidTestImplementation(Deps.Room.Test.RoomTest)
+
+    //Test
+    testImplementation(Deps.TestAndroid.MockkAndroid)
+    testImplementation(Deps.TestAndroid.MockkAgent)
+    testImplementation(Deps.Test.Testing)
+
+
 
 }
