@@ -18,9 +18,9 @@ class DatabaseModule {
 
     @Provides
     @AppScope
-    fun providesAudioFileNameEntityDao(appDatabase: AppDatabase) = appDatabase.audioFileNameEntityDao
+    fun providesAudioFileNameEntityDao(appDatabase: AppDatabase) = appDatabase.audioFileNameDao
 
     @Provides
     @AppScope
-    fun providesVideoFileNameEntityDao(appDatabase: AppDatabase) = appDatabase.videoFileNameEntityDao
+    fun providesVideoFileNameEntityDao(appDatabase: AppDatabase) = appDatabase.videoFileNameDao
 }

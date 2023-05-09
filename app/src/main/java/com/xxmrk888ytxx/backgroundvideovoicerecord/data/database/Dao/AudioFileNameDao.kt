@@ -8,7 +8,7 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Entity.AudioFil
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface AudioFileNameEntityDao {
+interface AudioFileNameDao {
 
     @Query("SELECT * FROM AUDIOFILENAMEENTITY")
     fun getAllNameFlow() : Flow<List<AudioFileNameEntity>>

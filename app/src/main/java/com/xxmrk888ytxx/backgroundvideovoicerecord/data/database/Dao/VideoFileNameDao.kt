@@ -4,12 +4,11 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Entity.AudioFileNameEntity
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Entity.VideoFileNameEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface VideoFileNameEntityDao {
+interface VideoFileNameDao {
 
     @Query("SELECT * FROM VideoFileNameEntity")
     fun getAllNameFlow() : Flow<List<VideoFileNameEntity>>

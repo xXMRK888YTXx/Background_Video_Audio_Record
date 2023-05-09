@@ -1,15 +1,14 @@
 package com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoFileNameRepository
 
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoFileNameRepository.models.VideoNameModel
-import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Dao.AudioFileNameEntityDao
-import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Dao.VideoFileNameEntityDao
+import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Dao.VideoFileNameDao
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Entity.VideoFileNameEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class VideoFileNameRepositoryImpl @Inject constructor(
-    private val videoNameEntityDao: VideoFileNameEntityDao
+    private val videoNameEntityDao: VideoFileNameDao
 ) : VideoFileNameRepository {
 
     override val videoNamesMapFlow: Flow<Map<Long, VideoNameModel>> = videoNameEntityDao

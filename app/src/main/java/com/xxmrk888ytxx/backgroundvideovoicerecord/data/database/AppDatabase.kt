@@ -2,8 +2,8 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Dao.AudioFileNameEntityDao
-import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Dao.VideoFileNameEntityDao
+import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Dao.AudioFileNameDao
+import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Dao.VideoFileNameDao
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Entity.AudioFileNameEntity
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Entity.VideoFileNameEntity
 
@@ -16,7 +16,7 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.data.database.Entity.VideoFil
 )
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract val audioFileNameEntityDao : AudioFileNameEntityDao
+    abstract val audioFileNameDao : AudioFileNameDao
 
-    abstract val videoFileNameEntityDao: VideoFileNameEntityDao
+    abstract val videoFileNameDao: VideoFileNameDao
 }
