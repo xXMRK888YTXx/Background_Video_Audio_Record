@@ -133,12 +133,15 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         if(recorder != null) return
         videoRecordServiceScope.launch {
 
+            val config = recordVideoParams.cameraConfig.first()
+
             recorder = VideoRecorder.Builder(
                 applicationContext,
                 outputFile,
                 this@RecordVideoService
             ).apply {
-                setCameraType(recordVideoParams.cameraConfig.first().cameraType.cameraTypeForRecorder)
+                setCameraType(config.cameraType.cameraTypeForRecorder)
+                setMaxQuality(config.maxQuality.videoRecorderMaxQuality)
             }.build()
 
             startRecordObserver()
