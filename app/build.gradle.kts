@@ -97,7 +97,7 @@ dependencies {
     testImplementation(Deps.TestAndroid.MockkAndroid)
     testImplementation(Deps.TestAndroid.MockkAgent)
     testImplementation(Deps.Test.Testing)
-
+    testImplementation(Deps.Coroutines.Test.CoroutinesTest)
 
 
 }
