@@ -5,4 +5,7 @@
     <string name="Videos_missing">No video files available</string>
     <string name="Audios_missing">There are no audio recordings</string>
     <string name="New_file_name">New file name</string>
+    <string name="Exported_successfully">Exported successfully</string>
+    <string name="export_error">An error occurred during the export</string>
+    <string name="Canceled">Cancelled</string>
 </resources>

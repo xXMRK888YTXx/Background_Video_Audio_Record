@@ -5,4 +5,7 @@
     <string name="Videos_missing">Видеофайлы отсутствуют</string>
     <string name="Audios_missing">Аудиозаписи отсутствуют</string>
     <string name="New_file_name">Новое имя файла</string>
+    <string name="Exported_successfully">Экспортировано успешно</string>
+    <string name="export_error">Во время экспорта произошла ошибка</string>
+    <string name="Canceled">Отменено</string>
 </resources>

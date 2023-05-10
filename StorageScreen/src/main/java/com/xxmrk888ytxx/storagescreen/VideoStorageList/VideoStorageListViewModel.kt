@@ -1,11 +1,17 @@
 package com.xxmrk888ytxx.storagescreen.VideoStorageList
 
-import android.util.Log
+import android.annotation.SuppressLint
+import android.net.Uri
+import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.Navigator
+import com.xxmrk888ytxx.coreandroid.ToastManager
+import com.xxmrk888ytxx.privatenote.presentation.ActivityLaunchContacts.FileParams
+import com.xxmrk888ytxx.storagescreen.R
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.ChangeVideoFileNameContract
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.DeleteVideoFileContract
+import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.ExportVideoContract
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.OpenVideoContract
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.ProvideVideoFilesContract
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.models.DialogState
@@ -25,8 +31,47 @@ class VideoStorageListViewModel @Inject constructor(
     private val deleteVideoFileContract: DeleteVideoFileContract,
     private val provideVideoFileContract: ProvideVideoFilesContract,
     private val openVideoContract: OpenVideoContract,
-    private val changeVideoFileNameContract: ChangeVideoFileNameContract
+    private val changeVideoFileNameContract: ChangeVideoFileNameContract,
+    private val toastManager: ToastManager,
+    private val exportVideoContract: ExportVideoContract
 ) : ViewModel() {
+
+    //ExportFile
+
+    private var currentExportFileId = Long.MIN_VALUE
+    @SuppressLint("ResourceType")
+    fun onExportPathSelected(uri: Uri?) {
+        if(currentExportFileId == Long.MIN_VALUE) return
+
+        if(uri == null) {
+            toastManager.showToast(R.string.Canceled)
+        } else {
+            viewModelScope.launch(Dispatchers.IO) {
+                _dialogState.update { it.copy(isExportLoadingDialogVisible = true) }
+
+                exportVideoContract.exportVideo(currentExportFileId,uri)
+                    .onSuccess { toastManager.showToast(R.string.Exported_successfully) }
+                    .onFailure { toastManager.showToast(R.string.export_error) }
+
+                currentExportFileId = Long.MIN_VALUE
+
+                _dialogState.update { it.copy(isExportLoadingDialogVisible = false) }
+            }
+        }
+    }
+
+    fun sendExportPathRequest(videoId: Long, activityResultLauncher: ActivityResultLauncher<FileParams>) {
+        currentExportFileId = videoId
+
+        activityResultLauncher.launch(
+            FileParams(
+                fileType = "video/mp4",
+                startFileName = "video.mp4"
+            )
+        )
+    }
+
+    //
 
     //Dialogs
     private val _dialogState = MutableStateFlow(DialogState())

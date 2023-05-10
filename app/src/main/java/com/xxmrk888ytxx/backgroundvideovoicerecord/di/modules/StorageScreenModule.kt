@@ -7,6 +7,7 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.AudioStora
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.AudioStorageList.ProvideFileByAudioIdImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.VideoStorageList.ChangeVideoFileNameContractImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.VideoStorageList.DeleteVideoFileContractImpl
+import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.VideoStorageList.ExportVideoContractImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.VideoStorageList.OpenVideoContactImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.VideoStorageList.ProvideVideoFilesContractImpl
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ChangeAudioFileNameContract
@@ -16,6 +17,7 @@ import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ProvideAudioFil
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ProvideFileByAudioId
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.ChangeVideoFileNameContract
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.DeleteVideoFileContract
+import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.ExportVideoContract
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.OpenVideoContract
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.ProvideVideoFilesContract
 import dagger.Binds
@@ -60,4 +62,7 @@ interface StorageScreenModule {
     fun bindChangeVideoFileNameContract(
         ChangeVideoFileNameContractImpl: ChangeVideoFileNameContractImpl
     ): ChangeVideoFileNameContract
+
+    @Binds
+    fun bindExportVideoContract(ExportVideoContract:ExportVideoContractImpl) : ExportVideoContract
 }

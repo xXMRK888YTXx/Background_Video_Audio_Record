@@ -13,6 +13,7 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordVideoService
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.ScopeModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.SettingsScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.StorageScreenModule
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.UseCaseModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.MainActivity
 import com.xxmrk888ytxx.recordvideoservice.RecordVideoParams
 import dagger.BindsInstance
@@ -31,7 +32,8 @@ import dagger.Lazy
         PreferencesStorageModule::class,
         DatabaseModule::class,
         DataModule::class,
-        SettingsScreenModule::class
+        SettingsScreenModule::class,
+        UseCaseModule::class
     ]
 )
 @AppScope
