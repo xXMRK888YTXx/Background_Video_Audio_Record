@@ -4,5 +4,6 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.m
 
 data class CameraConfig(
     val cameraType:CameraType,
-    val maxQuality: MaxQuality
+    val maxQuality: MaxQuality,
+    val cameraRotation: CameraRotation
 )

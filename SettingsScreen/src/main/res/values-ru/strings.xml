@@ -5,4 +5,6 @@
     <string name="Camera">Камера</string>
     <string name="Camera_type">Тип камеры</string>
     <string name="Record_quality">Качество записи</string>
+    <string name="degree">градусов</string>
+    <string name="Camera_rotation">Поворот камеры</string>
 </resources>

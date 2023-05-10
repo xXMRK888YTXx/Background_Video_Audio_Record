@@ -142,6 +142,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
             ).apply {
                 setCameraType(config.cameraType.cameraTypeForRecorder)
                 setMaxQuality(config.maxQuality.videoRecorderMaxQuality)
+                setCameraRotation(config.cameraRotation.cameraRotation)
             }.build()
 
             startRecordObserver()

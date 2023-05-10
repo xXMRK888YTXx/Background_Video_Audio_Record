@@ -21,8 +21,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xxmrk888ytxx.corecompose.Shared.SelectDialog
 import com.xxmrk888ytxx.corecompose.Shared.models.SelectDialogModel
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraMaxQualitySelectDialogState
+import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraRotationSelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraTypeSelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraMaxQuality
+import com.xxmrk888ytxx.settingsscreen.models.configs.CameraRotation
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraType
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -58,34 +60,90 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
             settingsViewModel = settingsViewModel,
             initialCameraType = (dialogState.cameraTypeSelectDialogState
                     as CameraTypeSelectDialogState.Showed)
-                    .currentSetup
+                .currentSetup
         )
     }
 
-    if(dialogState.cameraMaxQualitySelectDialogState is CameraMaxQualitySelectDialogState.Showed) {
+    if (dialogState.cameraMaxQualitySelectDialogState is CameraMaxQualitySelectDialogState.Showed) {
         CameraMaxQualitySelectDialog(
             settingsViewModel = settingsViewModel,
             initialCameraMaxQuality = (dialogState.cameraMaxQualitySelectDialogState as CameraMaxQualitySelectDialogState.Showed).currentSetup
         )
     }
+
+    if (dialogState.cameraRotationSelectDialogState is CameraRotationSelectDialogState.Showed) {
+        CameraRotationSelectDialog(
+            settingsViewModel,
+            initialCameraRotation = (dialogState.cameraRotationSelectDialogState
+                    as CameraRotationSelectDialogState.Showed).initialCameraRotation
+        )
+    }
+}
+
+@Composable
+internal fun CameraRotationSelectDialog(
+    settingsViewModel: SettingsViewModel,
+    initialCameraRotation: CameraRotation,
+) {
+    var currentSelectedCameraRotation by rememberSaveable {
+        mutableStateOf(initialCameraRotation.id)
+    }
+
+    SelectDialog(onConfirm = {
+        settingsViewModel.changeCameraRotation(
+            CameraRotation.fromId(
+                currentSelectedCameraRotation
+            )
+        )
+
+        settingsViewModel.hideCameraRotationSelectDialogState()
+    },
+        onCancel = settingsViewModel::hideCameraRotationSelectDialogState,
+        items = persistentListOf(
+            SelectDialogModel(
+                title = "0 ${stringResource(R.string.degree)}",
+                isSelected = CameraRotation.ROTATION_0.id == currentSelectedCameraRotation,
+                onClick = { currentSelectedCameraRotation = CameraRotation.ROTATION_0.id }
+            ),
+
+            SelectDialogModel(
+                title = "90 ${stringResource(R.string.degree)}",
+                isSelected = CameraRotation.ROTATION_90.id == currentSelectedCameraRotation,
+                onClick = { currentSelectedCameraRotation = CameraRotation.ROTATION_90.id }
+            ),
+
+            SelectDialogModel(
+                title = "180 ${stringResource(R.string.degree)}",
+                isSelected = CameraRotation.ROTATION_180.id == currentSelectedCameraRotation,
+                onClick = { currentSelectedCameraRotation = CameraRotation.ROTATION_180.id }
+            ),
+
+            SelectDialogModel(
+                title = "270 ${stringResource(R.string.degree)}",
+                isSelected = CameraRotation.ROTATION_270.id == currentSelectedCameraRotation,
+                onClick = { currentSelectedCameraRotation = CameraRotation.ROTATION_270.id }
+            ),
+        )
+    )
 }
 
 
 @Composable
 fun CameraMaxQualitySelectDialog(
     settingsViewModel: SettingsViewModel,
-    initialCameraMaxQuality: CameraMaxQuality
+    initialCameraMaxQuality: CameraMaxQuality,
 ) {
     var currentSelectedCameraMaxQuality by rememberSaveable {
         mutableStateOf(initialCameraMaxQuality.id)
     }
 
     SelectDialog(
-        onConfirm = { settingsViewModel.changeCurrentCameraMaxQuality(
-            CameraMaxQuality.fromID(currentSelectedCameraMaxQuality)
-        )
+        onConfirm = {
+            settingsViewModel.changeCurrentCameraMaxQuality(
+                CameraMaxQuality.fromID(currentSelectedCameraMaxQuality)
+            )
 
-        settingsViewModel.hideCameraMaxQualitySelectDialogState()
+            settingsViewModel.hideCameraMaxQualitySelectDialogState()
         },
         onCancel = settingsViewModel::hideCameraMaxQualitySelectDialogState,
         items = CameraMaxQuality.allCameraQualities.map {

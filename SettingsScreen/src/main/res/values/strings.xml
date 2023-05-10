@@ -5,4 +5,6 @@
     <string name="Camera">Camera</string>
     <string name="Camera_type">Camera Type</string>
     <string name="Record_quality">Recording quality</string>
+    <string name="degree">degrees</string>
+    <string name="Camera_rotation">Camera rotation</string>
 </resources>

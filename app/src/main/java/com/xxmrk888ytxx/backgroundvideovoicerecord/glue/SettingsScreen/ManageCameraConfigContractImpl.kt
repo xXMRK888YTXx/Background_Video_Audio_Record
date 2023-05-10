@@ -5,12 +5,14 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.mo
 import com.xxmrk888ytxx.settingsscreen.contracts.ManageCameraConfigContract
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraConfig
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraMaxQuality
+import com.xxmrk888ytxx.settingsscreen.models.configs.CameraRotation
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.models.CameraType as CameraConfigCameraType
 import javax.inject.Inject
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.models.MaxQuality as CameraConfigMaxQuality
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.models.CameraRotation as CameraConfigCameraRotation
 
 
 class ManageCameraConfigContractImpl @Inject constructor(
@@ -20,6 +22,7 @@ class ManageCameraConfigContractImpl @Inject constructor(
     /**
      * CameraConfigCameraType = com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.models.CameraType
      * CameraConfigMaxQuality = com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.models.MaxQuality
+     * CameraConfigCameraRotation = com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.models.CameraRotation
      */
 
     override suspend fun setupCameraType(cameraType: CameraType) {
@@ -30,10 +33,15 @@ class ManageCameraConfigContractImpl @Inject constructor(
         cameraConfigManager.setMaxQuality(cameraMaxQuality.toCameraConfigType())
     }
 
+    override suspend fun setupCameraRotation(cameraRotation: CameraRotation) {
+        cameraConfigManager.setCameraRotation(cameraRotation.toCameraConfigCameraRotation())
+    }
+
     override val cameraConfig: Flow<CameraConfig> = cameraConfigManager.config.map {
         CameraConfig(
             cameraType = it.cameraType.toSettingsScreenModel(),
-            cameraMaxQuality = it.maxQuality.toSettingsScreenModel()
+            cameraMaxQuality = it.maxQuality.toSettingsScreenModel(),
+            cameraRotation = it.cameraRotation.toSettingsScreenCameraRotation()
         )
     }
 
@@ -68,6 +76,30 @@ class ManageCameraConfigContractImpl @Inject constructor(
             CameraConfigMaxQuality.SD -> CameraMaxQuality.SD
             CameraConfigMaxQuality.HD -> CameraMaxQuality.HD
             CameraConfigMaxQuality.FHD -> CameraMaxQuality.FHD
+        }
+    }
+
+    private fun CameraRotation.toCameraConfigCameraRotation() : CameraConfigCameraRotation {
+        return when(this) {
+            CameraRotation.ROTATION_0 -> CameraConfigCameraRotation.ROTATION_0
+
+            CameraRotation.ROTATION_90 -> CameraConfigCameraRotation.ROTATION_90
+
+            CameraRotation.ROTATION_180 -> CameraConfigCameraRotation.ROTATION_180
+
+            CameraRotation.ROTATION_270 -> CameraConfigCameraRotation.ROTATION_270
+        }
+    }
+
+    private fun CameraConfigCameraRotation.toSettingsScreenCameraRotation() : CameraRotation {
+        return when(this) {
+            CameraConfigCameraRotation.ROTATION_0 -> CameraRotation.ROTATION_0
+
+            CameraConfigCameraRotation.ROTATION_90 -> CameraRotation.ROTATION_90
+
+            CameraConfigCameraRotation.ROTATION_180 -> CameraRotation.ROTATION_180
+
+            CameraConfigCameraRotation.ROTATION_270 -> CameraRotation.ROTATION_270
         }
     }
 }

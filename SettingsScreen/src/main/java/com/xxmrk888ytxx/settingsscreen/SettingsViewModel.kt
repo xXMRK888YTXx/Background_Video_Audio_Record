@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.settingsscreen.contracts.ManageCameraConfigContract
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraMaxQualitySelectDialogState
+import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraRotationSelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraTypeSelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogState
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraConfig
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraMaxQuality
+import com.xxmrk888ytxx.settingsscreen.models.configs.CameraRotation
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +37,12 @@ class SettingsViewModel @Inject constructor(
     internal fun changeCurrentCameraMaxQuality(maxQuality: CameraMaxQuality) {
         viewModelScope.launch(Dispatchers.IO) {
             manageCameraConfigContract.setupCameraMaxQuality(maxQuality)
+        }
+    }
+
+    internal fun changeCameraRotation(cameraRotation: CameraRotation) {
+        viewModelScope.launch(Dispatchers.IO) {
+            manageCameraConfigContract.setupCameraRotation(cameraRotation)
         }
     }
     //
@@ -84,6 +92,30 @@ class SettingsViewModel @Inject constructor(
         _dialogState.update { it.copy(cameraTypeSelectDialogState = CameraTypeSelectDialogState.Hidden) }
     }
 
+    //
+
+    //CameraRotationSelectDialogState
+    internal fun showCameraRotationSelectDialogState() {
+        viewModelScope.launch {
+            _dialogState.update {
+                it.copy(
+                    cameraRotationSelectDialogState = CameraRotationSelectDialogState.Showed(
+                        cameraConfig.first().cameraRotation
+                    )
+                )
+            }
+        }
+    }
+
+    internal fun hideCameraRotationSelectDialogState() {
+        viewModelScope.launch {
+            _dialogState.update {
+                it.copy(
+                    cameraRotationSelectDialogState = CameraRotationSelectDialogState.Hidden
+                )
+            }
+        }
+    }
     //
 
 }
