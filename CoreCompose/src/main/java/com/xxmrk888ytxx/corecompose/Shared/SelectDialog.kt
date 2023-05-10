@@ -34,7 +34,8 @@ fun SelectDialog(
     isConfirmButtonEnabled:Boolean = true,
     onConfirm:() -> Unit,
     onCancel:() -> Unit,
-    items:ImmutableList<SelectDialogModel>
+    items:ImmutableList<SelectDialogModel>,
+    additionalContent:@Composable (() -> Unit)? = null
 ) {
     Dialog(onDismissRequest = onCancel) {
         StyleCard(
@@ -71,6 +72,12 @@ fun SelectDialog(
                                 color = themeColors.primaryFontColor,
                                 style = themeTypography.selectDialog
                             )
+                        }
+                    }
+
+                    additionalContent?.let {
+                        item {
+                            it()
                         }
                     }
                 }

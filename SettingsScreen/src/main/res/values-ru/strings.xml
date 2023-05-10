@@ -7,4 +7,5 @@
     <string name="Record_quality">Качество записи</string>
     <string name="degree">градусов</string>
     <string name="Camera_rotation">Поворот камеры</string>
+    <string name="Warming_about_camera_preview">Эта настройка не влияет на превью камеры</string>
 </resources>
