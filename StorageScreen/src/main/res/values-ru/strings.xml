@@ -8,4 +8,5 @@
     <string name="Exported_successfully">Экспортировано успешно</string>
     <string name="export_error">Во время экспорта произошла ошибка</string>
     <string name="Canceled">Отменено</string>
+    <string name="Please_wait">Пожалуйста, подождите</string>
 </resources>

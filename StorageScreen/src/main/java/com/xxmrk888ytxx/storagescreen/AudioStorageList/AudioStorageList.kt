@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.storagescreen.AudioStorageList
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,9 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xxmrk888ytxx.corecompose.Shared.AudioPlayer
+import com.xxmrk888ytxx.privatenote.presentation.ActivityLaunchContacts.SingleAccessExternalFileContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.AudioPlayerDialogState
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.PlayerState
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.RenameDialogState
+import com.xxmrk888ytxx.storagescreen.ExportLoadingDialog
 import com.xxmrk888ytxx.storagescreen.MediaFileItem.MediaFileItem
 import com.xxmrk888ytxx.storagescreen.MediaFileItem.models.MediaFileButton
 import com.xxmrk888ytxx.storagescreen.R
@@ -28,6 +31,11 @@ import kotlinx.collections.immutable.persistentListOf
 fun AudioStorageList(audioStorageListViewModel: AudioStorageListViewModel) {
     val audioFiles by audioStorageListViewModel.audioFiles.collectAsStateWithLifecycle()
     val dialogState by audioStorageListViewModel.dialogState.collectAsStateWithLifecycle()
+
+    val selectExportPathContract = rememberLauncherForActivityResult(
+        contract = SingleAccessExternalFileContract(),
+        onResult = audioStorageListViewModel::onExportPathSelected
+    )
 
     if(audioFiles.isEmpty()) {
         Stub(text = stringResource(R.string.Audios_missing))
@@ -46,6 +54,13 @@ fun AudioStorageList(audioStorageListViewModel: AudioStorageListViewModel) {
                     MediaFileButton(
                         icon = R.drawable.remame,
                         onClick = { audioStorageListViewModel.showRenameDialog(it) }
+                    ),
+                    MediaFileButton(
+                        icon = R.drawable.export,
+                        onClick = { audioStorageListViewModel.sendExportPathRequest(
+                            audioId = it.id,
+                            launcher = selectExportPathContract
+                        ) }
                     )
                 )
 
@@ -80,6 +95,10 @@ fun AudioStorageList(audioStorageListViewModel: AudioStorageListViewModel) {
             onDismiss = audioStorageListViewModel::hideRenameDialog,
             onRenamed = { audioStorageListViewModel.changeAudioFileName(state.audioId,it) }
         )
+    }
+
+    if(dialogState.isExportLoadingDialogVisible) {
+        ExportLoadingDialog()
     }
 }
 

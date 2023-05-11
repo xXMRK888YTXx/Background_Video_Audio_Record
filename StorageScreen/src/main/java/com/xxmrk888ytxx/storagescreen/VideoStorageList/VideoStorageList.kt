@@ -25,6 +25,7 @@ import com.xxmrk888ytxx.corecompose.Shared.StyleCard
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeTypography
 import com.xxmrk888ytxx.privatenote.presentation.ActivityLaunchContacts.SingleAccessExternalFileContract
+import com.xxmrk888ytxx.storagescreen.ExportLoadingDialog
 import com.xxmrk888ytxx.storagescreen.MediaFileItem.MediaFileItem
 import com.xxmrk888ytxx.storagescreen.MediaFileItem.models.MediaFileButton
 import com.xxmrk888ytxx.storagescreen.R
@@ -98,29 +99,5 @@ fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
 
     if(dialogState.isExportLoadingDialogVisible) {
         ExportLoadingDialog()
-    }
-}
-
-@Composable
-fun ExportLoadingDialog() {
-    Dialog(
-        onDismissRequest = {},
-        properties = DialogProperties(dismissOnBackPress = false,dismissOnClickOutside = false)
-    ) {
-        StyleCard(Modifier.fillMaxWidth().padding(10.dp)) {
-            Row(
-                Modifier.fillMaxWidth().padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                CircularProgressIndicator()
-
-                Text(
-                    text = "Пожалуйста, подождите",
-                    style = themeTypography.body,
-                    color = themeColors.primaryFontColor
-                )
-            }
-        }
     }
 }

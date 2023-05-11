@@ -1,9 +1,15 @@
 package com.xxmrk888ytxx.storagescreen.AudioStorageList
 
+import android.annotation.SuppressLint
+import android.net.Uri
+import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.xxmrk888ytxx.coreandroid.ToastManager
+import com.xxmrk888ytxx.privatenote.presentation.ActivityLaunchContacts.FileParams
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ChangeAudioFileNameContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.DeleteAudioFileContract
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ExportAudioContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.PlayerFactoryContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ProvideAudioFilesContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ProvideFileByAudioId
@@ -13,6 +19,7 @@ import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.DialogState
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.LockBlockerScreen
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.PlayerState
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.RenameDialogState
+import com.xxmrk888ytxx.storagescreen.R
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -32,8 +39,45 @@ class AudioStorageListViewModel @AssistedInject constructor(
     @Assisted private val lockBlockerScreen: LockBlockerScreen,
     private val provideFileByAudioId: ProvideFileByAudioId,
     private val deleteAudioFileContract: DeleteAudioFileContract,
-    private val changeAudioFileNameContract: ChangeAudioFileNameContract
+    private val changeAudioFileNameContract: ChangeAudioFileNameContract,
+    private val toastManager: ToastManager,
+    private val exportAudioContract: ExportAudioContract
 ) : ViewModel()  {
+
+    //Export
+
+    private var currentExportAudioId = Long.MIN_VALUE
+    @SuppressLint("ResourceType")
+    internal fun onExportPathSelected(uri: Uri?) {
+        if(currentExportAudioId == Long.MIN_VALUE) return
+        if(uri == null) {
+            toastManager.showToast(R.string.Canceled)
+        } else {
+            viewModelScope.launch(Dispatchers.IO) {
+                _dialogState.update { it.copy(isExportLoadingDialogVisible = true) }
+
+                exportAudioContract.exportAudio(currentExportAudioId,uri)
+                    .onSuccess { toastManager.showToast(R.string.Exported_successfully) }
+                    .onFailure { toastManager.showToast(R.string.export_error) }
+
+                currentExportAudioId = Long.MIN_VALUE
+
+                _dialogState.update { it.copy(isExportLoadingDialogVisible = false) }
+            }
+        }
+    }
+
+    internal fun sendExportPathRequest(audioId: Long,launcher: ActivityResultLauncher<FileParams>) {
+        currentExportAudioId = audioId
+
+        launcher.launch(
+            FileParams(
+            fileType = "audio/mp3",
+            startFileName = "audio.mp3"
+        )
+        )
+    }
+    //
 
     val audioFiles = provideAudioFilesContract.files
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), persistentListOf())

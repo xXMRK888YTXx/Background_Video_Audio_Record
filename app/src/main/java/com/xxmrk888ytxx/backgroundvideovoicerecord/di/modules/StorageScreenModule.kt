@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules
 
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.AudioStorageList.ChangeAudioFileNameContractImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.AudioStorageList.DeleteAudioFileContractImpl
+import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.AudioStorageList.ExportAudioContractImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.AudioStorageList.PlayerFactoryContractImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.AudioStorageList.ProvideAudioFilesContractImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.AudioStorageList.ProvideFileByAudioIdImpl
@@ -12,6 +13,7 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.VideoStora
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.VideoStorageList.ProvideVideoFilesContractImpl
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ChangeAudioFileNameContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.DeleteAudioFileContract
+import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ExportAudioContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.PlayerFactoryContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ProvideAudioFilesContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ProvideFileByAudioId
@@ -65,4 +67,7 @@ interface StorageScreenModule {
 
     @Binds
     fun bindExportVideoContract(ExportVideoContract:ExportVideoContractImpl) : ExportVideoContract
+
+    @Binds
+    fun bindExportAudioContract(exportAudioContractImpl: ExportAudioContractImpl) : ExportAudioContract
 }
