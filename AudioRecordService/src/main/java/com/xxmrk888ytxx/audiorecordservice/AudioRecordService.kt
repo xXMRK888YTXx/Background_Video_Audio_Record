@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.audiorecordservice
 import android.app.Notification
 import android.app.Service
 import android.content.Intent
+import android.media.EncoderProfiles
 import android.media.MediaRecorder
 import android.os.Binder
 import android.os.Build
@@ -91,9 +92,11 @@ class AudioRecordService : Service(), AudioRecordServiceController {
             mediaRecorder?.let { recorder ->
                 recorder.apply {
                     setAudioSource(MediaRecorder.AudioSource.MIC)
+                    setAudioSamplingRate(44100)
                     setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-                    setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
                     setOutputFile(recordFileOutput.absolutePath)
+                    setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB)
+                    setAudioEncodingBitRate(16)
                     prepare()
                     start()
                 }
