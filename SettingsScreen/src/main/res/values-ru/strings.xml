@@ -8,4 +8,11 @@
     <string name="degree">градусов</string>
     <string name="Camera_rotation">Поворот камеры</string>
     <string name="Warming_about_camera_preview">Эта настройка не влияет на превью камеры</string>
+    <string name="Notifications">Уведомления</string>
+    <string name="Notification_audio_params">Настройка уведомления при записи звука</string>
+    <string name="Notification_video_params">Настройка уведомления при записи видео</string>
+    <string name="Show_recording_status">Показывать состояние записи</string>
+    <string name="Set_up_a_notification">Настроить уведомление</string>
+    <string name="Notice_header">Заголовок уведомления</string>
+    <string name="Notification_text">Текст уведомления</string>
 </resources>

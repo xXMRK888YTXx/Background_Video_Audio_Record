@@ -8,4 +8,11 @@
     <string name="degree">degrees</string>
     <string name="Camera_rotation">Camera rotation</string>
     <string name="Warming_about_camera_preview">This setting does not affect the camera preview.</string>
+    <string name="Notifications">Notifications</string>
+    <string name="Notification_audio_params">Setting a notification when recording audio</string>
+    <string name="Notification_video_params">Setting up a notification when recording video</string>
+    <string name="Show_recording_status">Show recording status</string>
+    <string name="Set_up_a_notification">Set up a notification</string>
+    <string name="Notice_header">Notice Header</string>
+    <string name="Notification_text">Notification text</string>
 </resources>

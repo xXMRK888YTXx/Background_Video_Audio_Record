@@ -6,17 +6,16 @@ import com.xxmrk888ytxx.settingsscreen.contracts.ManageCameraConfigContract
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraMaxQualitySelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraRotationSelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraTypeSelectDialogState
+import com.xxmrk888ytxx.settingsscreen.models.DialogModels.NotificationConfigurationDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogState
-import com.xxmrk888ytxx.settingsscreen.models.configs.CameraConfig
+import com.xxmrk888ytxx.settingsscreen.models.NotificationConfigType
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraMaxQuality
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraRotation
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,6 +23,47 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val manageCameraConfigContract: ManageCameraConfigContract,
 ) : ViewModel() {
+
+    //NotificationConfigurationDialog
+    internal fun showNotificationConfigurationDialog(
+        configurationForState: NotificationConfigurationDialogState.ConfigurationForState
+    ) {
+        val initialState = NotificationConfigType.ViewRecordStateType
+
+        _dialogState.update {
+            it.copy(
+                notificationConfigurationDialog = NotificationConfigurationDialogState.Showed(
+                    initialState = initialState,
+                    configurationForState = configurationForState
+                )
+            )
+        }
+    }
+
+    internal fun hideNotificationConfigurationDialog() {
+        _dialogState.update {
+            it.copy(
+                notificationConfigurationDialog = NotificationConfigurationDialogState.Hide
+            )
+        }
+    }
+
+    internal fun setNotificationConfig(newConfig: NotificationConfigType) {
+        val dialogState  = _dialogState.value.notificationConfigurationDialog as?
+                NotificationConfigurationDialogState.Showed ?: return
+
+        when(dialogState.configurationForState) {
+
+            NotificationConfigurationDialogState.ConfigurationForState.AUDIO_NOTIFICATION -> {
+
+            }
+
+            NotificationConfigurationDialogState.ConfigurationForState.VIDEO_NOTIFICATION -> {
+
+            }
+        }
+    }
+    //
 
     //Camera config
     private val cameraConfig = manageCameraConfigContract.cameraConfig
