@@ -2,7 +2,9 @@ package com.xxmrk888ytxx.settingsscreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.xxmrk888ytxx.settingsscreen.contracts.ManageAudioNotificationConfigContract
 import com.xxmrk888ytxx.settingsscreen.contracts.ManageCameraConfigContract
+import com.xxmrk888ytxx.settingsscreen.contracts.ManageVideoNotificationConfigContract
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraMaxQualitySelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraRotationSelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraTypeSelectDialogState
@@ -22,21 +24,33 @@ import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
     private val manageCameraConfigContract: ManageCameraConfigContract,
+    private val manageAudioNotificationConfigContract: ManageAudioNotificationConfigContract,
+    private val manageVideoNotificationConfigContract: ManageVideoNotificationConfigContract
 ) : ViewModel() {
 
     //NotificationConfigurationDialog
     internal fun showNotificationConfigurationDialog(
         configurationForState: NotificationConfigurationDialogState.ConfigurationForState
     ) {
-        val initialState = NotificationConfigType.ViewRecordStateType
 
-        _dialogState.update {
-            it.copy(
-                notificationConfigurationDialog = NotificationConfigurationDialogState.Showed(
-                    initialState = initialState,
-                    configurationForState = configurationForState
+        viewModelScope.launch {
+            val initialState = when(configurationForState) {
+                NotificationConfigurationDialogState.ConfigurationForState.AUDIO_NOTIFICATION -> {
+                    manageAudioNotificationConfigContract.currentConfig.first()
+                }
+                NotificationConfigurationDialogState.ConfigurationForState.VIDEO_NOTIFICATION -> {
+                    manageVideoNotificationConfigContract.currentConfig.first()
+                }
+            }
+
+            _dialogState.update {
+                it.copy(
+                    notificationConfigurationDialog = NotificationConfigurationDialogState.Showed(
+                        initialState = initialState,
+                        configurationForState = configurationForState
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -52,15 +66,19 @@ class SettingsViewModel @Inject constructor(
         val dialogState  = _dialogState.value.notificationConfigurationDialog as?
                 NotificationConfigurationDialogState.Showed ?: return
 
-        when(dialogState.configurationForState) {
+        viewModelScope.launch(Dispatchers.IO) {
+            when(dialogState.configurationForState) {
 
-            NotificationConfigurationDialogState.ConfigurationForState.AUDIO_NOTIFICATION -> {
+                NotificationConfigurationDialogState.ConfigurationForState.AUDIO_NOTIFICATION -> {
+                    manageAudioNotificationConfigContract.setConfig(newConfig)
+                }
 
+                NotificationConfigurationDialogState.ConfigurationForState.VIDEO_NOTIFICATION -> {
+                    manageVideoNotificationConfigContract.setConfig(newConfig)
+                }
             }
 
-            NotificationConfigurationDialogState.ConfigurationForState.VIDEO_NOTIFICATION -> {
-
-            }
+            hideNotificationConfigurationDialog()
         }
     }
     //
