@@ -1,6 +1,7 @@
 buildscript {
     dependencies {
         classpath(Deps.KolinSerialization.classPath)
+        classpath(Deps.Firebase.crashlyticsClassPath)
     }
 }
 plugins {

@@ -126,5 +126,13 @@ object Deps {
         const val collectionsImmutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
     }
 
+    object Firebase {
+        const val FirebaseBom = "com.google.firebase:firebase-bom:32.0.0"
+        const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx"
+        const val analytics = "com.google.firebase:firebase-analytics-ktx"
+        const val crashlyticsClassPath = "com.google.firebase:firebase-crashlytics-gradle:2.9.5"
+        const val crashlyticsPlugin = "com.google.firebase.crashlytics"
+    }
+
 
 }
