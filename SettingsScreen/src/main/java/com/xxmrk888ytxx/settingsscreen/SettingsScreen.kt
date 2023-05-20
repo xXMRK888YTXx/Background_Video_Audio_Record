@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,9 +21,12 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
@@ -287,21 +291,84 @@ internal fun NotificationConfigurationDialog(
         val onClick: () -> Unit,
     )
 
+    data class AdditionalNotificationParameters(
+        val text: String,
+        val isSelect: Boolean,
+        val onClick: (Boolean) -> Unit,
+    )
+
     val supportedNotificationTypes = persistentListOf<SupportedNotificationType>(
         SupportedNotificationType(
             isSelected = currentState is NotificationConfigType.ViewRecordStateType,
             text = stringResource(R.string.Show_recording_status),
-            onClick = remember {
-                { currentState = NotificationConfigType.ViewRecordStateType }
+            onClick = {
+                currentState = NotificationConfigType.ViewRecordStateType(
+                    currentState.isStopRecordButtonEnabled,
+                    currentState.isPauseResumeButtonActive
+                )
             }
+
         ),
         SupportedNotificationType(
             isSelected = currentState is NotificationConfigType.CustomNotification,
             text = stringResource(R.string.Set_up_a_notification),
-            onClick = remember {
-                { currentState = NotificationConfigType.CustomNotification() }
+            onClick = {
+                currentState = NotificationConfigType.CustomNotification(
+                    currentState.isStopRecordButtonEnabled,
+                    currentState.isPauseResumeButtonActive
+                )
             }
+
         )
+    )
+
+    val additionalNotificationParametersList = persistentListOf(
+        AdditionalNotificationParameters(
+            text = stringResource(R.string.Add_a_button_to_pause_resume_the_recording),
+            isSelect = currentState.isPauseResumeButtonActive,
+            onClick = { newPauseResumeButtonState ->
+                when (currentState) {
+                    is NotificationConfigType.CustomNotification -> {
+                        currentState = NotificationConfigType.CustomNotification(
+                            isPauseResumeButtonActive = newPauseResumeButtonState,
+                            isStopRecordButtonEnabled = currentState.isStopRecordButtonEnabled,
+                            title = (currentState as NotificationConfigType.CustomNotification).title,
+                            text = (currentState as NotificationConfigType.CustomNotification).text
+                        )
+                    }
+
+                    is NotificationConfigType.ViewRecordStateType -> {
+                        currentState = NotificationConfigType.ViewRecordStateType(
+                            isStopRecordButtonEnabled = currentState.isStopRecordButtonEnabled,
+                            isPauseResumeButtonActive = newPauseResumeButtonState
+                        )
+                    }
+                }
+            }
+        ),
+        AdditionalNotificationParameters(
+            text = stringResource(R.string.Add_a_button_to_stop_recording),
+            isSelect = currentState.isStopRecordButtonEnabled,
+            onClick = { newStopRecordButtonEnabled ->
+                when (currentState) {
+                    is NotificationConfigType.CustomNotification -> {
+                        currentState = NotificationConfigType.CustomNotification(
+                            isPauseResumeButtonActive = currentState.isPauseResumeButtonActive,
+                            isStopRecordButtonEnabled = newStopRecordButtonEnabled,
+                            title = (currentState as NotificationConfigType.CustomNotification).title,
+                            text = (currentState as NotificationConfigType.CustomNotification).text
+                        )
+                    }
+
+                    is NotificationConfigType.ViewRecordStateType -> {
+                        currentState = NotificationConfigType.ViewRecordStateType(
+                            isStopRecordButtonEnabled = newStopRecordButtonEnabled,
+                            isPauseResumeButtonActive = currentState.isPauseResumeButtonActive
+                        )
+                    }
+                }
+            }
+        ),
     )
 
 
@@ -312,7 +379,7 @@ internal fun NotificationConfigurationDialog(
         StyleCard(
             modifier = Modifier
                 .fillMaxWidth(),
-            ) {
+        ) {
 
             Column(
                 Modifier
@@ -349,10 +416,37 @@ internal fun NotificationConfigurationDialog(
                         }
                     }
 
+                    items(additionalNotificationParametersList) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Checkbox(
+                                checked = it.isSelect,
+                                onCheckedChange = it.onClick,
+                                colors = CheckboxDefaults.colors(
+                                    checkedColor = themeColors.primaryColor,
+                                    uncheckedColor = themeColors.primaryColor
+                                )
+                            )
+
+                            Text(
+                                text = it.text,
+                                color = themeColors.primaryFontColor,
+                                style = themeTypography.body,
+                                modifier = Modifier.horizontalScroll(rememberScrollState()).clickable {
+                                    it.onClick(!it.isSelect)
+                                }
+                            )
+                        }
+                    }
+
                     item {
                         Column(
                             Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(10.dp,Alignment.CenterVertically),
+                            verticalArrangement = Arrangement.spacedBy(
+                                10.dp,
+                                Alignment.CenterVertically
+                            ),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             OutlinedTextField(

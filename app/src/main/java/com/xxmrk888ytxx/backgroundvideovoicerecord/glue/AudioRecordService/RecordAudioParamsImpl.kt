@@ -27,11 +27,12 @@ class RecordAudioParamsImpl @Inject constructor(
         audioForegroundNotificationConfig.config.map {
             val foregroundType = when (it) {
                 is ForegroundNotificationConfig.CustomNotification -> AudioForegroundNotificationType.CustomNotification(
-                    it.title,
-                    it.text
+                    it.isPauseResumeButtonActive,it.isStopRecordButtonEnabled,it.title,it.text
                 )
 
-                is ForegroundNotificationConfig.ViewRecordStateType -> AudioForegroundNotificationType.ViewRecordStateType
+                is ForegroundNotificationConfig.ViewRecordStateType -> AudioForegroundNotificationType.ViewRecordStateType(
+                    it.isPauseResumeButtonActive,it.isStopRecordButtonEnabled
+                )
             }
 
             RecordAudioConfig(foregroundType)

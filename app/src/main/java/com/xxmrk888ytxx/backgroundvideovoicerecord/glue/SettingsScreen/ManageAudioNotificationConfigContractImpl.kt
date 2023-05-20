@@ -16,11 +16,15 @@ class ManageAudioNotificationConfigContractImpl @Inject constructor(
         audioForegroundNotificationConfig.config.map {
             when (it) {
                 is ForegroundNotificationConfig.CustomNotification -> NotificationConfigType.CustomNotification(
+                    it.isStopRecordButtonEnabled,
+                    it.isPauseResumeButtonActive,
                     it.title,
                     it.text
                 )
 
-                is ForegroundNotificationConfig.ViewRecordStateType -> NotificationConfigType.ViewRecordStateType
+                is ForegroundNotificationConfig.ViewRecordStateType -> NotificationConfigType.ViewRecordStateType(
+                    it.isStopRecordButtonEnabled,it.isPauseResumeButtonActive
+                )
             }
         }
 
@@ -30,8 +34,12 @@ class ManageAudioNotificationConfigContractImpl @Inject constructor(
 
     private fun NotificationConfigType.toForegroundConfig() : ForegroundNotificationConfig {
         return when(this) {
-            is NotificationConfigType.CustomNotification -> ForegroundNotificationConfig.CustomNotification(title,text)
-            is NotificationConfigType.ViewRecordStateType -> ForegroundNotificationConfig.ViewRecordStateType
+            is NotificationConfigType.CustomNotification -> ForegroundNotificationConfig.CustomNotification(
+                isPauseResumeButtonActive,isStopRecordButtonEnabled,title,text
+            )
+            is NotificationConfigType.ViewRecordStateType -> ForegroundNotificationConfig.ViewRecordStateType(
+                isPauseResumeButtonActive,isStopRecordButtonEnabled
+            )
         }
     }
 }

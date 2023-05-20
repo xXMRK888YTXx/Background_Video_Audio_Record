@@ -4,12 +4,23 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-sealed class NotificationConfigType : Parcelable {
+sealed class NotificationConfigType(
+    open val isPauseResumeButtonActive:Boolean,
+    open val isStopRecordButtonEnabled:Boolean
+) : Parcelable {
 
     @Parcelize
-    object ViewRecordStateType : NotificationConfigType(),Parcelable
+    data class ViewRecordStateType(
+        override val isStopRecordButtonEnabled: Boolean,
+        override val isPauseResumeButtonActive: Boolean
+    ) : NotificationConfigType(isPauseResumeButtonActive, isStopRecordButtonEnabled),Parcelable
 
     @Parcelize
-    data class CustomNotification(val title:String = "",val text:String = "") : NotificationConfigType(),
+    data class CustomNotification(
+        override val isStopRecordButtonEnabled: Boolean,
+        override val isPauseResumeButtonActive: Boolean,
+        val title:String = "",
+        val text:String = "",
+    ) : NotificationConfigType(isPauseResumeButtonActive, isStopRecordButtonEnabled),
         Parcelable
 }

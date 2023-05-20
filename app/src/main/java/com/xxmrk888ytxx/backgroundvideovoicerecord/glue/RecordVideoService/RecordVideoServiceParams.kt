@@ -77,11 +77,12 @@ class RecordVideoServiceParams @Inject constructor(
     private fun ForegroundNotificationConfig.toServiceForegroundType(): VideoForegroundNotificationType {
         return when (this) {
             is ForegroundNotificationConfig.CustomNotification -> VideoForegroundNotificationType.CustomNotification(
-                title,
-                text
+               isPauseResumeButtonActive,isStopRecordButtonEnabled,title,text
             )
 
-            is ForegroundNotificationConfig.ViewRecordStateType -> VideoForegroundNotificationType.ViewRecordStateType
+            is ForegroundNotificationConfig.ViewRecordStateType -> VideoForegroundNotificationType.ViewRecordStateType(
+                isPauseResumeButtonActive,isStopRecordButtonEnabled
+            )
         }
     }
 }

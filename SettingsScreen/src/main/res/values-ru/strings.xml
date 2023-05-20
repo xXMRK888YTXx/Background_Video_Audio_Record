@@ -15,4 +15,6 @@
     <string name="Set_up_a_notification">Настроить уведомление</string>
     <string name="Notice_header">Заголовок уведомления</string>
     <string name="Notification_text">Текст уведомления</string>
+    <string name="Add_a_button_to_pause_resume_the_recording">Добавить кнопку для паузы/возобновления записи</string>
+    <string name="Add_a_button_to_stop_recording">Добавить кнопку для остановки записи</string>
 </resources>

@@ -15,4 +15,6 @@
     <string name="Set_up_a_notification">Set up a notification</string>
     <string name="Notice_header">Notice Header</string>
     <string name="Notification_text">Notification text</string>
+    <string name="Add_a_button_to_pause_resume_the_recording">Add a button to pause/resume the recording</string>
+    <string name="Add_a_button_to_stop_recording">Add a button to stop recording</string>
 </resources>

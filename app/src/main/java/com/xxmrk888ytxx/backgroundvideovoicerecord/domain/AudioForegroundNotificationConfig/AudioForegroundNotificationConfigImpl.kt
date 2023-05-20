@@ -18,13 +18,20 @@ class AudioForegroundNotificationConfigImpl @Inject constructor(
     override val config: Flow<ForegroundNotificationConfig> = preferencesStorage.getPropertyOrNull(
         audioForegroundNotificationConfigKey
     ).map {
-        if(it == null) return@map ForegroundNotificationConfig.ViewRecordStateType
+        val defValue by lazy {
+            ForegroundNotificationConfig.ViewRecordStateType(
+                _isPauseResumeButtonActive =  true,
+                _isStopRecordButtonEnabled = true
+            )
+        }
+
+        if(it == null) return@map defValue
 
         return@map try {
             Json.decodeFromString(ForegroundNotificationConfig.serializer(),it)
         }catch (e:Exception) {
             Log.e(LOG_TAG,"exception when parse ${e.stackTraceToString()}")
-            ForegroundNotificationConfig.ViewRecordStateType
+            defValue
         }
     }
 
