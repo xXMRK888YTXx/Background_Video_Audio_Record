@@ -1,18 +1,22 @@
 package com.xxmrk888ytxx.recordvideoservice
 
 import android.app.Notification
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
+import androidx.core.content.getSystemService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.xxmrk888ytxx.coreandroid.buildNotification
 import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.cancelChillersAndLaunch
+import com.xxmrk888ytxx.coreandroid.milliSecondToString
 import com.xxmrk888ytxx.coredeps.DepsProvider.getDepsByApplication
+import com.xxmrk888ytxx.recordvideoservice.models.ForegroundNotificationType
 import com.xxmrk888ytxx.recordvideoservice.models.RecordVideoState
 import com.xxmrk888ytxx.videorecorder.VideoRecorder
 import com.xxmrk888ytxx.videorecorder.models.RecorderState
@@ -35,8 +39,14 @@ import java.io.File
 
 class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwner {
 
+    //Notification Manager
+    private val notificationManager: NotificationManager by lazy {
+        applicationContext.getSystemService()!!
+    }
+    //
+
     //Service params
-    private val recordVideoParams:RecordVideoParams by lazy {
+    private val recordVideoParams: RecordVideoParams by lazy {
         applicationContext.getDepsByApplication()
     }
     //
@@ -63,17 +73,17 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        Log.i(LOG_TAG,"onBind")
+        Log.i(LOG_TAG, "onBind")
         return LocalBinder()
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        Log.i(LOG_TAG,"onUnbind")
+        Log.i(LOG_TAG, "onUnbind")
         return super.onUnbind(intent)
     }
 
     override fun onRebind(intent: Intent?) {
-        Log.i(LOG_TAG,"onRebind")
+        Log.i(LOG_TAG, "onRebind")
         super.onRebind(intent)
     }
 
@@ -96,17 +106,19 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     //Start service
     override fun onCreate() {
         super.onCreate()
-        Log.i(LOG_TAG,"onCreate")
-        applicationContext.buildNotificationChannel(
-            id = NOTIFICATION_CHANNEL_ID,
-            name = getString(R.string.Channel_name)
-        )
+        Log.i(LOG_TAG, "onCreate")
+        videoRecordServiceScope.launch(Dispatchers.Main) {
+            applicationContext.buildNotificationChannel(
+                id = NOTIFICATION_CHANNEL_ID,
+                name = getString(R.string.Channel_name)
+            )
 
-        startForeground(NOTIFICATION_ID, foregroundNotification)
-        Log.i(LOG_TAG,"foreground started")
-        videoRecordServiceScope.launch {
-            withContext(Dispatchers.Main) {
-                lifecycleRegistry.currentState = Lifecycle.State.RESUMED
+            startForeground(NOTIFICATION_ID, createNotification())
+            Log.i(LOG_TAG, "foreground started")
+            videoRecordServiceScope.launch {
+                withContext(Dispatchers.Main) {
+                    lifecycleRegistry.currentState = Lifecycle.State.RESUMED
+                }
             }
         }
     }
@@ -115,7 +127,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     //Destroy service
     override fun onDestroy() {
         super.onDestroy()
-        Log.i(LOG_TAG,"onDestroy")
+        Log.i(LOG_TAG, "onDestroy")
         videoRecordServiceScope.launch {
             stopRecord()
             withContext(Dispatchers.Main) {
@@ -130,7 +142,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
 
     //Record control
     override fun startRecord(outputFile: File) {
-        if(recorder != null) return
+        if (recorder != null) return
         videoRecordServiceScope.launch {
 
             val config = recordVideoParams.cameraConfig.first()
@@ -150,34 +162,34 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
             recorder?.run {
                 startRecord()
             }
-            Log.i(LOG_TAG,"startRecord")
+            Log.i(LOG_TAG, "startRecord")
         }
     }
 
     override fun pauseRecord() {
-        if(recorder == null) return
+        if (recorder == null) return
         videoRecordServiceScope.launch {
             recorder?.run {
                 pauseRecord()
             }
 
-            Log.i(LOG_TAG,"pauseRecord")
+            Log.i(LOG_TAG, "pauseRecord")
         }
     }
 
     override fun resumeRecord() {
-        if(recorder == null) return
+        if (recorder == null) return
         videoRecordServiceScope.launch {
             recorder?.run {
                 resumeRecord()
             }
 
-            Log.i(LOG_TAG,"resumeRecord")
+            Log.i(LOG_TAG, "resumeRecord")
         }
     }
 
     override fun stopRecord() {
-        if(recorder == null) return
+        if (recorder == null) return
         videoRecordServiceScope.launch {
             stopRecordObserver()
             recorder?.run {
@@ -186,11 +198,11 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
 
             recorder = null
 
-            Log.i(LOG_TAG,"stopRecord")
+            Log.i(LOG_TAG, "stopRecord")
 
             withContext(NonCancellable) {
                 recordVideoParams.saveRecordedVideoStrategy.saveRecord()
-                Log.i(LOG_TAG,"record saved")
+                Log.i(LOG_TAG, "record saved")
             }
         }
     }
@@ -199,6 +211,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     //Record state observe
     private fun startRecordObserver() {
         recordStateObserverScope.cancelChillersAndLaunch {
+            val foregroundType = recordVideoParams.cameraConfig.first().foregroundNotificationType
             recorder?.run {
                 this.recordState.collect() { state ->
                     _currentState.update {
@@ -209,6 +222,13 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
 
                             else -> RecordVideoState.Idle
                         }
+                    }
+
+                    if (foregroundType is ForegroundNotificationType.ViewRecordStateType) {
+                        notificationManager.notify(
+                            NOTIFICATION_ID,
+                            createForegroundNotificationViewRecordStateType(_currentState.value)
+                        )
                     }
                 }
             }
@@ -222,11 +242,41 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     //
 
     //Foreground notification
-    private val foregroundNotification: Notification
-        get() = applicationContext.buildNotification(NOTIFICATION_CHANNEL_ID) {
-            setContentTitle("Сервис записи видео")
-            setContentText("Запись в процессе")
+    private suspend fun createNotification(): Notification {
+
+        val foregroundType = recordVideoParams.cameraConfig.first().foregroundNotificationType
+
+        return when (foregroundType) {
+            is ForegroundNotificationType.CustomNotification -> {
+                applicationContext.buildNotification(NOTIFICATION_CHANNEL_ID) {
+                    setContentTitle(foregroundType.title)
+                    setContentText(foregroundType.text)
+                    setSmallIcon(R.drawable.baseline_videocam_24)
+                }
+            }
+
+            is ForegroundNotificationType.ViewRecordStateType -> {
+                createForegroundNotificationViewRecordStateType(_currentState.value)
+            }
         }
+    }
+
+    private fun createForegroundNotificationViewRecordStateType(recordVideoState: RecordVideoState): Notification {
+        return applicationContext.buildNotification(NOTIFICATION_CHANNEL_ID) {
+            setContentTitle(
+                when (recordVideoState) {
+                    is RecordVideoState.Recording -> getString(R.string.Video_recording_is_on)
+                    else -> getString(R.string.Video_recording_suspended)
+                }
+            )
+            setContentText(
+                "${getString(R.string.Recording_runs)} " +
+                        recordVideoState.recordDuration.milliSecondToString()
+            )
+            setSmallIcon(R.drawable.baseline_videocam_24)
+            setOnlyAlertOnce(true)
+        }
+    }
     //
 
     companion object {

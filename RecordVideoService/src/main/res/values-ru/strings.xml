@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="Channel_name">Канал для показа уведомлений о состояния записи видео</string>
+    <string name="Video_recording_is_on">Запись видео идет</string>
+    <string name="Video_recording_suspended">Запись видео приостановлена</string>
+    <string name="Recording_runs">"Запись идет "</string>
 </resources>

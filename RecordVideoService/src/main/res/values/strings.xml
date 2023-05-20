@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="Channel_name">Channel for displaying video recording status notifications</string>
+    <string name="Video_recording_is_on">Video recording is on</string>
+    <string name="Video_recording_suspended">Video recording suspended</string>
+    <string name="Recording_runs">Recording runs</string>
 </resources>
