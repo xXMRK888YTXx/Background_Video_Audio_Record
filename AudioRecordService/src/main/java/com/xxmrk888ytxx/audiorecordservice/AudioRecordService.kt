@@ -3,7 +3,10 @@ package com.xxmrk888ytxx.audiorecordservice
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.Service
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.media.EncoderProfiles
 import android.media.MediaRecorder
 import android.os.Binder
@@ -45,6 +48,29 @@ class AudioRecordService : Service(), AudioRecordServiceController {
 
     private val recordAudioParams: RecordAudioParams by lazy {
         applicationContext.getDepsByApplication()
+    }
+
+    private val notificationCommandReceiver:BroadcastReceiver by lazy {
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if(intent?.action != ServiceNotificationActions.AUDIO_RECORD_SERVICE_COMMAND_ACTION) return
+                when(intent.getStringExtra(ServiceNotificationActions.COMMAND_KEY)) {
+
+                    ServiceNotificationActions.STOP_RECORD_ACTION -> {
+                        this@AudioRecordService.stopRecord()
+                    }
+
+                    ServiceNotificationActions.RESUME_RECORD_ACTION -> {
+                        this@AudioRecordService.resumeRecord()
+                    }
+
+                    ServiceNotificationActions.PAUSE_RECORD_ACTION -> {
+                        this@AudioRecordService.pauseRecord()
+                    }
+                }
+            }
+
+        }
     }
 
     private var mediaRecorder: MediaRecorder? = null
@@ -90,6 +116,10 @@ class AudioRecordService : Service(), AudioRecordServiceController {
             )
 
             startForeground(NOTIFICATION_ID, createNotification())
+
+            registerReceiver(notificationCommandReceiver, IntentFilter(
+                ServiceNotificationActions.AUDIO_RECORD_SERVICE_COMMAND_ACTION
+            ))
 
             Log.i(LOG_TAG, "foreground started")
         }
@@ -173,6 +203,7 @@ class AudioRecordService : Service(), AudioRecordServiceController {
     override fun onDestroy() {
         super.onDestroy()
         Log.i(LOG_TAG, "onDestroy")
+        unregisterReceiver(notificationCommandReceiver)
         audioRecordServiceScope.launch {
             stopRecord()
             durationObserverScope.cancel()
@@ -191,6 +222,27 @@ class AudioRecordService : Service(), AudioRecordServiceController {
                     setContentTitle(foregroundType.title)
                     setContentText(foregroundType.text)
                     setSmallIcon(R.drawable.record)
+                    setOnlyAlertOnce(true)
+                    if(foregroundType.isPauseResumeButtonActive) {
+                        when(_currentState.value) {
+                            is RecordAudioState.Recording -> {
+                                addAction(ServiceNotificationActions.createActionForPauseRecord(
+                                    context = applicationContext
+                                ))
+                            }
+                            else -> addAction(ServiceNotificationActions.createActionForResumeRecord(
+                                context = applicationContext
+                            ))
+                        }
+                    }
+
+                    if(foregroundType.isStopRecordButtonEnabled) {
+                        addAction(
+                            ServiceNotificationActions.createActionForStopRecord(
+                                context = applicationContext
+                            )
+                        )
+                    }
                 }
             }
 
@@ -200,7 +252,8 @@ class AudioRecordService : Service(), AudioRecordServiceController {
         }
     }
 
-    private fun createForegroundNotificationViewRecordStateType(recordAudioState: RecordAudioState): Notification {
+    private suspend fun createForegroundNotificationViewRecordStateType(recordAudioState: RecordAudioState): Notification {
+        val config = recordAudioParams.recordAudioConfig.first().foregroundNotificationType
         return applicationContext.buildNotification(NOTIFICATION_CHANNEL_ID) {
             setContentTitle(
                 when (recordAudioState) {
@@ -214,6 +267,26 @@ class AudioRecordService : Service(), AudioRecordServiceController {
             )
             setSmallIcon(R.drawable.record)
             setOnlyAlertOnce(true)
+            if(config.isPauseResumeButtonActive) {
+                when(_currentState.value) {
+                    is RecordAudioState.Recording -> {
+                        addAction(ServiceNotificationActions.createActionForPauseRecord(
+                            context = applicationContext
+                        ))
+                    }
+                    else -> addAction(ServiceNotificationActions.createActionForResumeRecord(
+                        context = applicationContext
+                    ))
+                }
+            }
+
+            if(config.isStopRecordButtonEnabled) {
+                addAction(
+                    ServiceNotificationActions.createActionForStopRecord(
+                        context = applicationContext
+                    )
+                )
+            }
         }
     }
 
@@ -226,12 +299,10 @@ class AudioRecordService : Service(), AudioRecordServiceController {
         _currentState.update { RecordAudioState.Pause(it.recordDuration) }
         stopDurationObserver()
 
-        if (recordAudioParams.recordAudioConfig.first().foregroundNotificationType is ForegroundNotificationType.ViewRecordStateType) {
-            notificationManager.notify(
-                NOTIFICATION_ID,
-                createForegroundNotificationViewRecordStateType(_currentState.value)
-            )
-        }
+        notificationManager.notify(
+            NOTIFICATION_ID,
+            createNotification()
+        )
     }
 
     private suspend fun toRecordingState() {
@@ -255,10 +326,10 @@ class AudioRecordService : Service(), AudioRecordServiceController {
                         }
                     }
 
-                    if (foregroundNotificationType is ForegroundNotificationType.ViewRecordStateType && isActive) {
+                    if(isActive) {
                         notificationManager.notify(
                             NOTIFICATION_ID,
-                            createForegroundNotificationViewRecordStateType(_currentState.value)
+                            createNotification()
                         )
                     }
                 }
@@ -271,6 +342,8 @@ class AudioRecordService : Service(), AudioRecordServiceController {
     private fun stopDurationObserver() {
         durationObserverScope.coroutineContext.cancelChildren()
     }
+
+
 
     companion object {
         const val NOTIFICATION_CHANNEL_ID = "AudioRecordServiceNotificationChannel"
