@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="Channel_name">Канал для показа уведомлений о состояния записи аудио</string>
+    <string name="Sound_recording_in_progress">Идет запись звука</string>
+    <string name="Recording_suspended">Запись приостановлена</string>
+    <string name="Recording_is_going_on">Запись идет</string>
 </resources>

@@ -16,6 +16,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 fun Long.milliSecondToString(): String {
+    if(this < 0) return "00:00:00"
     val seconds = this / 1000
 
     val hours = seconds / 3600

@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="Channel_name">Channel for displaying audio recording status notifications</string>
+    <string name="Sound_recording_in_progress">Sound recording in progress</string>
+    <string name="Recording_suspended">Recording suspended</string>
+    <string name="Recording_is_going_on">Recording runs</string>
 </resources>
