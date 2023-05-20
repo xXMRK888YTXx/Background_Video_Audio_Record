@@ -4,45 +4,56 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.Ca
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.models.CameraRotation
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.models.CameraType
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.models.MaxQuality
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoForegroundNotificationConfig.VideoForegroundNotificationConfig
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.models.ForegroundNotificationConfig
 import com.xxmrk888ytxx.recordvideoservice.RecordVideoParams
 import com.xxmrk888ytxx.recordvideoservice.SaveRecordedVideoStrategy
 import com.xxmrk888ytxx.recordvideoservice.models.RecordVideoConfig
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import com.xxmrk888ytxx.recordvideoservice.models.CameraType as ServiceCameraType
 import com.xxmrk888ytxx.recordvideoservice.models.MaxQuality as ServiceMaxQuality
 import com.xxmrk888ytxx.recordvideoservice.models.CameraRotation as ServiceCameraRotation
+import com.xxmrk888ytxx.recordvideoservice.models.ForegroundNotificationType as VideoForegroundNotificationType
 
 /**
  * ServiceCameraType = com.xxmrk888ytxx.recordvideoservice.models.CameraType
  * ServiceMaxQuality = com.xxmrk888ytxx.recordvideoservice.models.MaxQuality
  * ServiceCameraRotation = com.xxmrk888ytxx.recordvideoservice.models.CameraRotation
+ * VideoForegroundNotificationType = com.xxmrk888ytxx.recordvideoservice.models.ForegroundNotificationType
  */
 
-class RecordVideoServiceParams @Inject constructor (
+class RecordVideoServiceParams @Inject constructor(
     override val saveRecordedVideoStrategy: SaveRecordedVideoStrategy,
-    private val cameraConfigManager:CameraConfigManager
+    private val cameraConfigManager: CameraConfigManager,
+    private val videoForegroundNotificationConfig: VideoForegroundNotificationConfig,
 ) : RecordVideoParams {
 
-    override val cameraConfig: Flow<RecordVideoConfig> = cameraConfigManager.config.map {
+
+    override val cameraConfig: Flow<RecordVideoConfig> = combine(
+        cameraConfigManager.config, videoForegroundNotificationConfig.config
+    ) { cameraConfig, videoForegroundNotificationConfig ->
+
         RecordVideoConfig(
-            cameraType = it.cameraType.toServiceCameraType(),
-            maxQuality = it.maxQuality.toServiceMaxQuality(),
-            cameraRotation = it.cameraRotation.toServiceCameraRotation()
+            cameraType = cameraConfig.cameraType.toServiceCameraType(),
+            maxQuality = cameraConfig.maxQuality.toServiceMaxQuality(),
+            cameraRotation = cameraConfig.cameraRotation.toServiceCameraRotation(),
+            foregroundNotificationType = videoForegroundNotificationConfig.toServiceForegroundType(),
         )
     }
 
-    private fun CameraType.toServiceCameraType() : ServiceCameraType {
-        return when(this) {
+    private fun CameraType.toServiceCameraType(): ServiceCameraType {
+        return when (this) {
             is CameraType.Front -> com.xxmrk888ytxx.recordvideoservice.models.CameraType.Front
 
             is CameraType.Back -> com.xxmrk888ytxx.recordvideoservice.models.CameraType.Back
         }
     }
 
-    private fun MaxQuality.toServiceMaxQuality() : ServiceMaxQuality {
-        return when(this) {
+    private fun MaxQuality.toServiceMaxQuality(): ServiceMaxQuality {
+        return when (this) {
             MaxQuality.SD -> ServiceMaxQuality.SD
 
             MaxQuality.HD -> ServiceMaxQuality.HD
@@ -51,8 +62,8 @@ class RecordVideoServiceParams @Inject constructor (
         }
     }
 
-    private fun CameraRotation.toServiceCameraRotation() : ServiceCameraRotation {
-        return when(this) {
+    private fun CameraRotation.toServiceCameraRotation(): ServiceCameraRotation {
+        return when (this) {
             CameraRotation.ROTATION_0 -> ServiceCameraRotation.ROTATION_0
 
             CameraRotation.ROTATION_90 -> ServiceCameraRotation.ROTATION_90
@@ -60,6 +71,17 @@ class RecordVideoServiceParams @Inject constructor (
             CameraRotation.ROTATION_180 -> ServiceCameraRotation.ROTATION_180
 
             CameraRotation.ROTATION_270 -> ServiceCameraRotation.ROTATION_270
+        }
+    }
+
+    private fun ForegroundNotificationConfig.toServiceForegroundType(): VideoForegroundNotificationType {
+        return when (this) {
+            is ForegroundNotificationConfig.CustomNotification -> VideoForegroundNotificationType.CustomNotification(
+                title,
+                text
+            )
+
+            is ForegroundNotificationConfig.ViewRecordStateType -> VideoForegroundNotificationType.ViewRecordStateType
         }
     }
 }

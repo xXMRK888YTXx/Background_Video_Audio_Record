@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.audiorecordservice
 
 import com.xxmrk888ytxx.audiorecordservice.models.RecordAudioConfig
+import kotlinx.coroutines.flow.Flow
 
 /**
  * [Ru]
@@ -12,7 +13,7 @@ import com.xxmrk888ytxx.audiorecordservice.models.RecordAudioConfig
  */
 interface RecordAudioParams {
 
-    val recordAudioConfig: RecordAudioConfig
+    val recordAudioConfig: Flow<RecordAudioConfig>
 
     val saveAudioRecordStrategy:SaveAudioRecordStrategy
 }

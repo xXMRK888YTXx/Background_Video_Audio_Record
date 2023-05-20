@@ -14,5 +14,5 @@ package com.xxmrk888ytxx.audiorecordservice.models
  * @param tempRecordPath - Directory, which will temporarily contain the recorded file
  */
 data class RecordAudioConfig(
-    val tempRecordPath:String
+    val foregroundNotificationType: ForegroundNotificationType
 )
