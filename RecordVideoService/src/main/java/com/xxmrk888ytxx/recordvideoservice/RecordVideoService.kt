@@ -3,7 +3,10 @@ package com.xxmrk888ytxx.recordvideoservice
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.Service
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
@@ -33,6 +36,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -107,6 +111,12 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     override fun onCreate() {
         super.onCreate()
         Log.i(LOG_TAG, "onCreate")
+
+        registerReceiver(
+            notificationCommandReceiver,
+            IntentFilter(ServiceNotificationActions.VIDEO_RECORD_SERVICE_COMMAND_ACTION)
+        )
+
         videoRecordServiceScope.launch(Dispatchers.Main) {
             applicationContext.buildNotificationChannel(
                 id = NOTIFICATION_CHANNEL_ID,
@@ -127,6 +137,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     //Destroy service
     override fun onDestroy() {
         super.onDestroy()
+        unregisterReceiver(notificationCommandReceiver)
         Log.i(LOG_TAG, "onDestroy")
         videoRecordServiceScope.launch {
             stopRecord()
@@ -224,10 +235,10 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
                         }
                     }
 
-                    if (foregroundType is ForegroundNotificationType.ViewRecordStateType) {
+                    if (isActive) {
                         notificationManager.notify(
                             NOTIFICATION_ID,
-                            createForegroundNotificationViewRecordStateType(_currentState.value)
+                            createNotification()
                         )
                     }
                 }
@@ -252,6 +263,26 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
                     setContentTitle(foregroundType.title)
                     setContentText(foregroundType.text)
                     setSmallIcon(R.drawable.baseline_videocam_24)
+                    if(foregroundType.isPauseResumeButtonActive) {
+                        when(_currentState.value) {
+                            is RecordVideoState.Recording -> {
+                                addAction(ServiceNotificationActions.createActionForPauseRecord(
+                                    context = applicationContext
+                                ))
+                            }
+                            else -> addAction(ServiceNotificationActions.createActionForResumeRecord(
+                                context = applicationContext
+                            ))
+                        }
+                    }
+
+                    if(foregroundType.isStopRecordButtonEnabled) {
+                        addAction(
+                            ServiceNotificationActions.createActionForStopRecord(
+                                context = applicationContext
+                            )
+                        )
+                    }
                 }
             }
 
@@ -261,7 +292,8 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         }
     }
 
-    private fun createForegroundNotificationViewRecordStateType(recordVideoState: RecordVideoState): Notification {
+    private suspend fun createForegroundNotificationViewRecordStateType(recordVideoState: RecordVideoState): Notification {
+        val foregroundType = recordVideoParams.cameraConfig.first().foregroundNotificationType
         return applicationContext.buildNotification(NOTIFICATION_CHANNEL_ID) {
             setContentTitle(
                 when (recordVideoState) {
@@ -275,6 +307,51 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
             )
             setSmallIcon(R.drawable.baseline_videocam_24)
             setOnlyAlertOnce(true)
+            if(foregroundType.isPauseResumeButtonActive) {
+                when(_currentState.value) {
+                    is RecordVideoState.Recording -> {
+                        addAction(ServiceNotificationActions.createActionForPauseRecord(
+                            context = applicationContext
+                        ))
+                    }
+                    else -> addAction(ServiceNotificationActions.createActionForResumeRecord(
+                        context = applicationContext
+                    ))
+                }
+            }
+
+            if(foregroundType.isStopRecordButtonEnabled) {
+                addAction(
+                    ServiceNotificationActions.createActionForStopRecord(
+                        context = applicationContext
+                    )
+                )
+            }
+        }
+    }
+    //
+
+    //Command Receiver
+    private val notificationCommandReceiver: BroadcastReceiver by lazy {
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if(intent?.action != ServiceNotificationActions.VIDEO_RECORD_SERVICE_COMMAND_ACTION) return
+                when(intent.getStringExtra(ServiceNotificationActions.COMMAND_KEY)) {
+
+                    ServiceNotificationActions.STOP_RECORD_ACTION -> {
+                        this@RecordVideoService.stopRecord()
+                    }
+
+                    ServiceNotificationActions.RESUME_RECORD_ACTION -> {
+                        this@RecordVideoService.resumeRecord()
+                    }
+
+                    ServiceNotificationActions.PAUSE_RECORD_ACTION -> {
+                        this@RecordVideoService.pauseRecord()
+                    }
+                }
+            }
+
         }
     }
     //

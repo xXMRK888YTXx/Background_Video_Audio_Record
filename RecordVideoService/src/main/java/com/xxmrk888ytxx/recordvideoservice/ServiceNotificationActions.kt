@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.audiorecordservice
+package com.xxmrk888ytxx.recordvideoservice
 
 import android.app.Notification
 import android.app.PendingIntent
@@ -14,7 +14,7 @@ internal object ServiceNotificationActions {
         context: Context
     ) : Notification.Action {
 
-        val intent = Intent(AUDIO_RECORD_SERVICE_COMMAND_ACTION).apply {
+        val intent = Intent(VIDEO_RECORD_SERVICE_COMMAND_ACTION).apply {
             putExtra(COMMAND_KEY,PAUSE_RECORD_ACTION)
         }
 
@@ -34,8 +34,7 @@ internal object ServiceNotificationActions {
         context: Context
     ) : Notification.Action {
 
-        val intent = Intent(AUDIO_RECORD_SERVICE_COMMAND_ACTION).apply {
-            action = AUDIO_RECORD_SERVICE_COMMAND_ACTION
+        val intent = Intent(VIDEO_RECORD_SERVICE_COMMAND_ACTION).apply {
             putExtra(COMMAND_KEY, RESUME_RECORD_ACTION)
         }
 
@@ -55,7 +54,7 @@ internal object ServiceNotificationActions {
         context: Context
     ) : Notification.Action {
 
-        val intent = Intent(AUDIO_RECORD_SERVICE_COMMAND_ACTION).apply {
+        val intent = Intent(VIDEO_RECORD_SERVICE_COMMAND_ACTION).apply {
             putExtra(COMMAND_KEY, STOP_RECORD_ACTION)
         }
 
@@ -71,7 +70,7 @@ internal object ServiceNotificationActions {
         ).build()
     }
 
-    const val AUDIO_RECORD_SERVICE_COMMAND_ACTION = "AUDIO_RECORD_SERVICE_COMMAND_ACTION"
+    const val VIDEO_RECORD_SERVICE_COMMAND_ACTION = "VIDEO_RECORD_SERVICE_COMMAND_ACTION"
 
     const val COMMAND_KEY = "COMMAND_KEY"
 

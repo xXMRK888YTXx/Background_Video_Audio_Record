@@ -4,4 +4,7 @@
     <string name="Video_recording_is_on">Video recording is on</string>
     <string name="Video_recording_suspended">Video recording suspended</string>
     <string name="Recording_runs">Recording runs</string>
+    <string name="Pause_Recording">Pause Recording</string>
+    <string name="Resume_recording">Resume recording</string>
+    <string name="Stop_Recording">Stop Recording</string>
 </resources>

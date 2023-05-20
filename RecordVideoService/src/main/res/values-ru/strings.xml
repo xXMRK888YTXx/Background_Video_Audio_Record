@@ -4,4 +4,7 @@
     <string name="Video_recording_is_on">Запись видео идет</string>
     <string name="Video_recording_suspended">Запись видео приостановлена</string>
     <string name="Recording_runs">"Запись идет "</string>
+    <string name="Pause_Recording">Приостановить запись</string>
+    <string name="Resume_recording">Возобновить запись</string>
+    <string name="Stop_Recording">Остановить запись</string>
 </resources>
