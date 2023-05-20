@@ -152,8 +152,19 @@ class AudioRecordServiceManagerImpl @Inject constructor(
 
         recordStateObserverScope.cancelChillersAndLaunch {
             recordServiceController?.let { controller ->
+                var lastRecordState:RecordAudioState = RecordAudioState.Idle
                 controller.currentState.collect() { state ->
                     _currentRecordState.update { state }
+
+                    if(
+                        isConnectedToService() &&
+                        _currentRecordState.value is RecordAudioState.Idle &&
+                        lastRecordState !is RecordAudioState.Idle
+                    ) {
+                        stopRecord()
+                    }
+
+                    lastRecordState = state
                 }
             }
         }

@@ -204,10 +204,11 @@ class AudioRecordService : Service(), AudioRecordServiceController {
         super.onDestroy()
         Log.i(LOG_TAG, "onDestroy")
         unregisterReceiver(notificationCommandReceiver)
-        audioRecordServiceScope.launch {
+        audioRecordServiceScope.launch(NonCancellable) {
             stopRecord()
             durationObserverScope.cancel()
             audioRecordServiceScope.cancel()
+            notificationManager.cancel(NOTIFICATION_ID)
         }
     }
 

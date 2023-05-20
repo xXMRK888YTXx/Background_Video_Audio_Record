@@ -43,8 +43,19 @@ class VideoRecordServiceManagerImpl @Inject constructor(
     private fun startObserver() {
         recordStateObserverScope.cancelChillersAndLaunch {
             controller?.run {
+                var lastRecordState:RecordVideoState = RecordVideoState.Idle
                 currentState.collect() { state ->
                     _currentRecordState.update { state }
+
+                    if(
+                        isConnected &&
+                        _currentRecordState.value is RecordVideoState.Idle &&
+                        lastRecordState !is RecordVideoState.Idle
+                    ) {
+                        this@VideoRecordServiceManagerImpl.stopRecord()
+                    }
+
+                    lastRecordState = state
                 }
             }
         }
@@ -178,6 +189,7 @@ class VideoRecordServiceManagerImpl @Inject constructor(
     override fun stopRecord() {
         Log.i(LOG_TAG,"request stop record")
         serviceManagedScope.launch {
+
             if(!isConnected) {
                 delayedManageRequest.add(::stopRecord)
 

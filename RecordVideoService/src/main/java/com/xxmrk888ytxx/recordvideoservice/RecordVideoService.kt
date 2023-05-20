@@ -139,13 +139,14 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         super.onDestroy()
         unregisterReceiver(notificationCommandReceiver)
         Log.i(LOG_TAG, "onDestroy")
-        videoRecordServiceScope.launch {
+        videoRecordServiceScope.launch(NonCancellable) {
             stopRecord()
             withContext(Dispatchers.Main) {
                 lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
             }
             recordStateObserverScope.cancel()
             videoRecordServiceScope.cancel()
+            notificationManager.cancel(NOTIFICATION_ID)
         }
 
     }
