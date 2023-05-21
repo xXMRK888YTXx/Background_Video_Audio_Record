@@ -19,4 +19,8 @@
     <string name="Add_a_button_to_stop_recording">Добавить кнопку для остановки записи</string>
     <string name="About_the_application">О приложении</string>
     <string name="Application_version">Версия приложения</string>
+    <string name="Source_code">Исходный код</string>
+    <string name="Write_developer">Написать разработчику</string>
+    <string name="Privacy_policy">Политика конфиденциальности</string>
+    <string name="Terms_of_use">Условия использования</string>
 </resources>

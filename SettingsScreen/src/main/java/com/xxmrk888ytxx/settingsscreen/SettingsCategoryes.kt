@@ -62,6 +62,7 @@ internal fun notificationParams(settingsViewModel: SettingsViewModel): Immutable
     )
 }
 
+@SuppressLint("ResourceType")
 @Composable
 internal fun aboutNotificationParams(
     settingsViewModel: SettingsViewModel
@@ -72,6 +73,30 @@ internal fun aboutNotificationParams(
             text = stringResource(R.string.Application_version),
             icon = R.drawable.info,
             secondaryText = settingsViewModel.appVersion
-        )
+        ),
+
+        SettingsParamType.Button(
+            text = stringResource(R.string.Source_code),
+            icon = R.drawable.code,
+            onClick = settingsViewModel::openSourceCode
+        ),
+
+        SettingsParamType.Button(
+            text = stringResource(R.string.Write_developer),
+            icon = R.drawable.email,
+            onClick = settingsViewModel::openEmailSenderApp
+        ),
+
+        SettingsParamType.Button(
+            text = stringResource(R.string.Privacy_policy),
+            icon = R.drawable.shield,
+            onClick = settingsViewModel::openPrivacyPolicy
+        ),
+
+        SettingsParamType.Button(
+            text = stringResource(R.string.Terms_of_use),
+            icon = R.drawable.terms,
+            onClick = settingsViewModel::openTermsOfUse
+        ),
     )
 }

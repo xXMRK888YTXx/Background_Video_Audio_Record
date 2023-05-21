@@ -19,4 +19,8 @@
     <string name="Add_a_button_to_stop_recording">Add a button to stop recording</string>
     <string name="About_the_application">About the application</string>
     <string name="Application_version">Application version</string>
+    <string name="Source_code">Source code</string>
+    <string name="Write_developer">Write to the developer</string>
+    <string name="Privacy_policy">Privacy Policy</string>
+    <string name="Terms_of_use">Terms of Use</string>
 </resources>

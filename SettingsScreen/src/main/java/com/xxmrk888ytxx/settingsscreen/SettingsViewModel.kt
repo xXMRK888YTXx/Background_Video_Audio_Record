@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.settingsscreen.contracts.ManageAudioNotificationConfigContract
 import com.xxmrk888ytxx.settingsscreen.contracts.ManageCameraConfigContract
 import com.xxmrk888ytxx.settingsscreen.contracts.ManageVideoNotificationConfigContract
+import com.xxmrk888ytxx.settingsscreen.contracts.OpenActivityContract
 import com.xxmrk888ytxx.settingsscreen.contracts.ProvideAppVersionContract
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraMaxQualitySelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraRotationSelectDialogState
@@ -27,11 +28,40 @@ class SettingsViewModel @Inject constructor(
     private val manageCameraConfigContract: ManageCameraConfigContract,
     private val manageAudioNotificationConfigContract: ManageAudioNotificationConfigContract,
     private val manageVideoNotificationConfigContract: ManageVideoNotificationConfigContract,
-    private val provideAppVersionContract: ProvideAppVersionContract
+    private val provideAppVersionContract: ProvideAppVersionContract,
+    private val openActivityContract:OpenActivityContract
 ) : ViewModel() {
 
+    //Open terms of use
+    internal fun openTermsOfUse() {
+        openActivityContract.openTermsOfUse()
+    }
+    //
+
+    //Open privacy policy
+    internal fun openPrivacyPolicy() {
+        openActivityContract.openPrivacyPolicy()
+    }
+    //
+
+
+    //Open email sender app
+    internal fun openEmailSenderApp() {
+        openActivityContract.openEmailSender()
+    }
+    //
+
+
+    //Open source code
+    internal fun openSourceCode() {
+        openActivityContract.openSourceCode()
+    }
+    //
+
+    //App version
     internal val appVersion : String
         get() = provideAppVersionContract.appVersion
+    //
 
     //NotificationConfigurationDialog
     internal fun showNotificationConfigurationDialog(
