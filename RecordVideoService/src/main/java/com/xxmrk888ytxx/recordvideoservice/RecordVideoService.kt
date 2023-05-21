@@ -112,6 +112,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         super.onCreate()
         Log.i(LOG_TAG, "onCreate")
 
+        lifecycleRegistry.currentState = Lifecycle.State.RESUMED
         registerReceiver(
             notificationCommandReceiver,
             IntentFilter(ServiceNotificationActions.VIDEO_RECORD_SERVICE_COMMAND_ACTION)
@@ -125,11 +126,6 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
 
             startForeground(NOTIFICATION_ID, createNotification())
             Log.i(LOG_TAG, "foreground started")
-            videoRecordServiceScope.launch {
-                withContext(Dispatchers.Main) {
-                    lifecycleRegistry.currentState = Lifecycle.State.RESUMED
-                }
-            }
         }
     }
     //
@@ -137,13 +133,11 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     //Destroy service
     override fun onDestroy() {
         super.onDestroy()
+        lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
         unregisterReceiver(notificationCommandReceiver)
         Log.i(LOG_TAG, "onDestroy")
         videoRecordServiceScope.launch(NonCancellable) {
             stopRecord()
-            withContext(Dispatchers.Main) {
-                lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
-            }
             recordStateObserverScope.cancel()
             videoRecordServiceScope.cancel()
             notificationManager.cancel(NOTIFICATION_ID)
