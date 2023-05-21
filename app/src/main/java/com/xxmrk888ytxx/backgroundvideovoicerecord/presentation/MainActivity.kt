@@ -18,14 +18,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.xxmrk888ytxx.admobmanager.AdMobBanner
+import com.xxmrk888ytxx.admobmanager.AdMobManager
 import com.xxmrk888ytxx.backgroundvideovoicerecord.R
-import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.theme.setContentWithAppThemeAndNavigator
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.theme.Themes
+import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.theme.setContentWithAppThemeNavigatorInterstitialAdShower
 import com.xxmrk888ytxx.backgroundvideovoicerecord.utils.Const.VIDEO_URI_KEY
 import com.xxmrk888ytxx.backgroundvideovoicerecord.utils.appComponent
 import com.xxmrk888ytxx.backgroundvideovoicerecord.utils.composeViewModel
 import com.xxmrk888ytxx.bottombarscreen.BottomBarScreen
 import com.xxmrk888ytxx.bottombarscreen.models.BottomBarScreenModel
+import com.xxmrk888ytxx.coreandroid.InterstitialAdShower
 import com.xxmrk888ytxx.corecompose.Shared.AgreeDialog
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.recordaudioscreen.RecordAudioScreen
@@ -45,7 +48,7 @@ import kotlinx.collections.immutable.persistentListOf
 import javax.inject.Inject
 import javax.inject.Provider
 
-internal class MainActivity : ComponentActivity(), LockBlockerScreen {
+internal class MainActivity : ComponentActivity(), LockBlockerScreen, InterstitialAdShower {
 
     @Inject
     lateinit var recordAudioViewModel: Provider<RecordAudioViewModel>
@@ -68,15 +71,20 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen {
     @Inject
     lateinit var settingsScreenViewModel: Provider<SettingsViewModel>
 
+    @Inject
+    lateinit var adMobManager: AdMobManager
+
     private val activityViewModel by viewModels<ActivityViewModel> { activityViewModelFactory }
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
-        setContentWithAppThemeAndNavigator(
+        adMobManager.initAdmob()
+        setContentWithAppThemeNavigatorInterstitialAdShower(
             appTheme = Themes.dark,
-            navigator = activityViewModel
+            navigator = activityViewModel,
+            interstitialAdShower = this
         ) {
             val navController = rememberNavController()
 
@@ -98,12 +106,21 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen {
             ) {
                 composable(Screen.MainScreen.route) {
                     BottomBarScreen(
-                        bottomBarScreens = bottomScreens
+                        bottomBarScreens = bottomScreens,
+                        bannerAd = {
+                            AdMobBanner(
+                                adMobKey = stringResource(R.string.banner_key),
+                                background = themeColors.background
+                            )
+                        }
                     )
                 }
 
                 composable(Screen.VideoPlayerScreen.route) {
                     val uri = it.arguments?.getString(VIDEO_URI_KEY) ?: return@composable
+
+
+                    this@MainActivity.showAd(getString(R.string.ad_key))
 
                     VideoPlayerScreen(
                         modifier = Modifier.fillMaxSize(),
@@ -176,5 +193,9 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen {
 
     override fun cancel() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    override fun showAd(key: String) {
+        adMobManager.showInterstitialAd(key,this)
     }
 }

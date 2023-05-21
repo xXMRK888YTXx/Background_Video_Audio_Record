@@ -5,4 +5,5 @@
     <string name="Settings">Настройки</string>
     <string name="Storage">Хранилище</string>
     <string name="Choose_a_client">Выберете клиент</string>
+    <string name="ad_key">ca-app-pub-6313040706847570/9006206333</string>
 </resources>

@@ -14,5 +14,5 @@ object Project {
     const val PreferencesStorage = ":PreferencesStorage"
     const val VideoPlayerScreen = ":VideoPlayerScreen"
     const val SettingsScreen = ":SettingsScreen"
-   // const val DelayStartRecordConfigurationDialog = ":DelayStartRecordConfigurationDialog"
+    const val AdmobManager = ":AdmobManager"
 }

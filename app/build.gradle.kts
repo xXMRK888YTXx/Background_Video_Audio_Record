@@ -73,6 +73,7 @@ dependencies {
     implementation(project(Project.PreferencesStorage))
     implementation(project(Project.VideoPlayerScreen))
     implementation(project(Project.SettingsScreen))
+    implementation(project(Project.AdmobManager))
 
     //Database
     implementation(Deps.Room.RoomKTX)

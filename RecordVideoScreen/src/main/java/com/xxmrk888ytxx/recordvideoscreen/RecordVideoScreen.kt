@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xxmrk888ytxx.camerapreviewcompose.CameraPreview
 import com.xxmrk888ytxx.camerapreviewcompose.models.CameraType
+import com.xxmrk888ytxx.corecompose.LocalInterstitialAdShower
 import com.xxmrk888ytxx.corecompose.LocalTheme
 import com.xxmrk888ytxx.corecompose.Shared.BatteryIgnoreOptimizationDialog
 import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButton
@@ -126,6 +128,10 @@ fun RecordVideoScreen(
         targetValue = alpha,
         animationSpec = tween(themeValues.animationDuration)
     )
+
+    val context = LocalContext.current
+
+    val interstitialAdShower = LocalInterstitialAdShower.current
 
     LaunchedEffect(key1 = recordState::class, block = {
         launch {
@@ -269,6 +275,8 @@ fun RecordVideoScreen(
                         ),
                         background = themeColors.recordButtonColor
                     ) {
+                        interstitialAdShower.showAd(context.getString(R.string.ad_key))
+
                         if (recordState !is RecordState.Idle) {
                             recordVideoViewModel.stopRecord()
                         } else {

@@ -6,4 +6,6 @@
     <string name="Storage">Storage</string>
     <string name="email" translatable="false">xxmrk888ytxx.rlc@gmail.com</string>
     <string name="Choose_a_client">Choose a client</string>
+    <string name="banner_key" translatable="false">ca-app-pub-6313040706847570/5762780106</string>
+    <string name="ad_key">ca-app-pub-6313040706847570/9006206333</string>
 </resources>

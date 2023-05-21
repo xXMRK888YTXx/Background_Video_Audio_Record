@@ -30,11 +30,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.xxmrk888ytxx.corecompose.LocalInterstitialAdShower
 import com.xxmrk888ytxx.corecompose.LocalTheme
 import com.xxmrk888ytxx.corecompose.Shared.BatteryIgnoreOptimizationDialog
 import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButton
@@ -96,6 +98,10 @@ fun RecordAudioScreen(
     val currentWidgetGradientColor by recordAudioViewModel.currentWidgetColor.collectAsStateWithLifecycle()
 
     val themeValues = LocalTheme.current.values
+
+    val interstitialAdShower  = LocalInterstitialAdShower.current
+
+    val context = LocalContext.current
 
     val animatedWidgetGradientColor by animateColorAsState(
         targetValue = currentWidgetGradientColor.color,
@@ -193,6 +199,7 @@ fun RecordAudioScreen(
                         ),
                         background = themeColors.recordButtonColor
                     ) {
+                        interstitialAdShower.showAd(context.getString(R.string.ad_key))
                         if (recordState !is RecordState.Idle) {
                             recordAudioViewModel.stopRecord()
                         } else {

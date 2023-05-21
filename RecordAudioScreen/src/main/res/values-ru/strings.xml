@@ -5,4 +5,5 @@
     <string name="Video_recording_has_started">Запущена запись видео. Невозможно запустить ещё и запись аудио</string>
     <string name="The_entered_date_is_less_than_the_current_date">Введённая дата меньше текущей. Введите корректное значение</string>
     <string name="Delayed_start_of_audio_recording">Отложенный запуск записи звука</string>
+    <string name="ad_key">ca-app-pub-6313040706847570/8232180717</string>
 </resources>
