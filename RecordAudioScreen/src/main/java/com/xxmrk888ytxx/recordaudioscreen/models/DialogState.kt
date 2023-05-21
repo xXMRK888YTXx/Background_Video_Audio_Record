@@ -4,5 +4,6 @@ import androidx.compose.runtime.Stable
 
 @Stable
 data class DialogState(
-    val isPermissionDialogVisible:Boolean = false
+    val isPermissionDialogVisible:Boolean = false,
+    val isIgnoreBatteryOptimizationDialogVisible:Boolean = false
 )

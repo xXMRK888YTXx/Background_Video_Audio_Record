@@ -41,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xxmrk888ytxx.camerapreviewcompose.CameraPreview
 import com.xxmrk888ytxx.camerapreviewcompose.models.CameraType
 import com.xxmrk888ytxx.corecompose.LocalTheme
+import com.xxmrk888ytxx.corecompose.Shared.BatteryIgnoreOptimizationDialog
 import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButton
 import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButtonHolderWidget
 import com.xxmrk888ytxx.corecompose.Shared.RecordStateWidget
@@ -294,6 +295,18 @@ fun RecordVideoScreen(
         RequestPermissionDialog(
             permissions = requestedPermission(recordVideoViewModel),
             onDismissRequest = recordVideoViewModel::hidePermissionDialog
+        )
+    }
+
+    if(dialogState.isIgnoreBatteryOptimizationDialogVisible) {
+        BatteryIgnoreOptimizationDialog(
+            onHide = {
+                recordVideoViewModel.hideIgnoreBatteryOptimizationDialog(it)
+            },
+            onConfirm = {
+                recordVideoViewModel.openBatterySettings()
+                recordVideoViewModel.hideIgnoreBatteryOptimizationDialog(it)
+            }
         )
     }
 }

@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.corecompose.Shared.models.RequestedPermissionModel
+import com.xxmrk888ytxx.recordvideoscreen.contract.IgnoreBatteryOptimizationManageContract
 import com.xxmrk888ytxx.recordvideoscreen.contract.ManageCameraTypeContract
 import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoManageContract
 import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoStateProviderContract
@@ -25,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -35,8 +37,35 @@ class RecordVideoViewModel @Inject constructor(
     private val recordVideoStateProviderContract: RecordVideoStateProviderContract,
     private val context: Context,
     private val manageCameraTypeContract: ManageCameraTypeContract,
-    private val toastManager: ToastManager
+    private val toastManager: ToastManager,
+    private val ignoreBatteryOptimizationManageContract: IgnoreBatteryOptimizationManageContract
 ) : ViewModel() {
+
+    //Ingnore batteaty optimization
+
+    private var isIgnoreBatteryOptimizationAlreadyShowed = false
+
+    internal fun showIgnoreBatteryOptimizationDialog() {
+        _dialogState.update { it.copy(
+            isIgnoreBatteryOptimizationDialogVisible = true
+        ) }
+    }
+
+    internal fun hideIgnoreBatteryOptimizationDialog(isHideForever: Boolean) {
+        if(isHideForever) {
+            viewModelScope.launch(Dispatchers.IO) {
+                ignoreBatteryOptimizationManageContract.hideDisableBatteryDialogForever()
+            }
+        }
+
+        _dialogState.update { it.copy(
+            isIgnoreBatteryOptimizationDialogVisible = false
+        ) }
+    }
+
+    fun openBatterySettings() {
+        ignoreBatteryOptimizationManageContract.openBatterySettings()
+    }
 
     //Show toast
     fun showToast(text:Int) {
@@ -216,13 +245,24 @@ class RecordVideoViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RecordState.Idle)
 
     fun startRecord() {
-        if (!isAllPermissionGranted) {
-            showPermissionDialog()
-
-            return
-        }
-
         viewModelScope.launch {
+            if (!isAllPermissionGranted) {
+                showPermissionDialog()
+
+                return@launch
+            }
+
+            if(
+                !isIgnoreBatteryOptimizationAlreadyShowed &&
+                !ignoreBatteryOptimizationManageContract.isBatteryOptimizationDisabled &&
+                ignoreBatteryOptimizationManageContract.isNeedShowDialogForDisableBatteryOptimization.first()
+            ) {
+                showIgnoreBatteryOptimizationDialog()
+                isIgnoreBatteryOptimizationAlreadyShowed = true
+                return@launch
+            }
+
+
             try {
                 recordVideoManageContract.start()
             } catch (e: OtherRecordServiceStartedException) {

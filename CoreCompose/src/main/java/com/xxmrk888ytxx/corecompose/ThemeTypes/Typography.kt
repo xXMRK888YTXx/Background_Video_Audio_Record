@@ -12,5 +12,6 @@ data class Typography(
     val stub: TextStyle,
     val settingCategory: TextStyle,
     val settingsParam: TextStyle,
-    val selectDialog: TextStyle
+    val selectDialog: TextStyle,
+    val yesNoDialog: TextStyle
 )

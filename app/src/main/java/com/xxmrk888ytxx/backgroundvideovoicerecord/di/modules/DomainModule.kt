@@ -15,6 +15,8 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecord
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecordRepository.VideoRecordRepositoryImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioForegroundNotificationConfig.AudioForegroundNotificationConfig
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioForegroundNotificationConfig.AudioForegroundNotificationConfigImpl
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IgnoreBatteryOptimizationManager.IgnoreBatteryOptimizationManager
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IgnoreBatteryOptimizationManager.IgnoreBatteryOptimizationManagerImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.ToastManager.ToastManagerImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordServiceManager.VideoRecordServiceManager
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordServiceManager.VideoRecordServiceManagerImpl
@@ -74,5 +76,10 @@ interface DomainModule {
     fun bindAudioForegroundNotificationConfig(
         audioForegroundNotificationConfigImpl: AudioForegroundNotificationConfigImpl
     ) : AudioForegroundNotificationConfig
+
+    @Binds
+    fun bindIgnoreBatteryOptimizationManager(
+        IgnoreBatteryOptimizationManagerImpl: IgnoreBatteryOptimizationManagerImpl
+    ) : IgnoreBatteryOptimizationManager
 
 }

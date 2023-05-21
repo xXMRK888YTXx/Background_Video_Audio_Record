@@ -12,16 +12,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.corecompose.Shared.models.RequestedPermissionModel
+import com.xxmrk888ytxx.recordaudioscreen.contracts.IgnoreBatteryOptimizationManageContract
 import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordManageContract
 import com.xxmrk888ytxx.recordaudioscreen.contracts.RecordStateProviderContract
 import com.xxmrk888ytxx.recordaudioscreen.exceptions.OtherRecordStartedException
 import com.xxmrk888ytxx.recordaudioscreen.models.DialogState
 import com.xxmrk888ytxx.recordaudioscreen.models.RecordState
 import com.xxmrk888ytxx.recordaudioscreen.models.RecordWidgetColor
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,8 +34,37 @@ class RecordAudioViewModel @Inject constructor(
     private val recordManageContract: RecordManageContract,
     private val recordStateProviderContract: RecordStateProviderContract,
     private val context: Context,
-    private val toastManager: ToastManager
+    private val toastManager: ToastManager,
+    private val ignoreBatteryOptimizationManageContract: IgnoreBatteryOptimizationManageContract,
 ) : ViewModel() {
+
+    //Ingnore batteaty optimization
+
+    private var isIgnoreBatteryOptimizationAlreadyShowed = false
+
+    internal fun showIgnoreBatteryOptimizationDialog() {
+        _dialogState.update { it.copy(
+            isIgnoreBatteryOptimizationDialogVisible = true
+        ) }
+    }
+
+    internal fun hideIgnoreBatteryOptimizationDialog(isHideForever: Boolean) {
+        if(isHideForever) {
+            viewModelScope.launch(Dispatchers.IO) {
+                ignoreBatteryOptimizationManageContract.hideDisableBatteryDialogForever()
+            }
+        }
+
+        _dialogState.update { it.copy(
+            isIgnoreBatteryOptimizationDialogVisible = false
+        ) }
+    }
+
+    fun openBatterySettings() {
+        ignoreBatteryOptimizationManageContract.openBatterySettings()
+    }
+
+    //
 
     //Snackbar
     private var snackBarHostState: SnackbarHostState? = null
@@ -106,16 +138,27 @@ class RecordAudioViewModel @Inject constructor(
     }
 
     fun startRecord() {
-        if(!isAllPermissionGranted) {
-            showRequestPermissionDialog()
-            return
-        }
-
         viewModelScope.launch {
+            if (!isAllPermissionGranted) {
+                showRequestPermissionDialog()
+                return@launch
+            }
+
+            if(
+                !isIgnoreBatteryOptimizationAlreadyShowed &&
+                !ignoreBatteryOptimizationManageContract.isBatteryOptimizationDisabled &&
+                ignoreBatteryOptimizationManageContract.isNeedShowDialogForDisableBatteryOptimization.first()
+            ) {
+                showIgnoreBatteryOptimizationDialog()
+                isIgnoreBatteryOptimizationAlreadyShowed = true
+                return@launch
+            }
+
+
             try {
                 recordManageContract.start()
-            }catch (e: OtherRecordStartedException) {
-               snackBarHostState?.showSnackbar(context.getString(R.string.Video_recording_has_started))
+            } catch (e: OtherRecordStartedException) {
+                snackBarHostState?.showSnackbar(context.getString(R.string.Video_recording_has_started))
             }
         }
     }

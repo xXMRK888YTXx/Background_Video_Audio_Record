@@ -2,4 +2,6 @@
 <resources>
     <string name="Ok">Ok</string>
     <string name="Cancel">Cancel</string>
+    <string name="Ignore_battery_dialog_text">For the application to work correctly, you must turn off battery optimization. Go to settings?</string>
+    <string name="Dont_show_any_more">Don\'t show any more</string>
 </resources>

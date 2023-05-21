@@ -111,6 +111,10 @@ object Themes {
                     fontSize = 16.sp,
                     fontWeight = W500
                 ),
+                yesNoDialog = TextStyle(
+                    fontSize = 17.sp,
+                    fontWeight = W500
+                )
             )
         override val values: Values
             get() = Values(
