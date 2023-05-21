@@ -48,7 +48,6 @@ fun YesNoButtons(
         ) {
             Text(
                 text = noButtonText,
-                maxLines = 1,
                 style = themeTypography.body,
                 color = themeColors.primaryFontColor
             )
@@ -69,9 +68,8 @@ fun YesNoButtons(
         ) {
             Text(
                 text = yesButtonText,
-                maxLines = 1,
                 style = themeTypography.body,
-                color = themeColors.primaryFontColor
+                color = themeColors.primaryFontColor,
             )
         }
     }

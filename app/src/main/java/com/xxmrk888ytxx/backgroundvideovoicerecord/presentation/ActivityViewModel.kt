@@ -4,15 +4,42 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.xxmrk888ytxx.backgroundvideovoicerecord.utils.Const.VIDEO_URI_KEY
 import com.xxmrk888ytxx.coreandroid.Navigator
+import com.xxmrk888ytxx.preferencesstorage.PreferencesStorage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
 
-internal class ActivityViewModel @Inject constructor() : ViewModel(),Navigator {
+internal class ActivityViewModel @Inject constructor(
+    private val preferencesStorage: PreferencesStorage
+) : ViewModel(),Navigator {
+
+    //Privacy Policy and Terms Of use dialog
+    private val isNeedShowPrivacyPolicyAndTermsOfUseDialogKey = booleanPreferencesKey("isNeedShowPrivacyPolicyAndTermsOfUseDialogKey")
+
+    val isNeedShowPrivacyPolicyAndTermsOfUseDialogState = preferencesStorage.getProperty(isNeedShowPrivacyPolicyAndTermsOfUseDialogKey,true)
+
+    fun hidePrivacyPolicyAndTermsOfUseDialog() {
+        viewModelScope.launch(Dispatchers.IO) {
+            preferencesStorage.writeProperty(isNeedShowPrivacyPolicyAndTermsOfUseDialogKey,false)
+        }
+    }
+
+    fun openPrivacyPolicy() {
+
+    }
+
+    fun openTermsOfUse() {
+
+    }
+    //
 
     //Handler
     private val handler by lazy {

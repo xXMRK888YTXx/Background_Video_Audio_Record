@@ -4,4 +4,9 @@
     <string name="Cancel">Отмена</string>
     <string name="Ignore_battery_dialog_text">Для того чтобы приложение работало корректно, необходимо отключить оптимизацию батареи. Перейти в настройки?</string>
     <string name="Dont_show_any_more">Больше не показывать</string>
+    <string name="I_agree">Я соглашаюсь</string>
+    <string name="I_accept">Принимаю</string>
+    <string name="I_dont_accept">Не принимаю</string>
+    <string name="Terms_of_Use">Условия использования</string>
+    <string name="Privacy_policy">Политика кофендоциальности</string>
 </resources>
