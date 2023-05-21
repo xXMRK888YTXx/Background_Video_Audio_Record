@@ -98,6 +98,13 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
                     settingsParams = notificationParams(settingsViewModel)
                 )
             }
+
+            item {
+                SettingsCategory(
+                    categoryName = stringResource(R.string.About_the_application),
+                    settingsParams = aboutNotificationParams(settingsViewModel)
+                )
+            }
         }
     }
 
@@ -433,9 +440,11 @@ internal fun NotificationConfigurationDialog(
                                 text = it.text,
                                 color = themeColors.primaryFontColor,
                                 style = themeTypography.body,
-                                modifier = Modifier.horizontalScroll(rememberScrollState()).clickable {
-                                    it.onClick(!it.isSelect)
-                                }
+                                modifier = Modifier
+                                    .horizontalScroll(rememberScrollState())
+                                    .clickable {
+                                        it.onClick(!it.isSelect)
+                                    }
                             )
                         }
                     }

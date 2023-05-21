@@ -15,7 +15,7 @@ android {
         minSdk = Config.minSdk
         targetSdk = Config.compileSdk
         versionCode = 1
-        versionName = "devBuild"
+        versionName = Config.versionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -43,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = Deps.Compose.ComposeKotlinCompiler

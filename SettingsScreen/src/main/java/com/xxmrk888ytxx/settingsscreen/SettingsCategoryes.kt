@@ -61,3 +61,17 @@ internal fun notificationParams(settingsViewModel: SettingsViewModel): Immutable
         )
     )
 }
+
+@Composable
+internal fun aboutNotificationParams(
+    settingsViewModel: SettingsViewModel
+) : ImmutableList<SettingsParamType> {
+
+    return persistentListOf(
+        SettingsParamType.Label(
+            text = stringResource(R.string.Application_version),
+            icon = R.drawable.info,
+            secondaryText = settingsViewModel.appVersion
+        )
+    )
+}

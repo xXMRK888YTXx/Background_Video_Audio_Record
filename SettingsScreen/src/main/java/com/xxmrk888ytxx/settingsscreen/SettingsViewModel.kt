@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.settingsscreen.contracts.ManageAudioNotificationConfigContract
 import com.xxmrk888ytxx.settingsscreen.contracts.ManageCameraConfigContract
 import com.xxmrk888ytxx.settingsscreen.contracts.ManageVideoNotificationConfigContract
+import com.xxmrk888ytxx.settingsscreen.contracts.ProvideAppVersionContract
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraMaxQualitySelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraRotationSelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraTypeSelectDialogState
@@ -25,8 +26,12 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val manageCameraConfigContract: ManageCameraConfigContract,
     private val manageAudioNotificationConfigContract: ManageAudioNotificationConfigContract,
-    private val manageVideoNotificationConfigContract: ManageVideoNotificationConfigContract
+    private val manageVideoNotificationConfigContract: ManageVideoNotificationConfigContract,
+    private val provideAppVersionContract: ProvideAppVersionContract
 ) : ViewModel() {
+
+    internal val appVersion : String
+        get() = provideAppVersionContract.appVersion
 
     //NotificationConfigurationDialog
     internal fun showNotificationConfigurationDialog(

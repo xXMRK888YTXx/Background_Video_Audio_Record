@@ -6,6 +6,7 @@ object Config {
     const val packageName = "com.xxmrk888ytxx.backgroundvideovoicerecord"
     const val isR8ProGuardEnableForRelease = false
     const val isR8ProGuardEnableForDebug = false
+    const val versionName = "devBuild"
 
     //JDK Config
     val sourceCompatibility = JavaVersion.VERSION_17

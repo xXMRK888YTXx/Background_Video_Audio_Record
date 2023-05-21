@@ -17,4 +17,6 @@
     <string name="Notification_text">Текст уведомления</string>
     <string name="Add_a_button_to_pause_resume_the_recording">Добавить кнопку для паузы/возобновления записи</string>
     <string name="Add_a_button_to_stop_recording">Добавить кнопку для остановки записи</string>
+    <string name="About_the_application">О приложении</string>
+    <string name="Application_version">Версия приложения</string>
 </resources>
