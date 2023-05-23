@@ -4,7 +4,7 @@ object Config {
     const val compileSdk = 33
     const val minSdk = 26
     const val packageName = "com.xxmrk888ytxx.backgroundvideovoicerecord"
-    const val isR8ProGuardEnableForRelease = false
+    const val isR8ProGuardEnableForRelease = true
     const val isR8ProGuardEnableForDebug = false
     const val versionName = "devBuild"
 

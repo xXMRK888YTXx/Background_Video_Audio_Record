@@ -3,7 +3,7 @@ plugins {
     id ("org.jetbrains.kotlin.android")
     id (Deps.Dagger.DaggerKaptPlugin)
     id (Deps.KolinSerialization.plugin)
-    id (Deps.Firebase.crashlyticsPlugin)
+    //id (Deps.Firebase.crashlyticsPlugin)
 }
 
 android {
@@ -26,7 +26,9 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = Config.isR8ProGuardEnableForRelease
-            proguardFiles("proguard-android-optimize.txt","proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"),"proguard-rules.pro")
+            testProguardFile("test-proguard-rules.pro")
+
         }
 
         debug {
@@ -91,9 +93,9 @@ dependencies {
     implementation(Deps.KolinSerialization.serialization)
 
     //Firebase
-    implementation(platform(Deps.Firebase.FirebaseBom))
-    implementation(Deps.Firebase.analytics)
-    implementation(Deps.Firebase.crashlytics)
+//    implementation(platform(Deps.Firebase.FirebaseBom))
+//    implementation(Deps.Firebase.analytics)
+//    implementation(Deps.Firebase.crashlytics)
 
     //Instrumental Test
     androidTestImplementation (Deps.InstrumentalTest.espresso)
