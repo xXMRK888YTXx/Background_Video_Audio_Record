@@ -258,6 +258,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
                     setContentTitle(foregroundType.title)
                     setContentText(foregroundType.text)
                     setSmallIcon(R.drawable.baseline_videocam_24)
+                    setOnlyAlertOnce(true)
                     if(foregroundType.isPauseResumeButtonActive) {
                         when(_currentState.value) {
                             is RecordVideoState.Recording -> {
