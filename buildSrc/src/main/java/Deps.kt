@@ -3,6 +3,8 @@
 object Deps {
     private const val MockkVersion = "1.13.4"
 
+    const val KotlinVersion = "1.8.20"
+
     object Compose {
         const val ComposeKotlinCompiler = "1.4.5"
         const val ComposeBom = "androidx.compose:compose-bom:2023.04.00"
@@ -91,6 +93,50 @@ object Deps {
 
     object AdMob {
         const val adMob = "com.google.android.gms:play-services-ads:21.4.0"
+    }
+
+    object Media3 {
+        private const val media3_version = "1.0.1"
+        const val exoPlayer = "androidx.media3:media3-exoplayer:$media3_version"
+        const val ui = "androidx.media3:media3-ui:$media3_version"
+    }
+
+    object CameraX {
+        private val camerax_version = "1.3.0-alpha06"
+        val core = "androidx.camera:camera-core:${camerax_version}"
+        val camera2 = "androidx.camera:camera-camera2:${camerax_version}"
+        val lifecycle = "androidx.camera:camera-lifecycle:${camerax_version}"
+        val video = "androidx.camera:camera-video:${camerax_version}"
+        val view = "androidx.camera:camera-view:${camerax_version}"
+        val extensions = "androidx.camera:camera-extensions:${camerax_version}"
+    }
+
+    object MaterialDialog {
+        const val materialDialogs = "io.github.vanpra.compose-material-dialogs:datetime:0.9.0"
+    }
+
+    object KolinSerialization {
+        private const val version = "1.4.1"
+        const val plugin = "kotlinx-serialization"
+        const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:$version"
+        const val classPath = "org.jetbrains.kotlin:kotlin-serialization:$KotlinVersion"
+    }
+
+    object ImmutableCollection {
+        const val collectionsImmutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
+    }
+
+    object Firebase {
+        const val FirebaseBom = "com.google.firebase:firebase-bom:32.0.0"
+        const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx"
+        const val analytics = "com.google.firebase:firebase-analytics-ktx"
+        const val crashlyticsClassPath = "com.google.firebase:firebase-crashlytics-gradle:2.9.5"
+        const val crashlyticsPlugin = "com.google.firebase.crashlytics"
+    }
+
+    object GoogleServices {
+        const val gmsServicePlugin = "com.google.gms.google-services"
+        const val gmsServiceClassPath = "com.google.gms:google-services:4.3.15"
     }
 
 

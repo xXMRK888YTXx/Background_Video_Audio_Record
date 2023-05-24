@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "441268805023",
+    "project_id": "backgroundvideovoicerecord",
+    "storage_bucket": "backgroundvideovoicerecord.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:441268805023:android:b0e1a87859474a9633b1aa",
+        "android_client_info": {
+          "package_name": "com.xxmrk888ytxx.backgroundvideovoicerecord"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "441268805023-ke72g64j5ibb1p4d7tojc9qh1h357d8e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4vixj-O3ZYXb-l3mKuQ7E8IfeVvz6tXc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "441268805023-ke72g64j5ibb1p4d7tojc9qh1h357d8e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

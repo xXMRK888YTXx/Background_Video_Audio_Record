@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Record_audio_description">Audio Recording Permission</string>
+    <string name="Post_notification_permission_descrption">Permission to show notifications</string>
+    <string name="Video_recording_has_started">Video recording has started. Unable to start audio recording as well</string>
+    <string name="The_entered_date_is_less_than_the_current_date">The entered date is less than the current date. Please enter a valid value</string>
+    <string name="Delayed_start_of_audio_recording">Delayed start of audio recording</string>
+    <string name="ad_key">ca-app-pub-6313040706847570/8232180717</string>
+</resources>

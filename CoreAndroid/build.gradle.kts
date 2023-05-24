@@ -48,4 +48,5 @@ dependencies {
     api (Deps.ViewModel.ViewModelKotlin)
     api (Deps.Dagger.DaggerCore)
     api (Deps.Coroutines.CoroutinesAndroid)
+    api (Deps.ImmutableCollection.collectionsImmutable)
 }

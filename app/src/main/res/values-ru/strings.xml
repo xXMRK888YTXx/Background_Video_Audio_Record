@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Фоновая запись видео и аудио</string>
+    <string name="Sound_record">Аудио</string>
+    <string name="Record_video">Видео</string>
+    <string name="Settings">Настройки</string>
+    <string name="Storage">Хранилище</string>
+    <string name="Choose_a_client">Выберете клиент</string>
+    <string name="ad_key">ca-app-pub-6313040706847570/9006206333</string>
+</resources>

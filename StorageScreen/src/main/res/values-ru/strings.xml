@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Audio">Аудио</string>
+    <string name="Video">Видео</string>
+    <string name="Videos_missing">Видеофайлы отсутствуют</string>
+    <string name="Audios_missing">Аудиозаписи отсутствуют</string>
+    <string name="New_file_name">Новое имя файла</string>
+    <string name="Exported_successfully">Экспортировано успешно</string>
+    <string name="export_error">Во время экспорта произошла ошибка</string>
+    <string name="Canceled">Отменено</string>
+    <string name="Please_wait">Пожалуйста, подождите</string>
+</resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Front_camera">Фронтальная камера</string>
+    <string name="Back_camera">Задняя камера</string>
+    <string name="Camera">Камера</string>
+    <string name="Camera_type">Тип камеры</string>
+    <string name="Record_quality">Качество записи</string>
+    <string name="degree">градусов</string>
+    <string name="Camera_rotation">Поворот камеры</string>
+    <string name="Warming_about_camera_preview">Эта настройка не влияет на превью камеры</string>
+    <string name="Notifications">Уведомления</string>
+    <string name="Notification_audio_params">Настройка уведомления при записи звука</string>
+    <string name="Notification_video_params">Настройка уведомления при записи видео</string>
+    <string name="Show_recording_status">Показывать состояние записи</string>
+    <string name="Set_up_a_notification">Настроить уведомление</string>
+    <string name="Notice_header">Заголовок уведомления</string>
+    <string name="Notification_text">Текст уведомления</string>
+    <string name="Add_a_button_to_pause_resume_the_recording">Добавить кнопку для паузы/возобновления записи</string>
+    <string name="Add_a_button_to_stop_recording">Добавить кнопку для остановки записи</string>
+    <string name="About_the_application">О приложении</string>
+    <string name="Application_version">Версия приложения</string>
+    <string name="Source_code">Исходный код</string>
+    <string name="Write_developer">Написать разработчику</string>
+    <string name="Privacy_policy">Политика конфиденциальности</string>
+    <string name="Terms_of_use">Условия использования</string>
+</resources>

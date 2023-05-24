@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.xxmrk888ytxx.backgroundvideovoicerecord.App
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.AppComponent
 
-val Context.appComponent : AppComponent
+internal val Context.appComponent : AppComponent
     get() = when(this) {
         is App -> appComponent
         else -> applicationContext.appComponent

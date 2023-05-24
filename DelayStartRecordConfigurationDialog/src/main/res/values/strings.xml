@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Ok">Ok</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Date_not_setuped">Date not selected</string>
+    <string name="Seleted_date">Selected date</string>
+    <string name="Select_date">Selected date</string>
+    <string name="Time_not_setuped">Time not selected</string>
+    <string name="Selected_time">Selected time</string>
+    <string name="Select_time">Choose time</string>
+</resources>
