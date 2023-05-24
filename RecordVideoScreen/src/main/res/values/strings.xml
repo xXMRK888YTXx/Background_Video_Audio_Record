@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="Audio_record_permission_description">Audio Recording Permission</string>
+    <string name="Video_record_permission_description">Video Recording Permission</string>
     <string name="Post_notification_description">Permission to show notifications</string>
     <string name="Preview_not_avalible">Preview not available while recording</string>
     <string name="Audio_recording_is_started">Audio recording is started. Unable to start video recording as well</string>

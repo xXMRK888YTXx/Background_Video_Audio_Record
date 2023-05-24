@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="Audio_record_permission_description">Разрешение для записи аудио</string>
+    <string name="Video_record_permission_description">Разрешение для записи видео</string>
     <string name="Post_notification_description">Разрешение для показа уведомлений</string>
     <string name="Preview_not_avalible">Предпросмотр недоступен, во время записи</string>
     <string name="Audio_recording_is_started">Запущена запись аудио. Невозможно запустить ещё и запись видео</string>

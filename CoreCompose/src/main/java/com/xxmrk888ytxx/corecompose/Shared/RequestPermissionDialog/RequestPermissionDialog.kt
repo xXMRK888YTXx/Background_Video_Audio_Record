@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.xxmrk888ytxx.corecompose.R
 import com.xxmrk888ytxx.corecompose.Shared.GradientButton
 import com.xxmrk888ytxx.corecompose.Shared.StyleCard
 import com.xxmrk888ytxx.corecompose.Shared.models.RequestedPermissionModel
@@ -67,8 +68,8 @@ fun RequestPermissionDialog(permissions:ImmutableList<RequestedPermissionModel>,
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = if (it.isGranted) "Предоставлено"
-                                else "Предоставить",
+                                text = if (it.isGranted) stringResource(R.string.Granted)
+                                else stringResource(R.string.Grant),
                                 style = themeTypography.head,
                                 color = themeColors.primaryFontColor
                             )

@@ -9,4 +9,6 @@
     <string name="I_dont_accept">Не принимаю</string>
     <string name="Terms_of_Use">Условия использования</string>
     <string name="Privacy_policy">Политика кофендоциальности</string>
+    <string name="Granted">Предоставлено</string>
+    <string name="Grant">Предоставить</string>
 </resources>

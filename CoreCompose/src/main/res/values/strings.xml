@@ -9,4 +9,6 @@
     <string name="I_dont_accept">I dont accept</string>
     <string name="Terms_of_Use">Terms of Use</string>
     <string name="Privacy_policy">Privacy policy</string>
+    <string name="Granted">Granted</string>
+    <string name="Grant">Grant</string>
 </resources>
