@@ -2,11 +2,11 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.presentation
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -196,6 +196,17 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen, Interstiti
     }
 
     override fun showAd(key: String) {
+        if(!activityViewModel.isAllowShowAd) {
+            Log.i(LOG_TAG_FOR_AD,"Show ad request cancel")
+            return
+        }
+
+        Log.i(LOG_TAG_FOR_AD,"Show ad request")
         adMobManager.showInterstitialAd(key,this)
+        activityViewModel.adShowNotify()
+    }
+
+    companion object {
+        val LOG_TAG_FOR_AD = "InterstitialAdShower"
     }
 }
