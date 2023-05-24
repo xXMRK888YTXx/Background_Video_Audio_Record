@@ -4,14 +4,14 @@ package com.xxmrk888ytxx.audiorecordservice.models
  * [Ru]
  * Параметры для настройки сервиса
  *
- * @param tempRecordPath - Директория, в которой времено будет содержаться записываемый файл
+ * @param foregroundNotificationType - вид уведомления foreground сервиса
  */
 
 /**
  * [En]
  * Parameters for service setup
  *
- * @param tempRecordPath - Directory, which will temporarily contain the recorded file
+ * @param foregroundNotificationType - foreground service notification view
  */
 data class RecordAudioConfig(
     val foregroundNotificationType: ForegroundNotificationType
