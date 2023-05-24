@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.backgroundvideovoicerecord.presentation
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -9,6 +10,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.xxmrk888ytxx.backgroundvideovoicerecord.R
+import com.xxmrk888ytxx.backgroundvideovoicerecord.UseCases.OpenUrlUseCase.OpenUrlUseCase
 import com.xxmrk888ytxx.backgroundvideovoicerecord.utils.Const.VIDEO_URI_KEY
 import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.preferencesstorage.PreferencesStorage
@@ -18,7 +21,8 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 internal class ActivityViewModel @Inject constructor(
-    private val preferencesStorage: PreferencesStorage
+    private val preferencesStorage: PreferencesStorage,
+    private val openUrlUseCase: OpenUrlUseCase
 ) : ViewModel(),Navigator {
 
     //Privacy Policy and Terms Of use dialog
@@ -32,14 +36,18 @@ internal class ActivityViewModel @Inject constructor(
         }
     }
 
+    @SuppressLint("ResourceType")
     fun openPrivacyPolicy() {
-
+        openUrlUseCase.execute(R.string.privacy_policy_url)
     }
 
+    @SuppressLint("ResourceType")
     fun openTermsOfUse() {
-
+        openUrlUseCase.execute(R.string.terms_of_use_url)
     }
     //
+
+
 
     //Handler
     private val handler by lazy {

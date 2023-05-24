@@ -5,16 +5,18 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import com.xxmrk888ytxx.backgroundvideovoicerecord.R
+import com.xxmrk888ytxx.backgroundvideovoicerecord.UseCases.OpenUrlUseCase.OpenUrlUseCase
 import com.xxmrk888ytxx.settingsscreen.contracts.OpenActivityContract
 import javax.inject.Inject
 
 class OpenActivityContractImpl @Inject constructor(
-    private val context: Context
+    private val context: Context,
+    private val openUrlUseCase: OpenUrlUseCase
 ) : OpenActivityContract {
 
 
     override fun openSourceCode() {
-        //TODO()
+        openUrlUseCase.execute(context.getString(R.string.source_code_url))
     }
 
     override fun openEmailSender() {
@@ -33,23 +35,11 @@ class OpenActivityContractImpl @Inject constructor(
     }
 
     override fun openPrivacyPolicy() {
-        //TODO("Not yet implemented")
+        openUrlUseCase.execute(context.getString(R.string.privacy_policy_url))
     }
 
     override fun openTermsOfUse() {
-        //TODO("Not yet implemented")
-    }
-
-
-    private fun openUrl(url:String) {
-        try {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            context.startActivity(browserIntent)
-        }catch (e:Exception) {
-            Log.e(LOG_TAG,"Exception when try send ACTION_VIEW intent ${e.stackTraceToString()}")
-        }
+        openUrlUseCase.execute(context.getString(R.string.terms_of_use_url))
     }
 
     companion object {

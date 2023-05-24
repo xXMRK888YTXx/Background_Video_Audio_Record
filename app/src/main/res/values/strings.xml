@@ -8,4 +8,7 @@
     <string name="Choose_a_client">Choose a client</string>
     <string name="banner_key" translatable="false">ca-app-pub-6313040706847570/5762780106</string>
     <string name="ad_key">ca-app-pub-6313040706847570/9006206333</string>
+    <string name="source_code_url" translatable="false">https://github.com/xXMRK888YTXx/BackgroundVideoVoiceRecord</string>
+    <string name="privacy_policy_url" translatable="false">https://xxmrk888ytxx.github.io/backgroudAudioVideoRecorder_privacy.htm</string>
+    <string name="terms_of_use_url" translatable="false">https://xxmrk888ytxx.github.io/backgroudAudioVideoRecorder_terms.htm</string>
 </resources>
