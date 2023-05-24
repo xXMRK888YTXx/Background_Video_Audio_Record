@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">BackgroundVideo&amp;VoiceRecord</string>
+    <string name="app_name">Background video and audio recording</string>
     <string name="Sound_record">Audio</string>
     <string name="Record_video">Video</string>
     <string name="Settings">Settings</string>
