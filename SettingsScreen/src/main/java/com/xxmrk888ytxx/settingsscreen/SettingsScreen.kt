@@ -217,7 +217,7 @@ fun CameraMaxQualitySelectDialog(
         onCancel = settingsViewModel::hideCameraMaxQualitySelectDialogState,
         items = CameraMaxQuality.allCameraQualities.map {
             SelectDialogModel(
-                title = it::class.simpleName ?: "",
+                title = it.name,
                 isSelected = currentSelectedCameraMaxQuality == it.id,
                 onClick = { currentSelectedCameraMaxQuality = it.id }
             )
