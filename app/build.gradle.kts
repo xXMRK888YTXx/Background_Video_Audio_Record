@@ -3,7 +3,8 @@ plugins {
     id ("org.jetbrains.kotlin.android")
     id (Deps.Dagger.DaggerKaptPlugin)
     id (Deps.KolinSerialization.plugin)
-    //id (Deps.Firebase.crashlyticsPlugin)
+    id (Deps.GoogleServices.gmsServicePlugin)
+    id (Deps.Firebase.crashlyticsPlugin)
 }
 
 android {
@@ -93,9 +94,9 @@ dependencies {
     implementation(Deps.KolinSerialization.serialization)
 
     //Firebase
-//    implementation(platform(Deps.Firebase.FirebaseBom))
-//    implementation(Deps.Firebase.analytics)
-//    implementation(Deps.Firebase.crashlytics)
+    implementation(platform(Deps.Firebase.FirebaseBom))
+    implementation(Deps.Firebase.analytics)
+    implementation(Deps.Firebase.crashlytics)
 
     //Instrumental Test
     androidTestImplementation (Deps.InstrumentalTest.espresso)

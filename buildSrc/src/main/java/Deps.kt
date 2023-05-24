@@ -134,5 +134,10 @@ object Deps {
         const val crashlyticsPlugin = "com.google.firebase.crashlytics"
     }
 
+    object GoogleServices {
+        const val gmsServicePlugin = "com.google.gms.google-services"
+        const val gmsServiceClassPath = "com.google.gms:google-services:4.3.15"
+    }
+
 
 }

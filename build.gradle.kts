@@ -1,7 +1,8 @@
 buildscript {
     dependencies {
         classpath(Deps.KolinSerialization.classPath)
-        //classpath(Deps.Firebase.crashlyticsClassPath)
+        classpath(Deps.Firebase.crashlyticsClassPath)
+        classpath(Deps.GoogleServices.gmsServiceClassPath)
     }
 }
 plugins {
