@@ -81,6 +81,7 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen, Interstiti
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
         adMobManager.initAdmob()
+        activityViewModel.loadConsentForm(this)
         setContentWithAppThemeNavigatorInterstitialAdShower(
             appTheme = Themes.dark,
             navigator = activityViewModel,
