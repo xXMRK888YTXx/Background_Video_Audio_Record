@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.backgroundvideovoicerecord.presentation
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -11,6 +12,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.xxmrk888ytxx.admobmanager.ConsentFormLoader
+import com.xxmrk888ytxx.backgroundvideovoicerecord.BuildConfig
 import com.xxmrk888ytxx.backgroundvideovoicerecord.R
 import com.xxmrk888ytxx.backgroundvideovoicerecord.UseCases.OpenUrlUseCase.OpenUrlUseCase
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.MainActivity.Companion.LOG_TAG_FOR_AD
@@ -35,6 +38,47 @@ internal class ActivityViewModel @Inject constructor(
 
     private var currentShowAdCount = 0
         private set
+
+    private var isConsentChecked:Boolean = false
+
+    fun loadConsentForm(activity: Activity) {
+        if(isConsentChecked) return
+
+        isConsentChecked = true
+
+        val logTag = "ConsentFormLoader"
+
+        val loader = ConsentFormLoader.create(
+            activity,
+            BuildConfig.DEBUG,
+            true
+        )
+
+        loader.checkFormState(
+            onFormPrepared = {
+                Log.i(logTag, "onFormPrepared")
+
+                loader.loadAndShowForm(
+                    onSuccessLoad = {
+                        Log.i(logTag, "onSuccessLoad")
+                    },
+                    onLoadError = {
+                        Log.e(logTag, "onLoadError")
+
+                    },
+                    onDismissed = {
+                        Log.i(logTag, "onDismissed")
+                    }
+                )
+            },
+            onFormNotAvailable = {
+                Log.e(logTag, "onFormNotAvailable")
+            },
+            onError = {
+                Log.e(logTag, "onError")
+            }
+        )
+    }
 
     fun adShowNotify() {
         if(!isAllowShowAd) return
