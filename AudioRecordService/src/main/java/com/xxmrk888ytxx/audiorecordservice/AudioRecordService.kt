@@ -50,11 +50,11 @@ class AudioRecordService : Service(), AudioRecordServiceController {
         applicationContext.getDepsByApplication()
     }
 
-    private val notificationCommandReceiver:BroadcastReceiver by lazy {
+    private val notificationCommandReceiver: BroadcastReceiver by lazy {
         object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if(intent?.action != ServiceNotificationActions.AUDIO_RECORD_SERVICE_COMMAND_ACTION) return
-                when(intent.getStringExtra(ServiceNotificationActions.COMMAND_KEY)) {
+                if (intent?.action != ServiceNotificationActions.AUDIO_RECORD_SERVICE_COMMAND_ACTION) return
+                when (intent.getStringExtra(ServiceNotificationActions.COMMAND_KEY)) {
 
                     ServiceNotificationActions.STOP_RECORD_ACTION -> {
                         this@AudioRecordService.stopRecord()
@@ -117,9 +117,12 @@ class AudioRecordService : Service(), AudioRecordServiceController {
 
             startForeground(NOTIFICATION_ID, createNotification())
 
-            registerReceiver(notificationCommandReceiver, IntentFilter(
-                ServiceNotificationActions.AUDIO_RECORD_SERVICE_COMMAND_ACTION
-            ))
+            registerReceiver(
+                notificationCommandReceiver, IntentFilter(
+                    ServiceNotificationActions.AUDIO_RECORD_SERVICE_COMMAND_ACTION
+                ),
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) RECEIVER_EXPORTED else 0
+            )
 
             Log.i(LOG_TAG, "foreground started")
         }
@@ -224,20 +227,25 @@ class AudioRecordService : Service(), AudioRecordServiceController {
                     setContentText(foregroundType.text)
                     setSmallIcon(R.drawable.record)
                     setOnlyAlertOnce(true)
-                    if(foregroundType.isPauseResumeButtonActive) {
-                        when(_currentState.value) {
+                    if (foregroundType.isPauseResumeButtonActive) {
+                        when (_currentState.value) {
                             is RecordAudioState.Recording -> {
-                                addAction(ServiceNotificationActions.createActionForPauseRecord(
-                                    context = applicationContext
-                                ))
+                                addAction(
+                                    ServiceNotificationActions.createActionForPauseRecord(
+                                        context = applicationContext
+                                    )
+                                )
                             }
-                            else -> addAction(ServiceNotificationActions.createActionForResumeRecord(
-                                context = applicationContext
-                            ))
+
+                            else -> addAction(
+                                ServiceNotificationActions.createActionForResumeRecord(
+                                    context = applicationContext
+                                )
+                            )
                         }
                     }
 
-                    if(foregroundType.isStopRecordButtonEnabled) {
+                    if (foregroundType.isStopRecordButtonEnabled) {
                         addAction(
                             ServiceNotificationActions.createActionForStopRecord(
                                 context = applicationContext
@@ -268,20 +276,25 @@ class AudioRecordService : Service(), AudioRecordServiceController {
             )
             setSmallIcon(R.drawable.record)
             setOnlyAlertOnce(true)
-            if(config.isPauseResumeButtonActive) {
-                when(_currentState.value) {
+            if (config.isPauseResumeButtonActive) {
+                when (_currentState.value) {
                     is RecordAudioState.Recording -> {
-                        addAction(ServiceNotificationActions.createActionForPauseRecord(
-                            context = applicationContext
-                        ))
+                        addAction(
+                            ServiceNotificationActions.createActionForPauseRecord(
+                                context = applicationContext
+                            )
+                        )
                     }
-                    else -> addAction(ServiceNotificationActions.createActionForResumeRecord(
-                        context = applicationContext
-                    ))
+
+                    else -> addAction(
+                        ServiceNotificationActions.createActionForResumeRecord(
+                            context = applicationContext
+                        )
+                    )
                 }
             }
 
-            if(config.isStopRecordButtonEnabled) {
+            if (config.isStopRecordButtonEnabled) {
                 addAction(
                     ServiceNotificationActions.createActionForStopRecord(
                         context = applicationContext
@@ -327,7 +340,7 @@ class AudioRecordService : Service(), AudioRecordServiceController {
                         }
                     }
 
-                    if(isActive) {
+                    if (isActive) {
                         notificationManager.notify(
                             NOTIFICATION_ID,
                             createNotification()
@@ -343,7 +356,6 @@ class AudioRecordService : Service(), AudioRecordServiceController {
     private fun stopDurationObserver() {
         durationObserverScope.coroutineContext.cancelChildren()
     }
-
 
 
     companion object {

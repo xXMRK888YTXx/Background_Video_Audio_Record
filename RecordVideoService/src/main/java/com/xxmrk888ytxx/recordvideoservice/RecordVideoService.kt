@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.content.getSystemService
@@ -113,9 +114,14 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         Log.i(LOG_TAG, "onCreate")
 
         lifecycleRegistry.currentState = Lifecycle.State.RESUMED
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+
+        }
+
         registerReceiver(
             notificationCommandReceiver,
-            IntentFilter(ServiceNotificationActions.VIDEO_RECORD_SERVICE_COMMAND_ACTION)
+            IntentFilter(ServiceNotificationActions.VIDEO_RECORD_SERVICE_COMMAND_ACTION),
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) RECEIVER_EXPORTED else 0
         )
 
         videoRecordServiceScope.launch(Dispatchers.Main) {
