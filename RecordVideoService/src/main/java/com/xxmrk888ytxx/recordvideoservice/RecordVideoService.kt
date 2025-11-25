@@ -27,18 +27,21 @@ import com.xxmrk888ytxx.videorecorder.models.RecorderState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -65,10 +68,23 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     private val recordStateObserverScope = CoroutineScope(
         SupervisorJob() + Dispatchers.Default
     )
+
     //
+    private val recordNotificationStateObserverScope: CoroutineScope =
+        CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     //Recorder
     private var recorder: VideoRecorder? = null
+        get() = field
+        set(value) {
+            recordNotificationStateObserverScope.coroutineContext.cancelChildren()
+            if (value != null) {
+                recordNotificationStateObserverScope.launch {
+                    value.recordState.onEach { delay(200) }.collect { updateNotification() }
+                }
+            }
+            field = value
+        }
     //
 
 
@@ -98,7 +114,10 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     private val _currentState: MutableStateFlow<RecordVideoState> =
         MutableStateFlow(RecordVideoState.Idle)
 
-    override val currentState: Flow<RecordVideoState> = _currentState.asStateFlow()
+    override val currentState: Flow<RecordVideoState> = _currentState.asStateFlow().onEach {
+        Log.d("1", it.toString())
+    }
+
     //
 
     //Lifecycle
@@ -112,6 +131,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     override fun onCreate() {
         super.onCreate()
         Log.i(LOG_TAG, "onCreate")
+
 
         lifecycleRegistry.currentState = Lifecycle.State.RESUMED
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -146,6 +166,8 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
             stopRecord()
             recordStateObserverScope.cancel()
             videoRecordServiceScope.cancel()
+            recordNotificationStateObserverScope.cancel()
+
             notificationManager.cancel(NOTIFICATION_ID)
         }
 
@@ -183,8 +205,8 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         videoRecordServiceScope.launch {
             recorder?.run {
                 pauseRecord()
-            }
 
+            }
             Log.i(LOG_TAG, "pauseRecord")
         }
     }
@@ -221,28 +243,22 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     //
 
     //Record state observe
+    @OptIn(FlowPreview::class)
     private fun startRecordObserver() {
         recordStateObserverScope.cancelChillersAndLaunch {
-            val foregroundType = recordVideoParams.cameraConfig.first().foregroundNotificationType
             recorder?.run {
-                this.recordState.collect() { state ->
-                    _currentState.update {
-                        when (state) {
-                            is RecorderState.Recording -> RecordVideoState.Recording(state.currentRecordDuration)
+                recordState
+                    .collect() { state ->
+                        _currentState.update {
+                            when (state) {
+                                is RecorderState.Recording -> RecordVideoState.Recording(state.currentRecordDuration)
 
-                            is RecorderState.Paused -> RecordVideoState.Pause(state.currentRecordDuration)
+                                is RecorderState.Paused -> RecordVideoState.Pause(state.currentRecordDuration)
 
-                            else -> RecordVideoState.Idle
+                                else -> RecordVideoState.Idle
+                            }
                         }
                     }
-
-                    if (isActive) {
-                        notificationManager.notify(
-                            NOTIFICATION_ID,
-                            createNotification()
-                        )
-                    }
-                }
             }
         }
     }
@@ -265,20 +281,25 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
                     setContentText(foregroundType.text)
                     setSmallIcon(R.drawable.baseline_videocam_24)
                     setOnlyAlertOnce(true)
-                    if(foregroundType.isPauseResumeButtonActive) {
-                        when(_currentState.value) {
+                    if (foregroundType.isPauseResumeButtonActive) {
+                        when (_currentState.value) {
                             is RecordVideoState.Recording -> {
-                                addAction(ServiceNotificationActions.createActionForPauseRecord(
-                                    context = applicationContext
-                                ))
+                                addAction(
+                                    ServiceNotificationActions.createActionForPauseRecord(
+                                        context = applicationContext
+                                    )
+                                )
                             }
-                            else -> addAction(ServiceNotificationActions.createActionForResumeRecord(
-                                context = applicationContext
-                            ))
+
+                            else -> addAction(
+                                ServiceNotificationActions.createActionForResumeRecord(
+                                    context = applicationContext
+                                )
+                            )
                         }
                     }
 
-                    if(foregroundType.isStopRecordButtonEnabled) {
+                    if (foregroundType.isStopRecordButtonEnabled) {
                         addAction(
                             ServiceNotificationActions.createActionForStopRecord(
                                 context = applicationContext
@@ -309,20 +330,25 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
             )
             setSmallIcon(R.drawable.baseline_videocam_24)
             setOnlyAlertOnce(true)
-            if(foregroundType.isPauseResumeButtonActive) {
-                when(_currentState.value) {
+            if (foregroundType.isPauseResumeButtonActive) {
+                when (_currentState.value) {
                     is RecordVideoState.Recording -> {
-                        addAction(ServiceNotificationActions.createActionForPauseRecord(
-                            context = applicationContext
-                        ))
+                        addAction(
+                            ServiceNotificationActions.createActionForPauseRecord(
+                                context = applicationContext
+                            )
+                        )
                     }
-                    else -> addAction(ServiceNotificationActions.createActionForResumeRecord(
-                        context = applicationContext
-                    ))
+
+                    else -> addAction(
+                        ServiceNotificationActions.createActionForResumeRecord(
+                            context = applicationContext
+                        )
+                    )
                 }
             }
 
-            if(foregroundType.isStopRecordButtonEnabled) {
+            if (foregroundType.isStopRecordButtonEnabled) {
                 addAction(
                     ServiceNotificationActions.createActionForStopRecord(
                         context = applicationContext
@@ -331,14 +357,24 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
             }
         }
     }
+
+    private val mutex = Mutex()
+
+    private suspend fun updateNotification() = mutex.withLock {
+        notificationManager.notify(
+            NOTIFICATION_ID,
+            createNotification()
+        )
+    }
     //
 
     //Command Receiver
     private val notificationCommandReceiver: BroadcastReceiver by lazy {
         object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if(intent?.action != ServiceNotificationActions.VIDEO_RECORD_SERVICE_COMMAND_ACTION) return
-                when(intent.getStringExtra(ServiceNotificationActions.COMMAND_KEY)) {
+                Log.d("1", "onReceive ${intent.toString()}")
+                if (intent?.action != ServiceNotificationActions.VIDEO_RECORD_SERVICE_COMMAND_ACTION) return
+                when (intent.getStringExtra(ServiceNotificationActions.COMMAND_KEY)) {
 
                     ServiceNotificationActions.STOP_RECORD_ACTION -> {
                         this@RecordVideoService.stopRecord()
