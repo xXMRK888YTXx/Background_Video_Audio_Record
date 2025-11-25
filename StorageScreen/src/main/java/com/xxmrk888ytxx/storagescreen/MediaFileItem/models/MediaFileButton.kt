@@ -5,6 +5,6 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class MediaFileButton(
-    @IdRes val icon:Int,
+    @param:IdRes val icon:Int,
     val onClick:() -> Unit
 )

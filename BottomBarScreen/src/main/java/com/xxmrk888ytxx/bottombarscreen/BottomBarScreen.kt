@@ -37,10 +37,10 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BottomBarScreen(
-    bottomBarScreens:ImmutableList<BottomBarScreenModel>,
+    bottomBarScreens: ImmutableList<BottomBarScreenModel>,
     bannerAd: @Composable (() -> Unit)? = null
 ) {
-    val pager = rememberPagerState()
+    val pager = rememberPagerState { bottomBarScreens.size }
     val scope = rememberCoroutineScope()
 
     Scaffold(
@@ -60,7 +60,6 @@ fun BottomBarScreen(
         }
     ) {
         HorizontalPager(
-            pageCount = bottomBarScreens.size,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
@@ -79,9 +78,9 @@ fun BottomBarScreen(
 @SuppressLint("ResourceType")
 @Composable
 fun BottomBar(
-    bottomBarScreens:List<BottomBarScreenModel>,
-    currentPage:Int,
-    onScrollPage:(Int) -> Unit
+    bottomBarScreens: List<BottomBarScreenModel>,
+    currentPage: Int,
+    onScrollPage: (Int) -> Unit
 ) {
     BottomNavigation(
         backgroundColor = themeColors.bottomBarColor,
@@ -90,11 +89,13 @@ fun BottomBar(
             BottomNavigationItem(
                 selected = index == currentPage,
                 onClick = { onScrollPage(index) },
-                icon = { Icon(
-                    painter = painterResource(bottomBarScreenModel.icon),
-                    contentDescription = null,
-                    modifier = Modifier.size(themeDimensions.iconSize)
-                ) },
+                icon = {
+                    Icon(
+                        painter = painterResource(bottomBarScreenModel.icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(themeDimensions.iconSize)
+                    )
+                },
                 selectedContentColor = themeColors.bottomBarSelectedContentColor,
                 unselectedContentColor = themeColors.bottomBarUnselectedContentColor,
                 label = {

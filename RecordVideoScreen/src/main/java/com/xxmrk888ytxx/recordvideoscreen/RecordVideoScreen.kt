@@ -202,7 +202,7 @@ fun RecordVideoScreen(
                                 FlowColumn(
                                     Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
+                                    horizontalArrangement = Arrangement.Center
                                 ) {
                                     StyleIcon(
                                         painter = painterResource(R.drawable.baseline_block_24),
