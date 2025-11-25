@@ -1,14 +1,15 @@
+
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
     namespace = "com.xxmrk888ytxx.corecompose"
-    compileSdk = Config.compileSdk
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = Config.minSdk
+        minSdk = libs.versions.minSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -16,7 +17,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = Config.isR8ProGuardEnableForRelease
+            isMinifyEnabled = libs.versions.minifyEnabledRelease.get().toBoolean()
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -24,7 +25,7 @@ android {
         }
 
         debug {
-            isMinifyEnabled = Config.isR8ProGuardEnableForDebug
+            isMinifyEnabled = libs.versions.minifyEnabledDebug.get().toBoolean()
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -32,26 +33,26 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = Config.sourceCompatibility
-        targetCompatibility = Config.targetCompatibility
+        sourceCompatibility = JavaVersion.valueOf(libs.versions.javaCompatibilityVersion.get())
+        targetCompatibility = JavaVersion.valueOf(libs.versions.javaCompatibilityVersion.get())
     }
     kotlinOptions {
-        jvmTarget = Config.jvmTarget
+        jvmTarget = libs.versions.jvmTarget.get()
     }
     buildFeatures {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = Deps.Compose.ComposeKotlinCompiler
+        kotlinCompilerExtensionVersion = libs.versions.composeKotlinCompiler.get()
     }
 }
 
 dependencies {
-    api (project(Project.CoreAndroid))
-    api (platform(Deps.Compose.ComposeBom))
-    api (Deps.Compose.Ui)
-    api (Deps.Compose.Graphics)
-    api (Deps.Compose.ToolingPreview)
-    api (Deps.Compose.Material)
-    api (Deps.Compose.LifeCycle)
+    api (project(":CoreAndroid"))
+    api (platform(libs.compose.bom))
+    api (libs.compose.ui)
+    api (libs.compose.graphics)
+    api (libs.compose.tooling.preview)
+    api (libs.compose.material)
+    api (libs.compose.lifecycle)
 }

@@ -1,0 +1,146 @@
+
+[versions]
+mockk = "1.13.4"
+kotlin = "2.2.21"
+ksp = "2.2.21-2.0.4"
+composeKotlinCompiler = "1.4.5"
+lifecycle = "2.6.1"
+navigation = "2.5.3"
+systemUiController = "0.29.2-rc"
+junit = "1.1.4"
+espresso = "3.5.0"
+androidCore = "1.10.0"
+activityCompose = "1.7.0"
+viewModel = "2.6.0"
+dagger = "2.44"
+coroutines = "1.6.4"
+junit4 = "4.13.2"
+testng = "6.9.6"
+mockkJvm = "1.12.5"
+instrumentalTest = "1.5.0"
+testRunner = "1.5.1"
+coil = "2.2.2"
+dataStore = "1.0.0"
+room = "2.5.0"
+appCompat = "1.6.1"
+adMob = "21.4.0"
+media3 = "1.0.1"
+cameraX = "1.3.0-alpha06"
+materialDialogs = "0.9.0"
+kotlinSerialization = "1.9.0"
+kotlinSerializationPlugin="2.2.0"
+immutableCollection = "0.3.5"
+firebaseBom = "32.0.0"
+firebaseCrashlyticsGradle = "2.9.5"
+googleServices = "4.4.4"
+firebaseCrashlyticsPlugin = "3.0.6"
+androidGradlePlugin = "8.13.1"
+versionKotlinSerialization = "2.2.21"
+compileSdk = "33"
+minSdk = "26"
+minifyEnabledRelease = "true"
+minifyEnabledDebug = "false"
+javaCompatibilityVersion = "VERSION_17"
+jvmTarget = "17"
+packageName="com.xxmrk888ytxx.backgroundvideovoicerecord"
+
+[libraries]
+# Compose
+compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2023.04.00" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+compose-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-material = { group = "androidx.compose.material", name = "material" }
+compose-lifecycle = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
+compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+compose-system-ui-controller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "systemUiController" }
+
+# TestAndroid
+test-android-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
+test-android-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+test-android-mockk = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
+test-android-mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockk" }
+
+# AndroidX
+androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidCore" }
+androidx-lifecycle = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "viewModel" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+
+# ViewModel
+viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "viewModel" }
+viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "viewModel" }
+
+# Dagger
+dagger-core = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" }
+dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
+
+# Coroutines
+coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+
+# Test
+test-junit = { group = "junit", name = "junit", version.ref = "junit4" }
+test-mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+test-testng = { group = "org.testng", name = "testng", version.ref = "testng" }
+test-mockk-jvm-agent = { group = "io.mockk", name = "mockk-agent-jvm", version.ref = "mockkJvm" }
+
+# InstrumentalTest
+instrumental-test-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+instrumental-test-runner = { group = "androidx.test", name = "runner", version.ref = "testRunner" }
+instrumental-test-core = { group = "androidx.test", name = "core", version.ref = "instrumentalTest" }
+instrumental-test-junit = { group = "androidx.test.ext", name = "junit-ktx", version = "1.1.4" }
+instrumental-test-rules = { group = "androidx.test", name = "rules", version.ref = "instrumentalTest" }
+
+# Coil
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+
+# DataStore
+datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "dataStore" }
+
+# Room
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-test = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+
+# AppCompat
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appCompat" }
+appcompat-resources = { group = "androidx.appcompat", name = "appcompat-resources", version.ref = "appCompat" }
+
+# AdMob
+admob = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "adMob" }
+
+# Media3
+media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
+media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3" }
+
+# CameraX
+camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "cameraX" }
+camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraX" }
+camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraX" }
+camera-video = { group = "androidx.camera", name = "camera-video", version.ref = "cameraX" }
+camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraX" }
+camera-extensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "cameraX" }
+
+# MaterialDialog
+material-dialogs = { group = "io.github.vanpra.compose-material-dialogs", name = "datetime", version.ref = "materialDialogs" }
+
+# KotlinSerialization
+kotlin-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
+
+# ImmutableCollection
+immutable-collections = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "immutableCollection" }
+
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+
+[plugins]
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "versionKotlinSerialization" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
