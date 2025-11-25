@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.corecompose.Shared
 
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,7 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.xxmrk888ytxx.corecompose.R
@@ -48,8 +51,10 @@ fun YesNoButtons(
         ) {
             Text(
                 text = noButtonText,
+                maxLines = 1,
                 style = themeTypography.body,
-                color = themeColors.primaryFontColor
+                color = themeColors.primaryFontColor,
+                modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
             )
         }
 
@@ -69,7 +74,9 @@ fun YesNoButtons(
             Text(
                 text = yesButtonText,
                 style = themeTypography.body,
+                maxLines = 1,
                 color = themeColors.primaryFontColor,
+                modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE)
             )
         }
     }
