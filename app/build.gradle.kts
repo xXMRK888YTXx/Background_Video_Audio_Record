@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.room)
 }
 
 android {
@@ -50,11 +51,7 @@ android {
         compose = true
         buildConfig = true
     }
-//    kapt {
-//        arguments {
-//            arg("room.schemaLocation", "$projectDir/schemas")
-//        }
-//    }
+    room { schemaDirectory("$projectDir/schemas") }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -93,7 +90,6 @@ dependencies {
     implementation(libs.kotlin.serialization.json)
 
     //Firebase
-    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
 
