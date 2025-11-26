@@ -134,10 +134,6 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
 
 
         lifecycleRegistry.currentState = Lifecycle.State.RESUMED
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-
-        }
-
         registerReceiver(
             notificationCommandReceiver,
             IntentFilter(ServiceNotificationActions.VIDEO_RECORD_SERVICE_COMMAND_ACTION),
