@@ -25,13 +25,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 import javax.inject.Provider
 
 internal class ActivityViewModel @Inject constructor(
     private val preferencesStorage: PreferencesStorage,
     private val openUrlUseCase: OpenUrlUseCase
-) : ViewModel(),Navigator {
+) : ViewModel(), Navigator {
 
     internal var isAllowShowAd = true
         private set
@@ -39,10 +41,10 @@ internal class ActivityViewModel @Inject constructor(
     private var currentShowAdCount = 0
         private set
 
-    private var isConsentChecked:Boolean = false
+    private var isConsentChecked: Boolean = false
 
     fun loadConsentForm(activity: Activity) {
-        if(isConsentChecked) return
+        if (isConsentChecked) return
 
         isConsentChecked = true
 
@@ -81,12 +83,12 @@ internal class ActivityViewModel @Inject constructor(
     }
 
     fun adShowNotify() {
-        if(!isAllowShowAd) return
+        if (!isAllowShowAd) return
         currentShowAdCount += 1
 
-        if(currentShowAdCount >= MAX_SHOW_AD_IN_TIME_SPAN) {
+        if (currentShowAdCount >= MAX_SHOW_AD_IN_TIME_SPAN) {
             isAllowShowAd = false
-            Log.i(LOG_TAG_FOR_AD,"Ad lock active")
+            Log.i(LOG_TAG_FOR_AD, "Ad lock active")
 
             viewModelScope.launch(Dispatchers.Default) {
                 withTimeoutOrNull(TIME_SPAN) {
@@ -95,7 +97,7 @@ internal class ActivityViewModel @Inject constructor(
                     }
                 }
 
-                Log.i(LOG_TAG_FOR_AD,"Ad lock cancel")
+                Log.i(LOG_TAG_FOR_AD, "Ad lock cancel")
                 isAllowShowAd = true
                 currentShowAdCount = 0
             }
@@ -104,13 +106,15 @@ internal class ActivityViewModel @Inject constructor(
     }
 
     //Privacy Policy and Terms Of use dialog
-    private val isNeedShowPrivacyPolicyAndTermsOfUseDialogKey = booleanPreferencesKey("isNeedShowPrivacyPolicyAndTermsOfUseDialogKey")
+    private val isNeedShowPrivacyPolicyAndTermsOfUseDialogKey =
+        booleanPreferencesKey("isNeedShowPrivacyPolicyAndTermsOfUseDialogKey")
 
-    val isNeedShowPrivacyPolicyAndTermsOfUseDialogState = preferencesStorage.getProperty(isNeedShowPrivacyPolicyAndTermsOfUseDialogKey,true)
+    val isNeedShowPrivacyPolicyAndTermsOfUseDialogState =
+        preferencesStorage.getProperty(isNeedShowPrivacyPolicyAndTermsOfUseDialogKey, true)
 
     fun hidePrivacyPolicyAndTermsOfUseDialog() {
         viewModelScope.launch(Dispatchers.IO) {
-            preferencesStorage.writeProperty(isNeedShowPrivacyPolicyAndTermsOfUseDialogKey,false)
+            preferencesStorage.writeProperty(isNeedShowPrivacyPolicyAndTermsOfUseDialogKey, false)
         }
     }
 
@@ -126,7 +130,6 @@ internal class ActivityViewModel @Inject constructor(
     //
 
 
-
     //Handler
     private val handler by lazy {
         Handler(Looper.getMainLooper())
@@ -135,14 +138,13 @@ internal class ActivityViewModel @Inject constructor(
 
     //Navigator
 
-    var navController:NavController? = null
+    var navController: NavController? = null
         internal set
 
     override fun toVideoPlayerScreen(videoUri: Uri) {
         handler.post {
-            navController?.navigateWithData(Screen.VideoPlayerScreen) {
-                putString(VIDEO_URI_KEY,videoUri.toString())
-            }
+            val encodedUrl = URLEncoder.encode(videoUri.toString(), StandardCharsets.UTF_8.toString())
+            navController?.navigate("${Screen.VideoPlayerScreen.route}/$encodedUrl")
         }
     }
     //
@@ -155,15 +157,6 @@ internal class ActivityViewModel @Inject constructor(
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return activityViewModel.get() as T
         }
-    }
-
-
-    private fun NavController.navigateWithData(route:Screen,data:Bundle.() -> Unit) {
-        navigate(route.route) { launchSingleTop = true }
-
-        val dataBundle = Bundle().apply(data)
-
-        getBackStackEntry(route.route).arguments?.putAll(dataBundle)
     }
 
     companion object {

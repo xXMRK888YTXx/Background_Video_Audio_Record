@@ -15,9 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.xxmrk888ytxx.admobmanager.AdMobBanner
 import com.xxmrk888ytxx.admobmanager.AdMobManager
 import com.xxmrk888ytxx.backgroundvideovoicerecord.R
@@ -117,7 +119,12 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen, Interstiti
                     )
                 }
 
-                composable(Screen.VideoPlayerScreen.route) {
+                composable(
+                    route = "${Screen.VideoPlayerScreen.route}/{$VIDEO_URI_KEY}",
+                    arguments = listOf(
+                        navArgument(VIDEO_URI_KEY) { NavType.StringType }
+                    )
+                ) {
                     val uri = it.arguments?.getString(VIDEO_URI_KEY) ?: return@composable
 
 
