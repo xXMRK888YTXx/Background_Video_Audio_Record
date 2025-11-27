@@ -22,7 +22,7 @@ import androidx.annotation.IdRes
  * @param isEnable - parameter is responsible for whether the element is available
  * @param isVisible - the parameter is responsible for whether the element has been seen
  */
-internal sealed class SettingsParamType(
+sealed class SettingsParamType(
     open val text:String,
     @IdRes open val icon:Int,
     open val isEnable:Boolean,

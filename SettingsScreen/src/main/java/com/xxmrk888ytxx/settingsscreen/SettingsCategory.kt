@@ -24,8 +24,8 @@ import com.xxmrk888ytxx.settingsscreen.models.SettingsParamType
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-internal fun SettingsCategory(
-    categoryName: String,
+fun SettingsCategory(
+    categoryName: String?,
     settingsParams: ImmutableList<SettingsParamType>,
 ) {
     Column(
@@ -33,13 +33,16 @@ internal fun SettingsCategory(
             .fillMaxWidth()
             .padding(10.dp)
     ) {
-        Text(
-            text = categoryName,
-            color = themeColors.secondFontColor,
-            style = themeTypography.settingCategory
-        )
 
-        Spacer(Modifier.height(themeDimensions.paddingBetweenLabelAndSettingsField))
+        if (categoryName != null) {
+            Text(
+                text = categoryName,
+                color = themeColors.secondFontColor,
+                style = themeTypography.settingCategory
+            )
+
+            Spacer(Modifier.height(themeDimensions.paddingBetweenLabelAndSettingsField))
+        }
 
         settingsParams.forEachIndexed { index, param ->
             val shape =

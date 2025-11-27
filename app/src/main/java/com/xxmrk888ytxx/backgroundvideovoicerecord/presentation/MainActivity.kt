@@ -22,6 +22,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.xxmrk888ytxx.admobmanager.AdMobBanner
 import com.xxmrk888ytxx.admobmanager.AdMobManager
+import com.xxmrk888ytxx.autoexporttoexternalstoragescreen.AutoExportToExternalStorageScreen
+import com.xxmrk888ytxx.autoexporttoexternalstoragescreen.AutoExportToExternalStorageViewModel
 import com.xxmrk888ytxx.backgroundvideovoicerecord.R
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.theme.Themes
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.theme.setContentWithAppThemeNavigatorInterstitialAdShower
@@ -74,6 +76,9 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen, Interstiti
     lateinit var settingsScreenViewModel: Provider<SettingsViewModel>
 
     @Inject
+    lateinit var autoExportToExternalStorageScreen: Provider<AutoExportToExternalStorageViewModel>
+
+    @Inject
     lateinit var adMobManager: AdMobManager
 
     private val activityViewModel by viewModels<ActivityViewModel> { activityViewModelFactory }
@@ -92,9 +97,9 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen, Interstiti
             val navController = rememberNavController()
 
             val agreeDialogState by
-                activityViewModel.isNeedShowPrivacyPolicyAndTermsOfUseDialogState.collectAsStateWithLifecycle(
-                    initialValue = false
-                )
+            activityViewModel.isNeedShowPrivacyPolicyAndTermsOfUseDialogState.collectAsStateWithLifecycle(
+                initialValue = false
+            )
 
             LaunchedEffect(key1 = navController, block = {
                 activityViewModel.navController = navController
@@ -139,11 +144,13 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen, Interstiti
                 }
 
                 composable(route = Screen.AutoExportToExternalStorageScreen.route) {
-
+                    AutoExportToExternalStorageScreen(
+                        autoExportToExternalStorageViewModel = composeViewModel { autoExportToExternalStorageScreen.get() }
+                    )
                 }
             }
 
-            if(agreeDialogState) {
+            if (agreeDialogState) {
                 AgreeDialog(
                     openPrivacyPolicySite = activityViewModel::openPrivacyPolicy,
                     openTermsOfUseSite = activityViewModel::openTermsOfUse,
@@ -208,13 +215,13 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen, Interstiti
     }
 
     override fun showAd(key: String) {
-        if(!activityViewModel.isAllowShowAd) {
-            Log.i(LOG_TAG_FOR_AD,"Show ad request cancel")
+        if (!activityViewModel.isAllowShowAd) {
+            Log.i(LOG_TAG_FOR_AD, "Show ad request cancel")
             return
         }
 
-        Log.i(LOG_TAG_FOR_AD,"Show ad request")
-        adMobManager.showInterstitialAd(key,this)
+        Log.i(LOG_TAG_FOR_AD, "Show ad request")
+        adMobManager.showInterstitialAd(key, this)
         activityViewModel.adShowNotify()
     }
 

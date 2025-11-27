@@ -6,4 +6,6 @@ interface Navigator {
     fun toVideoPlayerScreen(videoUri: Uri)
 
     fun toAutoExportToExternalStorageScreen()
+
+    fun backScreen()
 }

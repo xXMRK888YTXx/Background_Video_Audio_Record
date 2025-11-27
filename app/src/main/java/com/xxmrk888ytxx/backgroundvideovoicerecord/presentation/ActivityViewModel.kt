@@ -151,6 +151,10 @@ internal class ActivityViewModel @Inject constructor(
     override fun toAutoExportToExternalStorageScreen() {
         navController?.navigate(Screen.AutoExportToExternalStorageScreen.route)
     }
+
+    override fun backScreen() {
+        navController?.popBackStack()
+    }
     //
 
 

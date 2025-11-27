@@ -73,6 +73,7 @@ dependencies {
     implementation(project(":VideoPlayerScreen"))
     implementation(project(":SettingsScreen"))
     implementation(project(":AdmobManager"))
+    implementation(project(":AutoExportToExternalStorageScreen"))
 
     //Database
     implementation(libs.room.ktx)

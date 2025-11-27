@@ -43,6 +43,7 @@ javaCompatibilityVersion = "VERSION_17"
 jvmTarget = "17"
 packageName="com.xxmrk888ytxx.backgroundvideovoicerecord"
 composePlugin="2.2.21"
+material = "1.13.0"
 
 
 [libraries]
@@ -135,6 +136,7 @@ immutable-collections = { group = "org.jetbrains.kotlinx", name = "kotlinx-colle
 # Firebase
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx", version = "19.4.4" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx", version = "22.5.0" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
