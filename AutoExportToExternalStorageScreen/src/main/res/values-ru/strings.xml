@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="select_a_folder_to_export">Выбрать папку для экспорта</string>
+    <string name="the_export_folder_was_saved">Папка экспорта была сохранена</string>
+    <string name="the_export_folder_is_not_selected_or_the_selected_folder_cannot_be_used">Папка экспорта не выбрана или выбранная папка не может быть использована</string>
+    <string name="export">Экспорт</string>
+</resources>

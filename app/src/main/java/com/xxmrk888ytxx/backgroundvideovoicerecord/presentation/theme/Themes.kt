@@ -43,7 +43,8 @@ object Themes {
                 cancelButtonColor = Color(0xFF303F4F).copy(0.7f),
                 yesButtonColor = Color(0xFF5849C2),
                 primaryColor = Color(0xFF5849C2),
-                disableColor = Color(0xFF303F4F)
+                disableColor = Color(0xFF303F4F),
+                uncheckedSettingsSwitch = Color(0xFFE6E6E6),
             )
         override val gradients: Gradients
             get() = Gradients(
@@ -73,7 +74,7 @@ object Themes {
             get() = Typography(
                 bottomBar = TextStyle(
                     fontSize = 12.sp,
-                    fontWeight = FontWeight.W500
+                    fontWeight = W500
                 ),
                 recordCounter = TextStyle(
                     fontSize = 40.sp,
@@ -101,7 +102,7 @@ object Themes {
                 ),
                 settingCategory = TextStyle(
                     fontSize = 17.sp,
-                    fontWeight = FontWeight.W500
+                    fontWeight = W500
                 ),
                 settingsParam = TextStyle(
                     fontSize = 18.sp,

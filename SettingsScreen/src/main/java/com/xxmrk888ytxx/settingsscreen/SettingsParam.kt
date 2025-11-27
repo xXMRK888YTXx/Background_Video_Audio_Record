@@ -111,9 +111,9 @@ internal fun SettingsParam(
                                     enabled = params.isEnable,
                                     colors = SwitchDefaults.colors(
                                         checkedThumbColor = themeColors.primaryColor,
-                                        uncheckedThumbColor = themeColors.disableColor,
-                                        uncheckedTrackColor = themeColors.disableColor.copy(0.5f),
-                                        disabledCheckedThumbColor = themeColors.disableColor.copy(
+                                        uncheckedThumbColor = themeColors.uncheckedSettingsSwitch,
+                                        uncheckedTrackColor = themeColors.uncheckedSettingsSwitch.copy(0.5f),
+                                        disabledCheckedThumbColor = themeColors.uncheckedSettingsSwitch.copy(
                                             paramsAlpha
                                         )
                                     ),

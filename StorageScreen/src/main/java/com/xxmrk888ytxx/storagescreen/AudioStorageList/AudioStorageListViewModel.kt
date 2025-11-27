@@ -6,7 +6,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.ToastManager
-import com.xxmrk888ytxx.privatenote.presentation.ActivityLaunchContacts.FileParams
+import com.xxmrk888ytxx.coreandroid.ActivityContracts.FileParams
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ChangeAudioFileNameContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.DeleteAudioFileContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ExportAudioContract

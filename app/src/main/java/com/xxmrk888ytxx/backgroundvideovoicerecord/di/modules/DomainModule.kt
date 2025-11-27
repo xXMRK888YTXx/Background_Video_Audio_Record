@@ -15,6 +15,8 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecord
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecordRepository.VideoRecordRepositoryImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioForegroundNotificationConfig.AudioForegroundNotificationConfig
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioForegroundNotificationConfig.AudioForegroundNotificationConfigImpl
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.ExportManager.ExternalStorageExportManager
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.ExportManager.ExternalStorageExportManagerImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IgnoreBatteryOptimizationManager.IgnoreBatteryOptimizationManager
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IgnoreBatteryOptimizationManager.IgnoreBatteryOptimizationManagerImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.ToastManager.ToastManagerImpl
@@ -81,5 +83,10 @@ interface DomainModule {
     fun bindIgnoreBatteryOptimizationManager(
         IgnoreBatteryOptimizationManagerImpl: IgnoreBatteryOptimizationManagerImpl
     ) : IgnoreBatteryOptimizationManager
+
+    @Binds
+    fun bindsExternalStorageExportManager(
+        externalStorageExportManagerImpl: ExternalStorageExportManagerImpl
+    ) : ExternalStorageExportManager
 
 }

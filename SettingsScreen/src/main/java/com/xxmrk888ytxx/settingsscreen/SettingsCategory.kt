@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
@@ -24,7 +25,7 @@ import com.xxmrk888ytxx.settingsscreen.models.SettingsParamType
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun SettingsCategory(
+fun LazyItemScope.SettingsCategory(
     categoryName: String?,
     settingsParams: ImmutableList<SettingsParamType>,
 ) {
@@ -32,6 +33,7 @@ fun SettingsCategory(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
+            .animateItem()
     ) {
 
         if (categoryName != null) {
