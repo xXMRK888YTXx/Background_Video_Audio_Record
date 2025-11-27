@@ -137,6 +137,10 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen, Interstiti
                         }
                     )
                 }
+
+                composable(route = Screen.AutoExportToExternalStorageScreen.route) {
+
+                }
             }
 
             if(agreeDialogState) {

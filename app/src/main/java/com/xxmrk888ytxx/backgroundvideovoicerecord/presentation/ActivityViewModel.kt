@@ -147,6 +147,10 @@ internal class ActivityViewModel @Inject constructor(
             navController?.navigate("${Screen.VideoPlayerScreen.route}/$encodedUrl")
         }
     }
+
+    override fun toAutoExportToExternalStorageScreen() {
+        navController?.navigate(Screen.AutoExportToExternalStorageScreen.route)
+    }
     //
 
 
