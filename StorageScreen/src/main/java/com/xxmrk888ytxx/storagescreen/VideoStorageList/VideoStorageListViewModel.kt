@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.coreandroid.ToastManager
-import com.xxmrk888ytxx.privatenote.presentation.ActivityLaunchContacts.FileParams
+import com.xxmrk888ytxx.coreandroid.ActivityContracts.FileParams
 import com.xxmrk888ytxx.storagescreen.R
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.ChangeVideoFileNameContract
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.DeleteVideoFileContract

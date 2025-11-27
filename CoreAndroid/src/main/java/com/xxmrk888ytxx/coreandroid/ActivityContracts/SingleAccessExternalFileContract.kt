@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContract
+import com.xxmrk888ytxx.coreandroid.ActivityContracts.FileParams
 
 /**
  * Contract for create file in external storage and give access before device reboot.
