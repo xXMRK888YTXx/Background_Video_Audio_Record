@@ -45,6 +45,7 @@ object Themes {
                 primaryColor = Color(0xFF5849C2),
                 disableColor = Color(0xFF303F4F),
                 uncheckedSettingsSwitch = Color(0xFFE6E6E6),
+                dropDownColor = Color(0xFF2C3947)
             )
         override val gradients: Gradients
             get() = Gradients(

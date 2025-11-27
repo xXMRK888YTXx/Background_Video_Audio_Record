@@ -4,4 +4,11 @@
     <string name="the_export_folder_was_saved">The export folder was saved</string>
     <string name="the_export_folder_is_not_selected_or_the_selected_folder_cannot_be_used">The export folder is not selected or the selected folder cannot be used</string>
     <string name="export">Export</string>
+    <string name="_1_hour">1 hour</string>
+    <string name="_3_hours">3 hours</string>
+    <string name="_6_hours">6 hours</string>
+    <string name="_12_hours">12 hours</string>
+    <string name="_1_day">1 day</string>
+    <string name="automatically_export_new_audio_recordings_and_videos">Automatically export new audio recordings and videos</string>
+    <string name="scan_a_folder_once_a">Scan a folder once a</string>
 </resources>

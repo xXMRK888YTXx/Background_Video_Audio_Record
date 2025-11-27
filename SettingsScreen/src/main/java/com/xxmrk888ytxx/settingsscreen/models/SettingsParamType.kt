@@ -1,6 +1,7 @@
 package com.xxmrk888ytxx.settingsscreen.models
 
 import androidx.annotation.IdRes
+import kotlinx.collections.immutable.ImmutableList
 
 /**
  * [Ru]
@@ -23,10 +24,10 @@ import androidx.annotation.IdRes
  * @param isVisible - the parameter is responsible for whether the element has been seen
  */
 sealed class SettingsParamType(
-    open val text:String,
-    @IdRes open val icon:Int,
-    open val isEnable:Boolean,
-    open val isVisible:Boolean
+    open val text: String,
+    @IdRes open val icon: Int,
+    open val isEnable: Boolean,
+    open val isVisible: Boolean
 ) {
 
     /**
@@ -46,13 +47,13 @@ sealed class SettingsParamType(
      * item
      */
     data class Switch(
-        override val text:String,
-        @IdRes override val icon:Int,
+        override val text: String,
+        @IdRes override val icon: Int,
         val isSwitched: Boolean,
         override val isEnable: Boolean = true,
         override val isVisible: Boolean = true,
-        val onStateChanged:(Boolean) -> Unit
-    ) : SettingsParamType(text,icon,isEnable,isVisible)
+        val onStateChanged: (Boolean) -> Unit
+    ) : SettingsParamType(text, icon, isEnable, isVisible)
 
     /**
      * [Ru]
@@ -67,12 +68,12 @@ sealed class SettingsParamType(
      * @param onClick - action to be performed on click
      */
     data class Button(
-        override val text:String,
-        @IdRes override val icon:Int,
+        override val text: String,
+        @IdRes override val icon: Int,
         override val isEnable: Boolean = true,
         override val isVisible: Boolean = true,
-        val onClick:() -> Unit
-    ) : SettingsParamType(text,icon,isEnable,isVisible)
+        val onClick: () -> Unit
+    ) : SettingsParamType(text, icon, isEnable, isVisible)
 
     /**
      * [Ru]
@@ -89,8 +90,48 @@ sealed class SettingsParamType(
     data class Label(
         override val text: String,
         override val icon: Int,
-        val secondaryText:String,
+        val secondaryText: String,
         override val isEnable: Boolean = true,
         override val isVisible: Boolean = true,
-    ) : SettingsParamType(text,icon,isEnable,isVisible)
+    ) : SettingsParamType(text, icon, isEnable, isVisible)
+
+    /**
+     * [Ru]
+     * Данная модель представляет параметр настроек, с выпадающим меню
+     * Необходимые параметры помимо базовых:
+     * @param dropDownItems - Список отображаемых элементов элементов
+     * @param onShowDropDown - лямбда для показа выпадающего списка
+     * @param onHideDropDown - лямбда для скрытия выпадающего списка
+     * @param isDropDownVisible - значение которое показывает,виден ли выпадающий список
+     * @param showSelectedDropDownParam - значение которое будет показано, как выбранное
+     */
+
+    /**
+     * [En]
+     * This model represents the settings option, with a drop-down menu
+     * Required parameters in addition to the basic ones:
+     * @param dropDownItems - List of item items to display
+     * @param onShowDropDown - lambda for showing dropdown list
+     * @param onHideDropDown - lambda to hide the dropdown list
+     * @param isDropDownVisible - a value that indicates whether the dropdown list is visible
+     * @param showSelectedDropDownParam - the value that will be shown as selected
+     */
+    data class DropDown(
+        override val text: String,
+        override val icon: Int,
+        val dropDownItems: ImmutableList<DropDownItem>,
+        val onShowDropDown: () -> Unit,
+        val onHideDropDown: () -> Unit,
+        val isDropDownVisible: Boolean,
+        val showSelectedDropDownParam: String,
+        val hideDropDownAfterSelect: Boolean = false,
+        override val isEnable: Boolean = true,
+        override val isVisible: Boolean = true
+    ) : SettingsParamType(text, icon, isEnable, isVisible) {
+
+        data class DropDownItem(
+            val text: String,
+            val onClick: () -> Unit
+        )
+    }
 }

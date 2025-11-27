@@ -4,9 +4,11 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.autoexporttoexternalstoragescreen.contract.ManageExportToExternalStorageSettingContract
+import com.xxmrk888ytxx.autoexporttoexternalstoragescreen.model.ScanFolderTime
 import com.xxmrk888ytxx.autoexporttoexternalstoragescreen.model.ScreenState
 import com.xxmrk888ytxx.coreandroid.ToastManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -19,12 +21,25 @@ class AutoExportToExternalStorageViewModel @Inject constructor(
     private val toastManager: ToastManager
 ) : ViewModel() {
 
+    private val isDropDownVisible = MutableStateFlow(false)
+
     internal val screenState = combine(
-        manageExportToExternalStorageSettingContract.isExportEnabled,
-        manageExportToExternalStorageSettingContract.isExportFolderSelected
-    ) { isExportEnabled, isExportFolderSelected ->
-        ScreenState(isExportEnabled, isExportFolderSelected)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ScreenState())
+        manageExportToExternalStorageSettingContract.externalStorageExportParams,
+        isDropDownVisible
+    ) { externalStorageExportParams, isDropDownVisible ->
+        ScreenState(
+            isExportEnabled = externalStorageExportParams.isExportEnabled,
+            isExportFolderSelected = externalStorageExportParams.isExportFolderSelected,
+            scanFolderTime = externalStorageExportParams.scanFolderTime,
+            isAutoExportAfterCreateNewRecordEnabled = externalStorageExportParams.isAutoExportAfterCreateNewRecordEnabled,
+            isDropDownVisible = isDropDownVisible
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        ScreenState()
+    )
+
 
     internal fun onExportFolderSelect(folderUri: Uri?) {
         if (folderUri == null) {
@@ -46,6 +61,27 @@ class AutoExportToExternalStorageViewModel @Inject constructor(
 
     internal fun switchExportState() {
         viewModelScope.launch { manageExportToExternalStorageSettingContract.changeExportState(!screenState.value.isExportEnabled) }
+    }
+
+    internal fun onScanFolderTimeChanged(newTime: ScanFolderTime) {
+        viewModelScope.launch {
+            manageExportToExternalStorageSettingContract.changeScanFolderTime(
+                newTime
+            )
+        }
+    }
+
+    internal fun onDropDownStateChanged(newState: Boolean) {
+        isDropDownVisible.value = newState
+    }
+
+
+    internal fun onAutoExportAfterCreateNewRecordStateChanged() {
+        viewModelScope.launch {
+            manageExportToExternalStorageSettingContract.changeAutoExportAfterCreateNewRecordState(
+                !screenState.value.isAutoExportAfterCreateNewRecordEnabled
+            )
+        }
     }
 
 

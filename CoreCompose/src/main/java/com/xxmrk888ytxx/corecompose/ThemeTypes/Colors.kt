@@ -20,5 +20,6 @@ data class Colors(
     val yesButtonColor: Color,
     val primaryColor: Color,
     val disableColor: Color,
-    val uncheckedSettingsSwitch: Color
+    val uncheckedSettingsSwitch: Color,
+    val dropDownColor: Color
 )
