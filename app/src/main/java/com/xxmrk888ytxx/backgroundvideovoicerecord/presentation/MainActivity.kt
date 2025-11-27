@@ -5,9 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -89,6 +92,7 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen, Interstiti
         appComponent.inject(this)
         adMobManager.initAdmob()
         activityViewModel.loadConsentForm(this)
+        enableEdgeToEdge()
         setContentWithAppThemeNavigatorInterstitialAdShower(
             appTheme = Themes.dark,
             navigator = activityViewModel,
@@ -105,58 +109,62 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen, Interstiti
                 activityViewModel.navController = navController
             })
 
-            NavHost(
-                navController = navController,
-                startDestination = Screen.MainScreen.route,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(themeColors.background)
+            Box(
+                modifier = Modifier.fillMaxSize().background(themeColors.background)
             ) {
-                composable(Screen.MainScreen.route) {
-                    BottomBarScreen(
-                        bottomBarScreens = bottomScreens,
-                        bannerAd = {
-                            AdMobBanner(
-                                adMobKey = stringResource(R.string.banner_key),
-                                background = themeColors.background
-                            )
-                        }
-                    )
-                }
-
-                composable(
-                    route = "${Screen.VideoPlayerScreen.route}/{$VIDEO_URI_KEY}",
-                    arguments = listOf(
-                        navArgument(VIDEO_URI_KEY) { NavType.StringType }
-                    )
+                NavHost(
+                    navController = navController,
+                    startDestination = Screen.MainScreen.route,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .systemBarsPadding()
                 ) {
-                    val uri = it.arguments?.getString(VIDEO_URI_KEY) ?: return@composable
+                    composable(Screen.MainScreen.route) {
+                        BottomBarScreen(
+                            bottomBarScreens = bottomScreens,
+                            bannerAd = {
+                                AdMobBanner(
+                                    adMobKey = stringResource(R.string.banner_key),
+                                    background = themeColors.background
+                                )
+                            }
+                        )
+                    }
+
+                    composable(
+                        route = "${Screen.VideoPlayerScreen.route}/{$VIDEO_URI_KEY}",
+                        arguments = listOf(
+                            navArgument(VIDEO_URI_KEY) { NavType.StringType }
+                        )
+                    ) {
+                        val uri = it.arguments?.getString(VIDEO_URI_KEY) ?: return@composable
 
 
-                    this@MainActivity.showAd(getString(R.string.ad_key))
+                        this@MainActivity.showAd(getString(R.string.ad_key))
 
-                    VideoPlayerScreen(
-                        modifier = Modifier.fillMaxSize(),
-                        videoPlayerViewModel = composeViewModel() {
-                            videoPlayerViewModel.create(uri.toUri())
-                        }
-                    )
+                        VideoPlayerScreen(
+                            modifier = Modifier.fillMaxSize(),
+                            videoPlayerViewModel = composeViewModel() {
+                                videoPlayerViewModel.create(uri.toUri())
+                            }
+                        )
+                    }
+
+                    composable(route = Screen.AutoExportToExternalStorageScreen.route) {
+                        AutoExportToExternalStorageScreen(
+                            autoExportToExternalStorageViewModel = composeViewModel { autoExportToExternalStorageScreen.get() }
+                        )
+                    }
                 }
 
-                composable(route = Screen.AutoExportToExternalStorageScreen.route) {
-                    AutoExportToExternalStorageScreen(
-                        autoExportToExternalStorageViewModel = composeViewModel { autoExportToExternalStorageScreen.get() }
+                if (agreeDialogState) {
+                    AgreeDialog(
+                        openPrivacyPolicySite = activityViewModel::openPrivacyPolicy,
+                        openTermsOfUseSite = activityViewModel::openTermsOfUse,
+                        onConfirm = activityViewModel::hidePrivacyPolicyAndTermsOfUseDialog,
+                        onCancel = this@MainActivity::finish
                     )
                 }
-            }
-
-            if (agreeDialogState) {
-                AgreeDialog(
-                    openPrivacyPolicySite = activityViewModel::openPrivacyPolicy,
-                    openTermsOfUseSite = activityViewModel::openTermsOfUse,
-                    onConfirm = activityViewModel::hidePrivacyPolicyAndTermsOfUseDialog,
-                    onCancel = this@MainActivity::finish
-                )
             }
         }
     }
