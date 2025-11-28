@@ -19,6 +19,7 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.UseCaseModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.WorkerDepsModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.MainActivity
 import com.xxmrk888ytxx.recordvideoservice.RecordVideoParams
+import com.xxmrk888ytxx.worker.contract.AllRecordAutoExportWorkerWork
 import com.xxmrk888ytxx.worker.contract.NotificationInfoProviderContract
 import com.xxmrk888ytxx.worker.contract.SingleFileExportWorkerWork
 import com.xxmrk888ytxx.worker.contract.WorkerDeps
@@ -61,4 +62,6 @@ internal interface AppComponent : WorkerDeps {
     override val notificationInfoProviderContract: NotificationInfoProviderContract
 
     override val singleFileExportWorkerWork: SingleFileExportWorkerWork
+
+    override val allRecordAutoExportWorkerWork: AllRecordAutoExportWorkerWork
 }

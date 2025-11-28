@@ -45,6 +45,11 @@ class ExternalStorageExportManagerImpl @Inject constructor(
         if (isEnabled == exportConfig.first().isExportEnabled) return@doAction
 
         preferencesStorage.writeProperty(isExportEnabledPreferencesKey, isEnabled)
+
+        when(isEnabled) {
+            true -> enableAutoExport()
+            false -> disableAutoExport()
+        }
     }
 
     override suspend fun updateExportFolderPath(folderUri: String): Result<Unit> = doAction {
@@ -53,6 +58,17 @@ class ExternalStorageExportManagerImpl @Inject constructor(
 
     override suspend fun updateScanFolderTimeMills(newTimeInMills: Long): Result<Unit> = doAction {
         preferencesStorage.writeProperty(scanFolderTimePreferencesKey, newTimeInMills)
+        enableAutoExport()
+    }
+
+    private suspend fun enableAutoExport() {
+        val exportConfig = exportConfig.first()
+        if (!exportConfig.isExportEnabled) return
+        workManagerController.enableWorkerForPeriodicallyExportRecordAndVideoToExternalStorage(exportConfig.scanFolderTimeMills)
+    }
+
+    private suspend fun disableAutoExport() {
+        workManagerController.disableWorkerForPeriodicallyExportRecordAndVideoToExternalStorage()
     }
 
     override suspend fun updateAutoExportAfterCreateNewRecordState(isEnabled: Boolean): Result<Unit> =

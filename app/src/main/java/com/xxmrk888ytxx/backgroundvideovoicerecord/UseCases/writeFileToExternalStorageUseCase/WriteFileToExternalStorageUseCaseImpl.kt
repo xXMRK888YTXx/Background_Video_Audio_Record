@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.backgroundvideovoicerecord.UseCases.ExportFileUseCase
+package com.xxmrk888ytxx.backgroundvideovoicerecord.UseCases.writeFileToExternalStorageUseCase
 
 import android.content.Context
 import android.net.Uri
@@ -10,16 +10,14 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.OutputStream
 import javax.inject.Inject
 
-class ExportFileUseCaseImpl @Inject constructor(
+class WriteFileToExternalStorageUseCaseImpl @Inject constructor(
     private val context: Context
-) : ExportFileUseCase {
+) : WriteFileToExternalStorageUseCase {
 
-    override suspend fun export(exportFile: File, outputPath: Uri) : Result<Unit> = withContext(Dispatchers.IO) {
-        Log.i(LOG_TAG,"start export")
+    override suspend fun write(exportFile: File, outputPath: Uri) : Result<Unit> = withContext(Dispatchers.IO) {
+        Log.i(LOG_TAG,"start write")
         var exportFileStream:BufferedInputStream? = null
         var outputFileStream: BufferedOutputStream? = null
 
@@ -35,10 +33,10 @@ class ExportFileUseCaseImpl @Inject constructor(
                 readerBytes = exportFileStream.read(buffer)
             }
 
-            Log.i(LOG_TAG,"export successful")
+            Log.i(LOG_TAG,"write successful")
             Result.success(Unit)
         }catch (e:Exception) {
-            Log.e(LOG_TAG,"error in export time ${e.stackTraceToString()}")
+            Log.e(LOG_TAG,"error in write time ${e.stackTraceToString()}")
             Result.failure(e)
         } finally {
             withContext(NonCancellable) {

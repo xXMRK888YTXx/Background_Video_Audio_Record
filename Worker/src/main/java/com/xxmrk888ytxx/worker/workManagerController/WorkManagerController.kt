@@ -6,7 +6,7 @@ import java.io.File
 interface WorkManagerController {
     fun runExportForSingleFile(fileFile: File,fileType: FileType): Result<Unit>
 
-    fun enableWorkerForPeriodicallyExportRecordAndVideoToExternalStorage(): Result<Unit>
+    fun enableWorkerForPeriodicallyExportRecordAndVideoToExternalStorage(repeatIntervalInMillis: Long): Result<Unit>
 
     fun disableWorkerForPeriodicallyExportRecordAndVideoToExternalStorage(): Result<Unit>
 }

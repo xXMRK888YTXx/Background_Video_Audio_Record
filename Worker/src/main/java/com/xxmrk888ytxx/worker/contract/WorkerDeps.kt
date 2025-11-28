@@ -4,4 +4,6 @@ interface WorkerDeps {
     val notificationInfoProviderContract: NotificationInfoProviderContract
 
     val singleFileExportWorkerWork: SingleFileExportWorkerWork
+
+    val allRecordAutoExportWorkerWork: AllRecordAutoExportWorkerWork
 }

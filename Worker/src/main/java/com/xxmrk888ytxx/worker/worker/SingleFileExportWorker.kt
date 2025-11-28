@@ -10,7 +10,7 @@ class SingleFileExportWorker internal constructor(
     params: WorkerParameters
 ) : BaseExportWorker(context, params) {
 
-    override val logTag: String = WORKER_NAME
+    override val logTag: String = SINGLE_FILE_WORKER_NAME
 
     private val singleFileExportWorkerWork: SingleFileExportWorkerWork by lazy { workerDeps.singleFileExportWorkerWork }
 
@@ -29,6 +29,6 @@ class SingleFileExportWorker internal constructor(
 
         const val FILE_TYPE_KEY = "FILE_TYPE_KEY"
 
-        const val WORKER_NAME = "SingleFileExportWorker"
+        const val SINGLE_FILE_WORKER_NAME = "SingleFileExportWorker"
     }
 }

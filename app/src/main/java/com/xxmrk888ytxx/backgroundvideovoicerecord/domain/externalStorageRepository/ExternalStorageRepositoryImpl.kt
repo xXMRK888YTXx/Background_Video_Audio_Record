@@ -1,9 +1,12 @@
 package com.xxmrk888ytxx.backgroundvideovoicerecord.domain.externalStorageRepository
 
+import android.content.Context
 import androidx.documentfile.provider.DocumentFile
+import java.io.InputStream
 
 private class ExternalStorageRepositoryImpl constructor(
-    private val rootFolder: DocumentFile
+    private val rootFolder: DocumentFile,
+    private val context: Context
 ) : ExternalStorageRepository {
     override val audioFolder: DocumentFile
         get() = rootFolder.findFile(AUDIO_FOLDER_NAME) ?: createFolder(AUDIO_FOLDER_NAME)
@@ -19,9 +22,13 @@ private class ExternalStorageRepositoryImpl constructor(
         return@runCatching parent.createFile(mineType, newFileName) ?: throw RuntimeException("Impossible create a file in ${parent.name} folder")
     }
 
+    override suspend fun openInputStream(file: DocumentFile): Result<InputStream> = runCatching {
+        return@runCatching context.contentResolver.openInputStream(file.uri) ?: throw RuntimeException("Impossible open input stream for ${file.name}")
+    }
+
     private fun createFolder(newFolderName: String): DocumentFile {
         return rootFolder.createDirectory(newFolderName)
-            ?: throw IllegalArgumentException("Impossible create new folder with name $newFolderName in export folder")
+            ?: throw IllegalArgumentException("Impossible create new folder with name $newFolderName in write folder")
     }
 
     companion object {
@@ -31,8 +38,8 @@ private class ExternalStorageRepositoryImpl constructor(
 }
 
 class Factory : ExternalStorageRepositoryFactory {
-    override fun createFromDocumentFile(rootFolder: DocumentFile): ExternalStorageRepository {
+    override fun createFromDocumentFile(rootFolder: DocumentFile,context: Context): ExternalStorageRepository {
         if (!rootFolder.exists()) throw IllegalArgumentException("rootFolder is not exists")
-        return ExternalStorageRepositoryImpl(rootFolder)
+        return ExternalStorageRepositoryImpl(rootFolder,context)
     }
 }

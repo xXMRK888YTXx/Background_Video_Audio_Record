@@ -33,6 +33,7 @@ abstract class BaseExportWorker internal constructor(
 
     protected suspend fun doAction(block: suspend () -> Unit) : Result {
         return withContext(Dispatchers.IO) {
+            Log.d(logTag,"$logTag started export")
             val result = runCatching { block() }
                 .onFailure {
                     Log.e(logTag,it.stackTraceToString())
@@ -40,6 +41,7 @@ abstract class BaseExportWorker internal constructor(
                         is FolderForExportRemovedException -> notificationInfoProviderContract.showFolderForExportRemovedNotification()
                     }
                 }
+            Log.d(logTag,"$logTag export finished")
             return@withContext when(result.isSuccess) {
                 true -> Result.success()
                 false -> Result.failure()

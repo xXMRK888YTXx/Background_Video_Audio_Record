@@ -3,7 +3,9 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.glue.worker
 import android.content.Context
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
-import com.xxmrk888ytxx.backgroundvideovoicerecord.UseCases.ExportFileUseCase.ExportFileUseCase
+import com.xxmrk888ytxx.backgroundvideovoicerecord.UseCases.exportFileUseCase.ExportFileType
+import com.xxmrk888ytxx.backgroundvideovoicerecord.UseCases.exportFileUseCase.ExportFileUseCase
+import com.xxmrk888ytxx.backgroundvideovoicerecord.UseCases.writeFileToExternalStorageUseCase.WriteFileToExternalStorageUseCase
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.externalStorageExportManager.ExternalStorageExportManager
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.externalStorageRepository.ExternalStorageRepositoryFactory
 import com.xxmrk888ytxx.coreandroid.toDateString
@@ -36,40 +38,22 @@ class SingleFileExportWorkerWorkImpl @Inject constructor(
             val externalStorageFolder =
                 DocumentFile.fromTreeUri(context, externalStorageFolderUri)!!
             val externalManagerRepository = try {
-                externalStorageRepositoryFactory.createFromDocumentFile(externalStorageFolder)
-            }catch (e: Exception) {
+                externalStorageRepositoryFactory.createFromDocumentFile(
+                    externalStorageFolder,
+                    context
+                )
+            } catch (_: Exception) {
                 throw FolderForExportRemovedException()
             }
 
-            val subFolderForFile = when (fileType) {
-                FileType.VIDEO -> externalManagerRepository.videoFolder
-                FileType.AUDIO -> externalManagerRepository.audioFolder
-            }
-            val externalStorageFile = externalManagerRepository.createFile(
-                subFolderForFile,
-                fileType.mineType,
-                provideNameForExportFile(fileForExport,fileType)
+            exportFileUseCase.export(
+                externalManagerRepository, fileForExport,
+                when (fileType) {
+                    FileType.VIDEO -> ExportFileType.VIDEO
+                    FileType.AUDIO -> ExportFileType.AUDIO
+                }
             ).getOrThrow()
-            exportFileUseCase.export(fileForExport, externalStorageFile.uri).getOrThrow()
         }
     }
 
-    private val FileType.mineType: String
-        get() = when (this) {
-            FileType.VIDEO -> "video/$fileExtension"
-            FileType.AUDIO -> "audio/$fileExtension"
-        }
-
-    private val FileType.fileExtension: String
-        get() = when (this) {
-            FileType.VIDEO -> "mp4"
-            FileType.AUDIO -> "mp3"
-        }
-
-    private fun provideNameForExportFile(fileForExport: File,fileType: FileType): String {
-        val lastModificationTime = fileForExport.lastModified()
-        val generatedExtraName = UUID.randomUUID().toString()
-
-        return "${lastModificationTime.toDateString(context)}-$generatedExtraName.${fileType.fileExtension}"
-    }
 }
