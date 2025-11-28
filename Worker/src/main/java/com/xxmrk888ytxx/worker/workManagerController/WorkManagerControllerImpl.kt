@@ -27,9 +27,10 @@ internal class WorkManagerControllerImpl(
 
         val worker = OneTimeWorkRequestBuilder<SingleFileExportWorker>()
             .setInputData(data)
+            .addTag(WORKER_NAME)
             .build()
 
-        workManager.enqueueUniqueWork(WORKER_NAME, ExistingWorkPolicy.APPEND,worker)
+        workManager.enqueue(worker)
     }
 
 

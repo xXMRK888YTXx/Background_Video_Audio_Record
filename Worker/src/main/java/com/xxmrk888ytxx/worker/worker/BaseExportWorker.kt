@@ -8,6 +8,7 @@ import androidx.work.WorkerParameters
 import com.xxmrk888ytxx.coredeps.DepsProvider.getDepsByApplication
 import com.xxmrk888ytxx.worker.contract.NotificationInfoProviderContract
 import com.xxmrk888ytxx.worker.contract.WorkerDeps
+import com.xxmrk888ytxx.worker.exception.FolderForExportRemovedException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -32,7 +33,13 @@ abstract class BaseExportWorker internal constructor(
 
     protected suspend fun doAction(block: suspend () -> Unit) : Result {
         return withContext(Dispatchers.IO) {
-            val result = runCatching { block() }.onFailure { Log.e(logTag,it.stackTraceToString()) }
+            val result = runCatching { block() }
+                .onFailure {
+                    Log.e(logTag,it.stackTraceToString())
+                    when(it) {
+                        is FolderForExportRemovedException -> notificationInfoProviderContract.showFolderForExportRemovedNotification()
+                    }
+                }
             return@withContext when(result.isSuccess) {
                 true -> Result.success()
                 false -> Result.failure()

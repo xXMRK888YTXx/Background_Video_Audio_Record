@@ -10,4 +10,6 @@
     <string name="export_worker">Export notification</string>
     <string name="the_export_is_currently_underway">В настоящее время идет экспорт.</string>
     <string name="do_not_close_the_app">Не закрывайте приложение</string>
+    <string name="the_folder_for_export_is_unavailable">Папка для экспорта не доступна</string>
+    <string name="specify_the_folder_to_export_again">Укажите папку для экспорта ещё раз</string>
 </resources>

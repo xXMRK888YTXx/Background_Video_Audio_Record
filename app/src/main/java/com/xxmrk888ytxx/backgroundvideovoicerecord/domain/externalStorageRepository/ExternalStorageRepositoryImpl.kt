@@ -32,7 +32,7 @@ private class ExternalStorageRepositoryImpl constructor(
 
 class Factory : ExternalStorageRepositoryFactory {
     override fun createFromDocumentFile(rootFolder: DocumentFile): ExternalStorageRepository {
-        if (!rootFolder.isDirectory) throw IllegalArgumentException("rootFolder must be a directory")
+        if (!rootFolder.exists()) throw IllegalArgumentException("rootFolder is not exists")
         return ExternalStorageRepositoryImpl(rootFolder)
     }
 }
