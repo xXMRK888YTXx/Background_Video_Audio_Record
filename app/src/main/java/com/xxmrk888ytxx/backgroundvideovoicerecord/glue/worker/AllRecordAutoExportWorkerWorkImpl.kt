@@ -94,14 +94,14 @@ class AllRecordAutoExportWorkerWorkImpl @Inject constructor(
 
     private suspend fun File.toMD5Hash(): MD5Hash {
         val md5Digest = MessageDigest.getInstance("MD5")
-        val fileBytes = inputStream().buffered().use { it.readBytes() }
+        val fileBytes = inputStream().buffered().use { it.readNBytes(1000) }
         return md5Digest.digest(fileBytes).toHexString()
     }
 
     private suspend fun DocumentFile.toMD5Hash(externalStorageRepository: ExternalStorageRepository): MD5Hash {
         val md5Digest = MessageDigest.getInstance("MD5")
         val fileBytes = externalStorageRepository.openInputStream(this).getOrThrow().buffered()
-            .use { it.readBytes() }
+            .use { it.readNBytes(1000) }
         return md5Digest.digest(fileBytes).toHexString()
     }
 
