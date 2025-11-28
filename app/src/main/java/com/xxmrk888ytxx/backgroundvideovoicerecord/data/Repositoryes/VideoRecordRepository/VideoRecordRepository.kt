@@ -7,13 +7,14 @@ import java.io.File
 
 interface VideoRecordRepository {
 
-    suspend fun addFileFromRecorded()
+    @Throws(IllegalStateException::class)
+    suspend fun addFileFromRecorded(): File
 
-    suspend fun getFileById(id:Long) : File?
+    suspend fun getFileById(id: Long): File?
 
-    suspend fun removeFile(id:Long)
+    suspend fun removeFile(id: Long)
 
     val fileList: Flow<List<VideoModel>>
 
-    suspend fun getFileForRecord() : File
+    suspend fun getFileForRecord(): File
 }

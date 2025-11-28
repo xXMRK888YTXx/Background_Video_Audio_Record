@@ -34,11 +34,14 @@ class VideoRecordRepositoryImpl @Inject constructor(
     private val _fileList = MutableStateFlow<List<VideoModel>>(emptyList())
     //
 
-    override suspend fun addFileFromRecorded() {
+    override suspend fun addFileFromRecorded(): File {
         if(fileForRecord.exists()) {
             val newFilePath = newFile
             fileForRecord.renameTo(newFilePath)
             loadNewFile(newFilePath)
+            return newFilePath
+        } else {
+            throw IllegalStateException("Folder for video records is not created")
         }
     }
 
