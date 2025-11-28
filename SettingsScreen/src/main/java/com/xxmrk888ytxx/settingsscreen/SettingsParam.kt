@@ -254,23 +254,9 @@ internal fun SettingsParam(
                         }
                     }
                 }
+
             }
 
         }
-
-        if (shape !is SettingsParamShape.BottomShape) {
-            Box(
-                contentAlignment = Alignment.BottomCenter,
-                modifier = Modifier.fillMaxHeight()
-            ) {
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(themeColors.disableColor.copy(0.7f))
-                        .height(1.dp)
-                )
-            }
-        }
-
     }
 }
