@@ -32,7 +32,7 @@ class SingleFileExportWorkerWorkImpl @Inject constructor(
             val fileForExport = File(filePath)
             val externalStorageFolderUri =
                 externalStorageExportManager.exportConfig.first().exportFolderUriString?.toUri()
-                    ?: throw IllegalStateException("External storage Uri is not provided")
+                    ?: throw FolderForExportRemovedException("External storage Uri is not provided")
             val externalStorageFolder =
                 DocumentFile.fromTreeUri(context, externalStorageFolderUri)!!
             val externalManagerRepository = try {
