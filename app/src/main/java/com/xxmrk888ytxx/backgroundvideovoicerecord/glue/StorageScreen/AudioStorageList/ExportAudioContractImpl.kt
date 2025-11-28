@@ -13,7 +13,7 @@ class ExportAudioContractImpl @Inject constructor(
 ) : ExportAudioContract {
 
     override suspend fun exportAudio(audioId: Long, outputPath: Uri): Result<Unit> {
-        val file = audioRecordRepository.getFileById(audioId.toInt()) ?: return Result.failure(FileNotFoundException())
+        val file = audioRecordRepository.getFileById(audioId) ?: return Result.failure(FileNotFoundException())
 
         return exportFileUseCase.export(file,outputPath)
     }

@@ -35,7 +35,7 @@ class AudioRecordRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getFileById(id: Int): File? = withContext(Dispatchers.IO) {
+    override suspend fun getFileById(id: Long): File? = withContext(Dispatchers.IO) {
         val file = File(audioDir,id.toString())
 
         return@withContext if(file.exists()) file else null

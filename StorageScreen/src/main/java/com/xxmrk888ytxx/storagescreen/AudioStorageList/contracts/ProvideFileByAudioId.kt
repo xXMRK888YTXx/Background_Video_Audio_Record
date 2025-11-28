@@ -12,5 +12,5 @@ import java.io.File
  */
 interface ProvideFileByAudioId {
 
-    suspend fun provide(id:Int) : File?
+    suspend fun provide(id: Long) : File?
 }

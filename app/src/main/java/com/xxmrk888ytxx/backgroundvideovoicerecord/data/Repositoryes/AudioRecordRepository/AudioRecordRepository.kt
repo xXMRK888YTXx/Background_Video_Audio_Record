@@ -18,7 +18,7 @@ interface AudioRecordRepository {
     @Throws(IllegalStateException::class)
     suspend fun addFileFromRecorded() : File
 
-    suspend fun getFileById(id:Int) : File?
+    suspend fun getFileById(id: Long) : File?
 
     suspend fun removeFile(id:Int)
 

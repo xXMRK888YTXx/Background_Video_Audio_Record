@@ -111,7 +111,7 @@ class AudioStorageListViewModel @AssistedInject constructor(
 
     fun showAudioDialogState(audio: AudioFileModel) {
         viewModelScope.launch(Dispatchers.IO) {
-            val audioFile = provideFileByAudioId.provide(audio.id.toInt()) ?: return@launch
+            val audioFile = provideFileByAudioId.provide(audio.id) ?: return@launch
             val player = playerFactoryContract.create(lockBlockerScreen::enable,lockBlockerScreen::cancel)
             player.prepare(audioFile)
             _dialogState.update { it.copy(
