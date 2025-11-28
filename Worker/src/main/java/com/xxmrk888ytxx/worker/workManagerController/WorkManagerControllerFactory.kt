@@ -4,5 +4,5 @@ import android.content.Context
 
 object WorkManagerControllerFactory {
 
-    fun createAndroid(context: Context) : WorkManagerController = WorkManagerControllerImpl(context)
+    fun create(context: Context) : WorkManagerController = WorkManagerControllerImpl(context)
 }

@@ -21,7 +21,7 @@ internal class WorkManagerControllerImpl(
         fileType: FileType
     ): Result<Unit> = runCatching {
         val data = Data.Builder()
-            .putString(SingleFileExportWorker.FILE_PATH_KEY,fileFile.absolutePath)
+            .putString(SingleFileExportWorker.FILE_FILE_KEY,fileFile.absolutePath)
             .putInt(SingleFileExportWorker.FILE_TYPE_KEY,fileType.id)
             .build()
 

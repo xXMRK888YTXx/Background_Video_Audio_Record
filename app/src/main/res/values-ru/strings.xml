@@ -7,4 +7,7 @@
     <string name="Storage">Хранилище</string>
     <string name="Choose_a_client">Выберете клиент</string>
     <string name="ad_key">ca-app-pub-6313040706847570/9006206333</string>
+    <string name="export_worker">Export notification</string>
+    <string name="the_export_is_currently_underway">В настоящее время идет экспорт.</string>
+    <string name="do_not_close_the_app">Не закрывайте приложение</string>
 </resources>

@@ -22,11 +22,14 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IgnoreBatteryOptimizat
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.ToastManager.ToastManagerImpl
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordServiceManager.VideoRecordServiceManager
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordServiceManager.VideoRecordServiceManagerImpl
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.externalStorageRepository.ExternalStorageRepositoryFactory
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.externalStorageRepository.Factory
 import com.xxmrk888ytxx.backgroundvideovoicerecord.glue.RecordVideoScreen.ManageCameraTypeContractImpl
 import com.xxmrk888ytxx.coreandroid.ToastManager
 import com.xxmrk888ytxx.recordvideoscreen.contract.ManageCameraTypeContract
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 
 @Module
 interface DomainModule {
@@ -88,5 +91,10 @@ interface DomainModule {
     fun bindsExternalStorageExportManager(
         externalStorageExportManagerImpl: ExternalStorageExportManagerImpl
     ) : ExternalStorageExportManager
+
+    companion object {
+        @Provides
+        fun bindsExternalStorageRepositoryFactory() : ExternalStorageRepositoryFactory = Factory()
+    }
 
 }

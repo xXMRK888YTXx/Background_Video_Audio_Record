@@ -24,11 +24,14 @@ class AudioRecordRepositoryImpl @Inject constructor(
 
     private val _fileList = MutableStateFlow(emptyList<AudioModel>())
 
-    override suspend fun addFileFromRecorded() {
+    override suspend fun addFileFromRecorded() : File {
         if(fileForRecord.exists()) {
             val newFilePath = newFile
             fileForRecord.renameTo(newFilePath)
             loadNewFile(newFilePath)
+            return newFilePath
+        } else {
+            throw IllegalStateException("Folder for audio records is not created")
         }
     }
 

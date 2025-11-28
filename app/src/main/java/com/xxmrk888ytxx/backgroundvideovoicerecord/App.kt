@@ -5,6 +5,7 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.di.DaggerAppComponent
 import com.xxmrk888ytxx.coreandroid.DepsProvider.DepsProviderApp
 import com.xxmrk888ytxx.coredeps.DepsProvider.DepsProvider
 import com.xxmrk888ytxx.coredeps.Exceptions.DepsProviderNotFoundDeps
+import com.xxmrk888ytxx.worker.contract.WorkerDeps
 import kotlin.reflect.KClass
 
 internal class App : Application(),DepsProvider {
@@ -17,7 +18,8 @@ internal class App : Application(),DepsProvider {
     private val depsMap: Map<KClass<*>, () -> Any> by lazy {
         mapOf(
             appComponent.recordAudioParams.toProvidedDeps(),
-            appComponent.recordVideoParams.toProvidedDeps()
+            appComponent.recordVideoParams.toProvidedDeps(),
+            (appComponent as WorkerDeps).toProvidedDeps()
         )
     }
 

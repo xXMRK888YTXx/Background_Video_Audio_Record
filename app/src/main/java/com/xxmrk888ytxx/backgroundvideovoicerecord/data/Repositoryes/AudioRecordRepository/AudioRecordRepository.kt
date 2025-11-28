@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.AudioRecor
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.AudioRecordRepository.models.AudioModel
 import kotlinx.coroutines.flow.Flow
 import java.io.File
+import kotlin.jvm.Throws
 
 /**
  * [Ru]
@@ -14,7 +15,8 @@ import java.io.File
  */
 interface AudioRecordRepository {
 
-    suspend fun addFileFromRecorded()
+    @Throws(IllegalStateException::class)
+    suspend fun addFileFromRecorded() : File
 
     suspend fun getFileById(id:Int) : File?
 

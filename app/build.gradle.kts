@@ -74,6 +74,7 @@ dependencies {
     implementation(project(":SettingsScreen"))
     implementation(project(":AdmobManager"))
     implementation(project(":AutoExportToExternalStorageScreen"))
+    implementation(project(":Worker"))
 
     //Database
     implementation(libs.room.ktx)
@@ -109,4 +110,7 @@ dependencies {
     testImplementation(libs.test.android.mockk.agent)
     testImplementation(libs.test.testng)
     testImplementation(libs.coroutines.test)
+
+    //DocumentFile Api
+    implementation(libs.document.file)
 }

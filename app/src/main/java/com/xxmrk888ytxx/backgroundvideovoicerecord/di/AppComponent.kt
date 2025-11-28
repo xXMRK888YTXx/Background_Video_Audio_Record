@@ -16,8 +16,12 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.ScopeModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.SettingsScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.StorageScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.UseCaseModule
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.WorkerDepsModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.MainActivity
 import com.xxmrk888ytxx.recordvideoservice.RecordVideoParams
+import com.xxmrk888ytxx.worker.contract.NotificationInfoProviderContract
+import com.xxmrk888ytxx.worker.contract.SingleFileExportWorkerWork
+import com.xxmrk888ytxx.worker.contract.WorkerDeps
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Lazy
@@ -37,12 +41,12 @@ import dagger.Lazy
         SettingsScreenModule::class,
         UseCaseModule::class,
         AdManagerModule::class,
-        AutoExportToExternalStorageScreenModule::class
+        AutoExportToExternalStorageScreenModule::class,
+        WorkerDepsModule::class
     ]
 )
 @AppScope
-internal interface AppComponent {
-
+internal interface AppComponent : WorkerDeps {
     fun inject(mainActivity: MainActivity)
 
     @Component.Factory
@@ -53,4 +57,8 @@ internal interface AppComponent {
     val recordAudioParams:Lazy<RecordAudioParams>
 
     val recordVideoParams:Lazy<RecordVideoParams>
+
+    override val notificationInfoProviderContract: NotificationInfoProviderContract
+
+    override val singleFileExportWorkerWork: SingleFileExportWorkerWork
 }

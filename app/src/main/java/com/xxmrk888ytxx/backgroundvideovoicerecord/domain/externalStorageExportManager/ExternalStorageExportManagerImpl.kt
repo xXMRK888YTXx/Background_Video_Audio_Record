@@ -5,15 +5,19 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.externalStorageExportManager.model.ExportToExternalStorageConfig
 import com.xxmrk888ytxx.preferencesstorage.PreferencesStorage
+import com.xxmrk888ytxx.worker.model.FileType
+import com.xxmrk888ytxx.worker.workManagerController.WorkManagerController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 class ExternalStorageExportManagerImpl @Inject constructor(
-    private val preferencesStorage: PreferencesStorage
+    private val preferencesStorage: PreferencesStorage,
+    private val workManagerController: WorkManagerController
 ) : ExternalStorageExportManager {
 
     private val isExportEnabledPreferencesKey = booleanPreferencesKey(EXPORT_ENABLE_PREFERENCES_KEY)
@@ -58,6 +62,23 @@ class ExternalStorageExportManagerImpl @Inject constructor(
                 isEnabled
             )
         }
+
+    override suspend fun exportNewAudioFile(file: File){
+        if (!isNeedExportNewFile()) return
+        workManagerController.runExportForSingleFile(file, FileType.AUDIO)
+    }
+
+    override suspend fun exportNewVideoFile(file: File) {
+        if (!isNeedExportNewFile()) return
+        workManagerController.runExportForSingleFile(file, FileType.VIDEO)
+    }
+
+    private suspend fun isNeedExportNewFile(): Boolean {
+        val config = exportConfig.first()
+        return config.isExportEnabled && config.exportFolderUriString != null && config.isAutoExportAfterCreateNewRecordEnabled
+    }
+
+
 
     private suspend fun doAction(block: suspend () -> Unit): Result<Unit> =
         runCatching { withContext(Dispatchers.IO) { block() } }
