@@ -2,6 +2,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -17,7 +18,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = libs.versions.minifyEnabledRelease.get().toBoolean()
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -25,7 +26,7 @@ android {
         }
 
         debug {
-            isMinifyEnabled = libs.versions.minifyEnabledDebug.get().toBoolean()
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -38,12 +39,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = libs.versions.jvmTarget.get()
-    }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeKotlinCompiler.get()
     }
 }
 

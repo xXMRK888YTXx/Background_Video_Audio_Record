@@ -32,6 +32,7 @@ android {
             isMinifyEnabled = libs.versions.minifyEnabledRelease.get().toBoolean()
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"),"proguard-rules.pro")
             testProguardFile("test-proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("debug")
 
         }
 
