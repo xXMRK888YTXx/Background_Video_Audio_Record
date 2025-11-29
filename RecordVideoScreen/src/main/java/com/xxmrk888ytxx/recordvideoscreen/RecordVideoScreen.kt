@@ -10,6 +10,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowColumn
@@ -288,6 +289,26 @@ fun RecordVideoScreen(
                         }
                     }
                 }
+            }
+
+            item {
+                val selectedCameraString = when(currentSelectedCamera) {
+                    CurrentSelectedCameraModel.Back -> stringResource(R.string.back)
+                    CurrentSelectedCameraModel.Front -> stringResource(R.string.front)
+                }
+
+                Text(
+                    text = "Selected camera:$selectedCameraString",
+                    color = themeColors.primaryFontColor,
+                    style = themeTypography.body,
+                    maxLines = 1,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp, horizontal = 8.dp)
+                        .basicMarquee()
+                    ,
+                    textAlign = TextAlign.Center
+                )
             }
 
 

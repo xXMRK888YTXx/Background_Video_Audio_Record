@@ -8,4 +8,6 @@
     <string name="The_entered_date_is_less_than_the_current_date">The entered date is less than the current date. Please enter a valid value</string>
     <string name="Delayed_start_of_video_recording">Delayed start of video recording</string>
     <string name="ad_key">ca-app-pub-6313040706847570/4137023039</string>
+    <string name="back">Back</string>
+    <string name="front">Front</string>
 </resources>
