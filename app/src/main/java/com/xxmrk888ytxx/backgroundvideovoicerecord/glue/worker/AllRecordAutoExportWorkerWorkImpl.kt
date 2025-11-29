@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.InputStream
 import java.security.MessageDigest
 import javax.inject.Inject
 
@@ -94,15 +95,22 @@ class AllRecordAutoExportWorkerWorkImpl @Inject constructor(
 
     private suspend fun File.toMD5Hash(): MD5Hash {
         val md5Digest = MessageDigest.getInstance("MD5")
-        val fileBytes = inputStream().buffered().use { it.readNBytes(1000) }
+        val fileBytes = inputStream().buffered().use { it.readFileForGetHash() }
         return md5Digest.digest(fileBytes).toHexString()
     }
 
     private suspend fun DocumentFile.toMD5Hash(externalStorageRepository: ExternalStorageRepository): MD5Hash {
         val md5Digest = MessageDigest.getInstance("MD5")
         val fileBytes = externalStorageRepository.openInputStream(this).getOrThrow().buffered()
-            .use { it.readNBytes(1000) }
+            .use { it.readFileForGetHash() }
         return md5Digest.digest(fileBytes).toHexString()
+    }
+
+    private fun InputStream.readFileForGetHash(): ByteArray {
+        val byteArraySize = 1000
+        val out = ByteArray(byteArraySize)
+        read(out,0,byteArraySize)
+        return out
     }
 
 
