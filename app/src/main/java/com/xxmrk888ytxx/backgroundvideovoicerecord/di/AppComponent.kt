@@ -8,6 +8,7 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.AutoExportToExtern
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.DataModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.DatabaseModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.DomainModule
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.FastOpenAppQuickSettingsServiceModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.PreferencesStorageModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordAudioScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordVideoScreenModule
@@ -18,6 +19,7 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.StorageScreenModul
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.UseCaseModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.WorkerDepsModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.MainActivity
+import com.xxmrk888ytxx.fastopenappquicksettingsservice.FastOpenAppQuickSettingsServiceCallback
 import com.xxmrk888ytxx.recordvideoservice.RecordVideoParams
 import com.xxmrk888ytxx.worker.contract.AllRecordAutoExportWorkerWork
 import com.xxmrk888ytxx.worker.contract.NotificationInfoProviderContract
@@ -43,7 +45,8 @@ import dagger.Lazy
         UseCaseModule::class,
         AdManagerModule::class,
         AutoExportToExternalStorageScreenModule::class,
-        WorkerDepsModule::class
+        WorkerDepsModule::class,
+        FastOpenAppQuickSettingsServiceModule::class
     ]
 )
 @AppScope
@@ -52,16 +55,18 @@ internal interface AppComponent : WorkerDeps {
 
     @Component.Factory
     interface Factory {
-        fun create(@BindsInstance context: Context) : AppComponent
+        fun create(@BindsInstance context: Context): AppComponent
     }
 
-    val recordAudioParams:Lazy<RecordAudioParams>
+    val recordAudioParams: Lazy<RecordAudioParams>
 
-    val recordVideoParams:Lazy<RecordVideoParams>
+    val recordVideoParams: Lazy<RecordVideoParams>
 
     override val notificationInfoProviderContract: NotificationInfoProviderContract
 
     override val singleFileExportWorkerWork: SingleFileExportWorkerWork
 
     override val allRecordAutoExportWorkerWork: AllRecordAutoExportWorkerWork
+
+    val fastOpenAppQuickSettingsServiceCallback: FastOpenAppQuickSettingsServiceCallback
 }

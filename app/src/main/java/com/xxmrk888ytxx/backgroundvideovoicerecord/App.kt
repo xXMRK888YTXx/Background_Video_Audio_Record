@@ -19,7 +19,8 @@ internal class App : Application(),DepsProvider {
         mapOf(
             appComponent.recordAudioParams.toProvidedDeps(),
             appComponent.recordVideoParams.toProvidedDeps(),
-            (appComponent as WorkerDeps).toProvidedDeps()
+            (appComponent as WorkerDeps).toProvidedDeps(),
+            appComponent.fastOpenAppQuickSettingsServiceCallback.toProvidedDeps()
         )
     }
 

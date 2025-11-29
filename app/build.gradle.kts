@@ -75,6 +75,8 @@ dependencies {
     implementation(project(":AdmobManager"))
     implementation(project(":AutoExportToExternalStorageScreen"))
     implementation(project(":Worker"))
+    implementation(project(":FastOpenAppQuickSettingsService"))
+
 
     //Database
     implementation(libs.room.ktx)
