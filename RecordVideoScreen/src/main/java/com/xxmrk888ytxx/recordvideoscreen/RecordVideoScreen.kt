@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xxmrk888ytxx.camerapreviewcompose.CameraPreview
 import com.xxmrk888ytxx.camerapreviewcompose.models.CameraType
-import com.xxmrk888ytxx.corecompose.LocalInterstitialAdShower
 import com.xxmrk888ytxx.corecompose.LocalTheme
 import com.xxmrk888ytxx.corecompose.Shared.BatteryIgnoreOptimizationDialog
 import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButton
@@ -130,8 +129,6 @@ fun RecordVideoScreen(
     )
 
     val context = LocalContext.current
-
-    val interstitialAdShower = LocalInterstitialAdShower.current
 
     LaunchedEffect(key1 = recordState::class, block = {
         launch {
@@ -275,8 +272,6 @@ fun RecordVideoScreen(
                         ),
                         background = themeColors.recordButtonColor
                     ) {
-                        interstitialAdShower.showAd(context.getString(R.string.ad_key))
-
                         if (recordState !is RecordState.Idle) {
                             recordVideoViewModel.stopRecord()
                         } else {

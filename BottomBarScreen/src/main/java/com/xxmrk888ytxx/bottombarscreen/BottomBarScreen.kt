@@ -38,7 +38,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun BottomBarScreen(
     bottomBarScreens: ImmutableList<BottomBarScreenModel>,
-    bannerAd: @Composable (() -> Unit)? = null
 ) {
     val pager = rememberPagerState { bottomBarScreens.size }
     val scope = rememberCoroutineScope()
@@ -54,8 +53,6 @@ fun BottomBarScreen(
                     onScrollPage = {
                         scope.launch { pager.animateScrollToPage(it) }
                     })
-
-                bannerAd?.invoke()
             }
         }
     ) {

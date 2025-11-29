@@ -113,9 +113,6 @@ room-test = { group = "androidx.room", name = "room-testing", version.ref = "roo
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appCompat" }
 appcompat-resources = { group = "androidx.appcompat", name = "appcompat-resources", version.ref = "appCompat" }
 
-# AdMob
-admob = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "adMob" }
-
 # Media3
 media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
 media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3" }

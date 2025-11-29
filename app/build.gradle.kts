@@ -72,7 +72,6 @@ dependencies {
     implementation(project(":PreferencesStorage"))
     implementation(project(":VideoPlayerScreen"))
     implementation(project(":SettingsScreen"))
-    implementation(project(":AdmobManager"))
     implementation(project(":AutoExportToExternalStorageScreen"))
     implementation(project(":Worker"))
     implementation(project(":FastOpenAppQuickSettingsService"))

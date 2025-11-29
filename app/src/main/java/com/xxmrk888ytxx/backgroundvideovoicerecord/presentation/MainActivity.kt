@@ -2,7 +2,6 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.presentation
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
@@ -23,8 +22,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.xxmrk888ytxx.admobmanager.AdMobBanner
-import com.xxmrk888ytxx.admobmanager.AdMobManager
 import com.xxmrk888ytxx.autoexporttoexternalstoragescreen.AutoExportToExternalStorageScreen
 import com.xxmrk888ytxx.autoexporttoexternalstoragescreen.AutoExportToExternalStorageViewModel
 import com.xxmrk888ytxx.backgroundvideovoicerecord.R
@@ -35,7 +32,6 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.utils.appComponent
 import com.xxmrk888ytxx.backgroundvideovoicerecord.utils.composeViewModel
 import com.xxmrk888ytxx.bottombarscreen.BottomBarScreen
 import com.xxmrk888ytxx.bottombarscreen.models.BottomBarScreenModel
-import com.xxmrk888ytxx.coreandroid.InterstitialAdShower
 import com.xxmrk888ytxx.corecompose.Shared.AgreeDialog
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.recordaudioscreen.RecordAudioScreen
@@ -44,10 +40,10 @@ import com.xxmrk888ytxx.recordvideoscreen.RecordVideoScreen
 import com.xxmrk888ytxx.recordvideoscreen.RecordVideoViewModel
 import com.xxmrk888ytxx.settingsscreen.SettingsScreen
 import com.xxmrk888ytxx.settingsscreen.SettingsViewModel
-import com.xxmrk888ytxx.storagescreen.StorageScreen
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.AudioStorageListViewModel
-import com.xxmrk888ytxx.storagescreen.VideoStorageList.VideoStorageListViewModel
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.LockBlockerScreen
+import com.xxmrk888ytxx.storagescreen.StorageScreen
+import com.xxmrk888ytxx.storagescreen.VideoStorageList.VideoStorageListViewModel
 import com.xxmrk888ytxx.videoplayerscreen.VideoPlayerScreen
 import com.xxmrk888ytxx.videoplayerscreen.VideoPlayerViewModel
 import kotlinx.collections.immutable.ImmutableList
@@ -55,7 +51,7 @@ import kotlinx.collections.immutable.persistentListOf
 import javax.inject.Inject
 import javax.inject.Provider
 
-internal class MainActivity : ComponentActivity(), LockBlockerScreen, InterstitialAdShower {
+internal class MainActivity : ComponentActivity(), LockBlockerScreen {
 
     @Inject
     lateinit var recordAudioViewModel: Provider<RecordAudioViewModel>
@@ -81,22 +77,16 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen, Interstiti
     @Inject
     lateinit var autoExportToExternalStorageScreen: Provider<AutoExportToExternalStorageViewModel>
 
-    @Inject
-    lateinit var adMobManager: AdMobManager
-
     private val activityViewModel by viewModels<ActivityViewModel> { activityViewModelFactory }
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
-        adMobManager.initAdmob()
-        activityViewModel.loadConsentForm(this)
         enableEdgeToEdge()
         setContentWithAppThemeNavigatorInterstitialAdShower(
             appTheme = Themes.dark,
             navigator = activityViewModel,
-            interstitialAdShower = this
         ) {
             val navController = rememberNavController()
 
@@ -122,12 +112,6 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen, Interstiti
                     composable(Screen.MainScreen.route) {
                         BottomBarScreen(
                             bottomBarScreens = bottomScreens,
-                            bannerAd = {
-                                AdMobBanner(
-                                    adMobKey = stringResource(R.string.banner_key),
-                                    background = themeColors.background
-                                )
-                            }
                         )
                     }
 
@@ -138,9 +122,6 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen, Interstiti
                         )
                     ) {
                         val uri = it.arguments?.getString(VIDEO_URI_KEY) ?: return@composable
-
-
-                        this@MainActivity.showAd(getString(R.string.ad_key))
 
                         VideoPlayerScreen(
                             modifier = Modifier.fillMaxSize(),
@@ -220,20 +201,5 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen, Interstiti
 
     override fun cancel() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
-
-    override fun showAd(key: String) {
-        if (!activityViewModel.isAllowShowAd) {
-            Log.i(LOG_TAG_FOR_AD, "Show ad request cancel")
-            return
-        }
-
-        Log.i(LOG_TAG_FOR_AD, "Show ad request")
-        adMobManager.showInterstitialAd(key, this)
-        activityViewModel.adShowNotify()
-    }
-
-    companion object {
-        val LOG_TAG_FOR_AD = "InterstitialAdShower"
     }
 }
