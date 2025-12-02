@@ -1,4 +1,4 @@
-package com.xxmrk888ytxx.privatenote.presentation.ActivityLaunchContacts
+package com.xxmrk888ytxx.coreandroid.ActivityContracts
 
 data class FileParams(
     val fileType: String,

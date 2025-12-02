@@ -44,7 +44,7 @@ fun StorageScreen(
     videoStorageListViewModel: VideoStorageListViewModel
 ) {
 
-    val pageState = rememberPagerState()
+    val pageState = rememberPagerState { 2 }
     val scope = rememberCoroutineScope()
     val pages: ImmutableList<Pair<StorageType, @Composable () -> Unit>> = remember {
         persistentListOf(
@@ -78,7 +78,7 @@ fun StorageScreen(
                     bottom = paddings.calculateBottomPadding()
                 )
         ) {
-            HorizontalPager(state = pageState, pageCount = 2) {
+            HorizontalPager(state = pageState) {
                 pages[it].second()
             }
         }

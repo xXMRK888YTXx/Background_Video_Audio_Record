@@ -10,6 +10,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowColumn
@@ -41,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xxmrk888ytxx.camerapreviewcompose.CameraPreview
 import com.xxmrk888ytxx.camerapreviewcompose.models.CameraType
-import com.xxmrk888ytxx.corecompose.LocalInterstitialAdShower
 import com.xxmrk888ytxx.corecompose.LocalTheme
 import com.xxmrk888ytxx.corecompose.Shared.BatteryIgnoreOptimizationDialog
 import com.xxmrk888ytxx.corecompose.Shared.ControlRecordButton
@@ -131,8 +131,6 @@ fun RecordVideoScreen(
 
     val context = LocalContext.current
 
-    val interstitialAdShower = LocalInterstitialAdShower.current
-
     LaunchedEffect(key1 = recordState::class, block = {
         launch {
             if (recordState is RecordState.Idle) {
@@ -202,7 +200,7 @@ fun RecordVideoScreen(
                                 FlowColumn(
                                     Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
+                                    horizontalArrangement = Arrangement.Center
                                 ) {
                                     StyleIcon(
                                         painter = painterResource(R.drawable.baseline_block_24),
@@ -275,8 +273,6 @@ fun RecordVideoScreen(
                         ),
                         background = themeColors.recordButtonColor
                     ) {
-                        interstitialAdShower.showAd(context.getString(R.string.ad_key))
-
                         if (recordState !is RecordState.Idle) {
                             recordVideoViewModel.stopRecord()
                         } else {
@@ -293,6 +289,26 @@ fun RecordVideoScreen(
                         }
                     }
                 }
+            }
+
+            item {
+                val selectedCameraString = when(currentSelectedCamera) {
+                    CurrentSelectedCameraModel.Back -> stringResource(R.string.back)
+                    CurrentSelectedCameraModel.Front -> stringResource(R.string.front)
+                }
+
+                Text(
+                    text = "Selected camera:$selectedCameraString",
+                    color = themeColors.primaryFontColor,
+                    style = themeTypography.body,
+                    maxLines = 1,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp, horizontal = 8.dp)
+                        .basicMarquee()
+                    ,
+                    textAlign = TextAlign.Center
+                )
             }
 
 

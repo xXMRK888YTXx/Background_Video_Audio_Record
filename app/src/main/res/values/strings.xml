@@ -11,4 +11,9 @@
     <string name="source_code_url" translatable="false">https://github.com/xXMRK888YTXx/Background_Video_Audio_Record</string>
     <string name="privacy_policy_url" translatable="false">https://xxmrk888ytxx.github.io/backgroudAudioVideoRecorder_privacy.htm</string>
     <string name="terms_of_use_url" translatable="false">https://xxmrk888ytxx.github.io/backgroudAudioVideoRecorder_terms.htm</string>
+    <string name="export_worker">Export notification</string>
+    <string name="the_export_is_currently_underway">The export is currently underway.</string>
+    <string name="do_not_close_the_app">Do not close the app</string>
+    <string name="the_folder_for_export_is_unavailable">The folder for export is unavailable</string>
+    <string name="specify_the_folder_to_export_again">Specify the folder to export again</string>
 </resources>

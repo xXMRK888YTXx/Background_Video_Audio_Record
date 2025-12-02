@@ -44,7 +44,7 @@ fun LazyItemScope.MediaFileItem(
     val context = LocalContext.current
     StyleCard(
         modifier = Modifier
-            .animateItemPlacement()
+            .animateItem()
             .fillMaxWidth()
             .padding(themeDimensions.cardOutPaddings),
     ) {
@@ -75,7 +75,7 @@ fun LazyItemScope.MediaFileItem(
 
             FlowRow(
                 Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalArrangement = Arrangement.Center,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 buttons.forEach { button ->

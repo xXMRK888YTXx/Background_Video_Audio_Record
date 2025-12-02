@@ -1,12 +1,10 @@
-buildscript {
-    dependencies {
-        classpath(Deps.KolinSerialization.classPath)
-        classpath(Deps.Firebase.crashlyticsClassPath)
-        classpath(Deps.GoogleServices.gmsServiceClassPath)
-    }
-}
+
 plugins {
-    id ("com.android.application") version "8.0.1" apply false
-    id ("com.android.library") version "8.0.1" apply false
-    id ("org.jetbrains.kotlin.android") version Deps.KotlinVersion apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
+    alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.room) apply false
 }

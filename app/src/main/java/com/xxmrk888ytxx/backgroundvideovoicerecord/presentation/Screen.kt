@@ -5,4 +5,6 @@ sealed class Screen(val route:String) {
     object MainScreen : Screen("MainScreen")
 
     object VideoPlayerScreen : Screen("VideoPlayerScreen")
+
+    object AutoExportToExternalStorageScreen : Screen("AutoExportToExternalStorageScreen")
 }

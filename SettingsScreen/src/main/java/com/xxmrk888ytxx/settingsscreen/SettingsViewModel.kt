@@ -2,6 +2,7 @@ package com.xxmrk888ytxx.settingsscreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.settingsscreen.contracts.ManageAudioNotificationConfigContract
 import com.xxmrk888ytxx.settingsscreen.contracts.ManageCameraConfigContract
 import com.xxmrk888ytxx.settingsscreen.contracts.ManageVideoNotificationConfigContract
@@ -57,6 +58,11 @@ class SettingsViewModel @Inject constructor(
         openActivityContract.openSourceCode()
     }
     //
+
+    internal fun openAutoExportToExternalStorageScreen(navigator: Navigator) {
+        navigator.toAutoExportToExternalStorageScreen()
+    }
+
 
     //App version
     internal val appVersion : String

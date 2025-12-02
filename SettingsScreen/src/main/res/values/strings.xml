@@ -23,4 +23,6 @@
     <string name="Write_developer">Write to the developer</string>
     <string name="Privacy_policy">Privacy Policy</string>
     <string name="Terms_of_use">Terms of Use</string>
+    <string name="automatic_copying_to_external_memory">Automatic copying to external memory</string>
+    <string name="export_settings">Export Settings</string>
 </resources>

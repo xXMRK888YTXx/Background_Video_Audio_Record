@@ -2,11 +2,12 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.di
 
 import android.content.Context
 import com.xxmrk888ytxx.audiorecordservice.RecordAudioParams
-import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.AdManagerModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.AudioRecordServiceModule
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.AutoExportToExternalStorageScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.DataModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.DatabaseModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.DomainModule
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.FastOpenAppQuickSettingsServiceModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.PreferencesStorageModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordAudioScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.RecordVideoScreenModule
@@ -15,8 +16,14 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.ScopeModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.SettingsScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.StorageScreenModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.UseCaseModule
+import com.xxmrk888ytxx.backgroundvideovoicerecord.di.modules.WorkerDepsModule
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.MainActivity
+import com.xxmrk888ytxx.fastopenappquicksettingsservice.FastOpenAppQuickSettingsServiceCallback
 import com.xxmrk888ytxx.recordvideoservice.RecordVideoParams
+import com.xxmrk888ytxx.worker.contract.AllRecordAutoExportWorkerWork
+import com.xxmrk888ytxx.worker.contract.NotificationInfoProviderContract
+import com.xxmrk888ytxx.worker.contract.SingleFileExportWorkerWork
+import com.xxmrk888ytxx.worker.contract.WorkerDeps
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Lazy
@@ -35,20 +42,29 @@ import dagger.Lazy
         DataModule::class,
         SettingsScreenModule::class,
         UseCaseModule::class,
-        AdManagerModule::class
+        AutoExportToExternalStorageScreenModule::class,
+        WorkerDepsModule::class,
+        FastOpenAppQuickSettingsServiceModule::class
     ]
 )
 @AppScope
-internal interface AppComponent {
-
+internal interface AppComponent : WorkerDeps {
     fun inject(mainActivity: MainActivity)
 
     @Component.Factory
     interface Factory {
-        fun create(@BindsInstance context: Context) : AppComponent
+        fun create(@BindsInstance context: Context): AppComponent
     }
 
-    val recordAudioParams:Lazy<RecordAudioParams>
+    val recordAudioParams: Lazy<RecordAudioParams>
 
-    val recordVideoParams:Lazy<RecordVideoParams>
+    val recordVideoParams: Lazy<RecordVideoParams>
+
+    override val notificationInfoProviderContract: NotificationInfoProviderContract
+
+    override val singleFileExportWorkerWork: SingleFileExportWorkerWork
+
+    override val allRecordAutoExportWorkerWork: AllRecordAutoExportWorkerWork
+
+    val fastOpenAppQuickSettingsServiceCallback: FastOpenAppQuickSettingsServiceCallback
 }

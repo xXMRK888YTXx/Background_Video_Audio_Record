@@ -23,4 +23,6 @@
     <string name="Write_developer">Написать разработчику</string>
     <string name="Privacy_policy">Политика конфиденциальности</string>
     <string name="Terms_of_use">Условия использования</string>
+    <string name="automatic_copying_to_external_memory">Автоматическое копирование во внешнюю память</string>
+    <string name="export_settings">Настройки экспорта</string>
 </resources>

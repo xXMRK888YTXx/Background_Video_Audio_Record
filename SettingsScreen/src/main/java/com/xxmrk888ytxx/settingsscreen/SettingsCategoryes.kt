@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
+import com.xxmrk888ytxx.coreandroid.Navigator
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.NotificationConfigurationDialogState
 import com.xxmrk888ytxx.settingsscreen.models.SettingsParamType
 import kotlinx.collections.immutable.ImmutableList
@@ -64,7 +65,7 @@ internal fun notificationParams(settingsViewModel: SettingsViewModel): Immutable
 
 @SuppressLint("ResourceType")
 @Composable
-internal fun aboutNotificationParams(
+internal fun aboutApplicationParams(
     settingsViewModel: SettingsViewModel
 ) : ImmutableList<SettingsParamType> {
 
@@ -97,6 +98,22 @@ internal fun aboutNotificationParams(
             text = stringResource(R.string.Terms_of_use),
             icon = R.drawable.terms,
             onClick = settingsViewModel::openTermsOfUse
+        ),
+    )
+}
+
+@SuppressLint("ResourceType")
+@Composable
+internal fun autoExportToExternalStorageParams(
+    settingsViewModel: SettingsViewModel,
+    navigator: Navigator
+) : ImmutableList<SettingsParamType> {
+
+    return persistentListOf(
+        SettingsParamType.Button(
+            text = stringResource(R.string.automatic_copying_to_external_memory),
+            icon = R.drawable.baseline_sd_storage_24,
+            onClick = { settingsViewModel.openAutoExportToExternalStorageScreen(navigator) }
         ),
     )
 }

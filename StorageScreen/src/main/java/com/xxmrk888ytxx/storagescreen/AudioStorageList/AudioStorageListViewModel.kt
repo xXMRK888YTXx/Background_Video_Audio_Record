@@ -6,7 +6,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxmrk888ytxx.coreandroid.ToastManager
-import com.xxmrk888ytxx.privatenote.presentation.ActivityLaunchContacts.FileParams
+import com.xxmrk888ytxx.coreandroid.ActivityContracts.FileParams
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ChangeAudioFileNameContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.DeleteAudioFileContract
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.contracts.ExportAudioContract
@@ -111,7 +111,7 @@ class AudioStorageListViewModel @AssistedInject constructor(
 
     fun showAudioDialogState(audio: AudioFileModel) {
         viewModelScope.launch(Dispatchers.IO) {
-            val audioFile = provideFileByAudioId.provide(audio.id.toInt()) ?: return@launch
+            val audioFile = provideFileByAudioId.provide(audio.id) ?: return@launch
             val player = playerFactoryContract.create(lockBlockerScreen::enable,lockBlockerScreen::cancel)
             player.prepare(audioFile)
             _dialogState.update { it.copy(

@@ -185,7 +185,7 @@ class RecordVideoViewModel @Inject constructor(
     private val _cameraPermissionState: MutableStateFlow<RequestedPermissionModel> =
         MutableStateFlow(
             RequestedPermissionModel(
-                description = R.string.Audio_record_permission_description,
+                description = R.string.Video_record_permission_description,
                 isGranted = isCameraPermissionGranted,
                 onRequest = ::requestCameraPermission
             )

@@ -8,7 +8,7 @@ import javax.inject.Inject
 class ProvideFileByAudioIdImpl @Inject constructor(
     private val audioRecordRepository: AudioRecordRepository
 ) : ProvideFileByAudioId {
-    override suspend fun provide(id: Int): File? {
+    override suspend fun provide(id: Long): File? {
         return audioRecordRepository.getFileById(id)
     }
 }
