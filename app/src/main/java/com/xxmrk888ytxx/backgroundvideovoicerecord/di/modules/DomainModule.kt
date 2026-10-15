@@ -98,6 +98,12 @@ interface DomainModule {
         dualCameraSettingsManagerImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.dualCameraSettings.DualCameraSettingsManagerImpl
     ): com.xxmrk888ytxx.backgroundvideovoicerecord.domain.dualCameraSettings.DualCameraSettingsManager
 
+    @Binds
+    @AppScope
+    fun bindAppLockManager(
+        appLockManagerImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.appLock.AppLockManagerImpl
+    ): com.xxmrk888ytxx.backgroundvideovoicerecord.domain.appLock.AppLockManager
+
     companion object {
         @Provides
         fun bindsExternalStorageRepositoryFactory() : ExternalStorageRepositoryFactory = Factory()

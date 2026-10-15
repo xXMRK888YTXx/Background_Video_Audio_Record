@@ -16,5 +16,7 @@ data class DialogState(
     val cameraRotationSelectDialogState: CameraRotationSelectDialogState = CameraRotationSelectDialogState.Hidden,
     val dualCameraPrimarySelectDialogState: DualCameraPrimarySelectDialogState = DualCameraPrimarySelectDialogState.Hidden,
     val pipPositionSelectDialogState: PipPositionSelectDialogState = PipPositionSelectDialogState.Hidden,
-    val notificationConfigurationDialog: NotificationConfigurationDialogState = NotificationConfigurationDialogState.Hide
+    val videoSplitLimitSelectDialogState: com.xxmrk888ytxx.settingsscreen.models.DialogModels.VideoSplitLimitSelectDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.VideoSplitLimitSelectDialogState.Hidden,
+    val notificationConfigurationDialog: NotificationConfigurationDialogState = NotificationConfigurationDialogState.Hide,
+    val setPinDialogState: com.xxmrk888ytxx.settingsscreen.models.DialogModels.SetPinDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.SetPinDialogState.Hidden
 )

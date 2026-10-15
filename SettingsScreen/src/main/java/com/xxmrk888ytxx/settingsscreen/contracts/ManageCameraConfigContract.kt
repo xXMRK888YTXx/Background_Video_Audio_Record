@@ -23,4 +23,8 @@ interface ManageCameraConfigContract {
     val pipPosition: Flow<com.xxmrk888ytxx.coreandroid.models.PipPosition>
 
     suspend fun setupPipPosition(position: com.xxmrk888ytxx.coreandroid.models.PipPosition)
+
+    val videoSplitLimit: Flow<com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit>
+
+    suspend fun setupVideoSplitLimit(limit: com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit)
 }

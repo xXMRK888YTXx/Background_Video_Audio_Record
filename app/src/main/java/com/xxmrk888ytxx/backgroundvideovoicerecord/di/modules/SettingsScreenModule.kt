@@ -47,4 +47,9 @@ interface SettingsScreenModule {
     fun bindOpenActivityContract(
         openActivityContractImpl: OpenActivityContractImpl
     ) : OpenActivityContract
+
+    @Binds
+    fun bindManageAppLockContract(
+        manageAppLockContractImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.glue.SettingsScreen.ManageAppLockContractImpl
+    ): com.xxmrk888ytxx.settingsscreen.contracts.ManageAppLockContract
 }

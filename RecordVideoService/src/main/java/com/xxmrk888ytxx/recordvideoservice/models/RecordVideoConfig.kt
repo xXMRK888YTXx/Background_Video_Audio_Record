@@ -5,5 +5,6 @@ data class RecordVideoConfig(
     val cameraType: CameraType,
     val maxQuality: MaxQuality,
     val cameraRotation: CameraRotation,
-    val foregroundNotificationType:ForegroundNotificationType
+    val foregroundNotificationType: ForegroundNotificationType,
+    val videoSplitLimitId: Int = 0
 )

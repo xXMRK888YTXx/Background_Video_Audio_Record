@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.backgroundvideovoicerecord.domain.videoProcessing
 
+import android.os.Build
 import android.graphics.SurfaceTexture
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
@@ -117,6 +118,68 @@ class DualVideoCombiner @Inject constructor() {
 
         // Universal portrait default
         return OutputDimensions(720, 1280, 0)
+    }
+
+    private fun findHardwareEncoder(mimeType: String): MediaCodecInfo? {
+        try {
+            val codecList = MediaCodecList(MediaCodecList.REGULAR_CODECS)
+            for (info in codecList.codecInfos) {
+                if (!info.isEncoder) continue
+                val types = info.supportedTypes
+                if (!types.contains(mimeType)) continue
+
+                val isHardware = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    info.isHardwareAccelerated && !info.isSoftwareOnly
+                } else {
+                    val name = info.name.lowercase()
+                    !name.startsWith("omx.google.") &&
+                    !name.startsWith("c2.android.") &&
+                    !name.contains("sw") &&
+                    !name.contains("software")
+                }
+
+                if (isHardware) {
+                    val caps = info.getCapabilitiesForType(mimeType)
+                    val supportsSurface = caps.colorFormats.contains(MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface)
+                    if (supportsSurface) {
+                        Log.i(TAG, "Hardware encoder discovered: ${info.name}")
+                        return info
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed searching for hardware encoder: ${e.message}")
+        }
+        return null
+    }
+
+    private fun findHardwareDecoder(mimeType: String): MediaCodecInfo? {
+        try {
+            val codecList = MediaCodecList(MediaCodecList.REGULAR_CODECS)
+            for (info in codecList.codecInfos) {
+                if (info.isEncoder) continue
+                val types = info.supportedTypes
+                if (!types.contains(mimeType)) continue
+
+                val isHardware = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    info.isHardwareAccelerated && !info.isSoftwareOnly
+                } else {
+                    val name = info.name.lowercase()
+                    !name.startsWith("omx.google.") &&
+                    !name.startsWith("c2.android.") &&
+                    !name.contains("sw") &&
+                    !name.contains("software")
+                }
+
+                if (isHardware) {
+                    Log.i(TAG, "Hardware decoder discovered: ${info.name}")
+                    return info
+                }
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed searching for hardware decoder: ${e.message}")
+        }
+        return null
     }
 
     private fun combineInternal(
@@ -288,16 +351,43 @@ class DualVideoCombiner @Inject constructor() {
             )
         }
 
-        // Setup AVC Encoder
+        // Setup Hardware-Accelerated AVC Encoder
         val encoderFormat = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, outWidth, outHeight).apply {
             setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface)
             setInteger(MediaFormat.KEY_BIT_RATE, 5_000_000)
             setInteger(MediaFormat.KEY_FRAME_RATE, 30)
             setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1)
+            try {
+                setInteger(MediaFormat.KEY_BITRATE_MODE, MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_VBR)
+            } catch (_: Exception) {}
         }
 
-        val encoder = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC)
-        encoder.configure(encoderFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
+        val hwEncoder = findHardwareEncoder(MediaFormat.MIMETYPE_VIDEO_AVC)
+        val encoder = if (hwEncoder != null) {
+            try {
+                Log.i(TAG, "Initializing hardware encoder: ${hwEncoder.name}")
+                MediaCodec.createByCodecName(hwEncoder.name)
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed creating hardware encoder by name, fallback to type", e)
+                MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC)
+            }
+        } else {
+            Log.i(TAG, "No hardware encoder found, fallback to type")
+            MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC)
+        }
+
+        try {
+            encoder.configure(encoderFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed configuring with VBR, retrying with standard format", e)
+            val fallbackFormat = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, outWidth, outHeight).apply {
+                setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface)
+                setInteger(MediaFormat.KEY_BIT_RATE, 5_000_000)
+                setInteger(MediaFormat.KEY_FRAME_RATE, 30)
+                setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1)
+            }
+            encoder.configure(fallbackFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
+        }
         val inputSurface = encoder.createInputSurface()
         encoder.start()
 
@@ -342,16 +432,38 @@ class DualVideoCombiner @Inject constructor() {
         }
         val secondaryDecoderSurface = Surface(secondarySurfaceTexture)
 
-        // Setup decoders with KEY_ROTATION
+        // Setup hardware-accelerated decoders with KEY_ROTATION
         val primaryDecoderMime = primaryVideoFormat.getString(MediaFormat.KEY_MIME) ?: MediaFormat.MIMETYPE_VIDEO_AVC
-        val primaryDecoder = MediaCodec.createDecoderByType(primaryDecoderMime)
+        val primaryHwDec = findHardwareDecoder(primaryDecoderMime)
+        val primaryDecoder = if (primaryHwDec != null) {
+            try {
+                Log.i(TAG, "Initializing hardware primary decoder: ${primaryHwDec.name}")
+                MediaCodec.createByCodecName(primaryHwDec.name)
+            } catch (e: Exception) {
+                Log.w(TAG, "Hardware primary decoder instantiation failed, fallback to type", e)
+                MediaCodec.createDecoderByType(primaryDecoderMime)
+            }
+        } else {
+            MediaCodec.createDecoderByType(primaryDecoderMime)
+        }
         primaryDecoder.configure(primaryVideoFormat, primaryDecoderSurface, null, 0)
         primaryDecoder.start()
 
         val secondaryDecoder = if (secondaryVideoFormat != null) {
             try {
                 val secMime = secondaryVideoFormat.getString(MediaFormat.KEY_MIME) ?: MediaFormat.MIMETYPE_VIDEO_AVC
-                val decoder = MediaCodec.createDecoderByType(secMime)
+                val secHwDec = findHardwareDecoder(secMime)
+                val decoder = if (secHwDec != null) {
+                    try {
+                        Log.i(TAG, "Initializing hardware secondary decoder: ${secHwDec.name}")
+                        MediaCodec.createByCodecName(secHwDec.name)
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Hardware secondary decoder instantiation failed, fallback to type", e)
+                        MediaCodec.createDecoderByType(secMime)
+                    }
+                } else {
+                    MediaCodec.createDecoderByType(secMime)
+                }
                 decoder.configure(secondaryVideoFormat, secondaryDecoderSurface, null, 0)
                 decoder.start()
                 decoder

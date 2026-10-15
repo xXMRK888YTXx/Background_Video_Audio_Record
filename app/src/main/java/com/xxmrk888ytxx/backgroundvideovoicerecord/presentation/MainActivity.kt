@@ -48,10 +48,15 @@ import com.xxmrk888ytxx.videoplayerscreen.VideoPlayerScreen
 import com.xxmrk888ytxx.videoplayerscreen.VideoPlayerViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.appLock.AppLockManager
+import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.appLock.AppLockScreen
 import javax.inject.Inject
 import javax.inject.Provider
 
-internal class MainActivity : ComponentActivity(), LockBlockerScreen {
+internal class MainActivity : androidx.fragment.app.FragmentActivity(), LockBlockerScreen {
+
+    @Inject
+    lateinit var appLockManager: AppLockManager
 
     @Inject
     lateinit var recordAudioViewModel: Provider<RecordAudioViewModel>
@@ -95,6 +100,16 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen {
                 initialValue = false
             )
 
+            val isAppLockEnabled by appLockManager.isAppLockEnabled.collectAsStateWithLifecycle(
+                initialValue = false
+            )
+            val isSessionUnlocked by appLockManager.isSessionUnlocked.collectAsStateWithLifecycle(
+                initialValue = false
+            )
+            val isBiometricEnabled by appLockManager.isBiometricEnabled.collectAsStateWithLifecycle(
+                initialValue = false
+            )
+
             LaunchedEffect(key1 = navController, block = {
                 activityViewModel.navController = navController
             })
@@ -105,9 +120,7 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen {
                 NavHost(
                     navController = navController,
                     startDestination = Screen.MainScreen.route,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .systemBarsPadding()
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     composable(Screen.MainScreen.route) {
                         BottomBarScreen(
@@ -144,6 +157,25 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen {
                         openTermsOfUseSite = activityViewModel::openTermsOfUse,
                         onConfirm = activityViewModel::hidePrivacyPolicyAndTermsOfUseDialog,
                         onCancel = this@MainActivity::finish
+                    )
+                }
+
+                if (isAppLockEnabled && !isSessionUnlocked) {
+                    AppLockScreen(
+                        isBiometricEnabled = isBiometricEnabled && appLockManager.canAuthenticateWithBiometrics(this@MainActivity),
+                        onVerifyPin = { pin ->
+                            val verified = appLockManager.verifyPinCode(pin)
+                            if (verified) {
+                                appLockManager.unlockSession()
+                            }
+                            verified
+                        },
+                        onUnlockSuccess = {
+                            appLockManager.unlockSession()
+                        },
+                        onTriggerBiometric = {
+                            showBiometricPrompt()
+                        }
                     )
                 }
             }
@@ -201,5 +233,33 @@ internal class MainActivity : ComponentActivity(), LockBlockerScreen {
 
     override fun cancel() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    private fun showBiometricPrompt() {
+        try {
+            val executor = androidx.core.content.ContextCompat.getMainExecutor(this)
+            val biometricPrompt = androidx.biometric.BiometricPrompt(
+                this,
+                executor,
+                object : androidx.biometric.BiometricPrompt.AuthenticationCallback() {
+                    override fun onAuthenticationSucceeded(result: androidx.biometric.BiometricPrompt.AuthenticationResult) {
+                        super.onAuthenticationSucceeded(result)
+                        appLockManager.unlockSession()
+                    }
+                }
+            )
+            val promptInfo = androidx.biometric.BiometricPrompt.PromptInfo.Builder()
+                .setTitle(getString(R.string.app_name))
+                .setSubtitle("Подтвердите личность для входа")
+                .setNegativeButtonText("Использовать PIN")
+                .build()
+
+            biometricPrompt.authenticate(promptInfo)
+        } catch (_: Exception) {}
+    }
+
+    override fun onStop() {
+        super.onStop()
+        appLockManager.lockSession()
     }
 }

@@ -118,6 +118,13 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
 
             item {
                 SettingsCategory(
+                    categoryName = "Безопасность",
+                    settingsParams = securityParams(settingsViewModel)
+                )
+            }
+
+            item {
+                SettingsCategory(
                     categoryName = stringResource(R.string.About_the_application),
                     settingsParams = aboutApplicationParams(settingsViewModel)
                 )
@@ -167,6 +174,22 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
         NotificationConfigurationDialog(
             initialState = (dialogState.notificationConfigurationDialog as NotificationConfigurationDialogState.Showed).initialState,
             settingsViewModel = settingsViewModel
+        )
+    }
+
+    if (dialogState.videoSplitLimitSelectDialogState is com.xxmrk888ytxx.settingsscreen.models.DialogModels.VideoSplitLimitSelectDialogState.Showed) {
+        VideoSplitLimitSelectDialog(
+            settingsViewModel = settingsViewModel,
+            initialLimit = (dialogState.videoSplitLimitSelectDialogState as com.xxmrk888ytxx.settingsscreen.models.DialogModels.VideoSplitLimitSelectDialogState.Showed).currentLimit
+        )
+    }
+
+    if (dialogState.setPinDialogState is com.xxmrk888ytxx.settingsscreen.models.DialogModels.SetPinDialogState.Showed) {
+        val isChangeMode = (dialogState.setPinDialogState as com.xxmrk888ytxx.settingsscreen.models.DialogModels.SetPinDialogState.Showed).isChangeMode
+        SetPinDialog(
+            isChangeMode = isChangeMode,
+            onConfirm = { pin -> settingsViewModel.onPinCodeConfirmed(pin) },
+            onDismiss = settingsViewModel::hideSetPinDialog
         )
     }
 }
@@ -773,4 +796,199 @@ internal fun PipPositionSelectDialog(
         )
     )
 }
+
+@Composable
+internal fun VideoSplitLimitSelectDialog(
+    settingsViewModel: SettingsViewModel,
+    initialLimit: com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit,
+) {
+    var selectedId by rememberSaveable {
+        mutableStateOf(initialLimit.id)
+    }
+
+    SelectDialog(
+        onConfirm = {
+            settingsViewModel.changeVideoSplitLimit(
+                com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.fromId(selectedId)
+            )
+            settingsViewModel.hideVideoSplitLimitSelectDialog()
+        },
+        onCancel = settingsViewModel::hideVideoSplitLimitSelectDialog,
+        items = kotlinx.collections.immutable.persistentListOf(
+            SelectDialogModel(
+                title = "Без разделения (Один файл)",
+                isSelected = selectedId == com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.DISABLED.id,
+                onClick = { selectedId = com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.DISABLED.id }
+            ),
+            SelectDialogModel(
+                title = "4 ГБ или 30 минут (Рекомендуется)",
+                isSelected = selectedId == com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_4GB_OR_30MIN.id,
+                onClick = { selectedId = com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_4GB_OR_30MIN.id }
+            ),
+            SelectDialogModel(
+                title = "Каждые 15 минут",
+                isSelected = selectedId == com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_15MIN.id,
+                onClick = { selectedId = com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_15MIN.id }
+            ),
+            SelectDialogModel(
+                title = "Каждые 30 минут",
+                isSelected = selectedId == com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_30MIN.id,
+                onClick = { selectedId = com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_30MIN.id }
+            ),
+            SelectDialogModel(
+                title = "Каждые 60 минут",
+                isSelected = selectedId == com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_60MIN.id,
+                onClick = { selectedId = com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_60MIN.id }
+            )
+        )
+    )
+}
+
+@Composable
+fun SetPinDialog(
+    isChangeMode: Boolean,
+    onConfirm: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var pin by rememberSaveable { mutableStateOf("") }
+    var confirmPin by rememberSaveable { mutableStateOf("") }
+    var step by rememberSaveable { mutableStateOf(1) }
+    var errorMessage by rememberSaveable { mutableStateOf<String?>(null) }
+
+    Dialog(onDismissRequest = onDismiss) {
+        StyleCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = if (isChangeMode) "Изменение PIN-кода" else "Установка PIN-кода",
+                    style = themeTypography.body,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
+
+                Text(
+                    text = if (step == 1) "Придумайте 4-значный PIN-код" else "Повторите 4-значный PIN-код",
+                    style = themeTypography.body,
+                    fontSize = 14.sp,
+                    color = Color(0xFF94A3B8)
+                )
+
+                val currentDigits = if (step == 1) pin else confirmPin
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 12.dp)
+                ) {
+                    repeat(4) { index ->
+                        val isFilled = index < currentDigits.length
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .clip(CircleShape)
+                                .background(if (isFilled) Color(0xFF818CF8) else Color.Transparent)
+                                .border(2.dp, if (isFilled) Color(0xFF818CF8) else Color(0xFF475569), CircleShape)
+                        )
+                    }
+                }
+
+                if (errorMessage != null) {
+                    Text(
+                        text = errorMessage ?: "",
+                        color = Color(0xFFEF4444),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val rows = listOf(
+                        listOf("1", "2", "3"),
+                        listOf("4", "5", "6"),
+                        listOf("7", "8", "9"),
+                        listOf("", "0", "⌫")
+                    )
+
+                    for (row in rows) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            for (item in row) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .clip(CircleShape)
+                                        .background(if (item.isNotEmpty()) Color(0xFF1E293B) else Color.Transparent)
+                                        .clickable(enabled = item.isNotEmpty()) {
+                                            errorMessage = null
+                                            if (item == "⌫") {
+                                                if (step == 1 && pin.isNotEmpty()) pin = pin.dropLast(1)
+                                                else if (step == 2 && confirmPin.isNotEmpty()) confirmPin = confirmPin.dropLast(1)
+                                            } else {
+                                                if (step == 1) {
+                                                    if (pin.length < 4) {
+                                                        pin += item
+                                                        if (pin.length == 4) {
+                                                            step = 2
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (confirmPin.length < 4) {
+                                                        confirmPin += item
+                                                        if (confirmPin.length == 4) {
+                                                            if (pin == confirmPin) {
+                                                                onConfirm(pin)
+                                                            } else {
+                                                                errorMessage = "PIN-коды не совпадают!"
+                                                                confirmPin = ""
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (item.isNotEmpty()) {
+                                        Text(
+                                            text = item,
+                                            color = Color.White,
+                                            fontSize = 20.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    androidx.compose.material3.TextButton(onClick = onDismiss) {
+                        Text("Отмена", color = Color(0xFF94A3B8))
+                    }
+                }
+            }
+        }
+    }
+}
+
 

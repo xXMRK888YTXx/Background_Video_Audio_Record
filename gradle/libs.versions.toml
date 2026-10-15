@@ -45,9 +45,13 @@ composePlugin = "2.2.21"
 material = "1.13.0"
 workManager = "2.11.0"
 documentFile = "1.1.0"
+biometric = "1.1.0"
 
 
 [libraries]
+# Biometric
+androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+
 # Compose
 compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2025.11.01" }
 compose-ui = { group = "androidx.compose.ui", name = "ui" }

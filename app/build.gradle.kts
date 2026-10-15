@@ -88,7 +88,6 @@ dependencies {
 
     //Compose
     implementation(libs.compose.navigation)
-    implementation(libs.compose.system.ui.controller)
 
     //Serialization
     implementation(libs.kotlin.serialization.json)

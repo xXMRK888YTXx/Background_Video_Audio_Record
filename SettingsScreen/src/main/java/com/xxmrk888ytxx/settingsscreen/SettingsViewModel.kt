@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.xxmrk888ytxx.settingsscreen.contracts.ManageAppLockContract
 import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
@@ -34,7 +35,8 @@ class SettingsViewModel @Inject constructor(
     private val manageAudioNotificationConfigContract: ManageAudioNotificationConfigContract,
     private val manageVideoNotificationConfigContract: ManageVideoNotificationConfigContract,
     private val provideAppVersionContract: ProvideAppVersionContract,
-    private val openActivityContract:OpenActivityContract
+    private val openActivityContract: OpenActivityContract,
+    private val manageAppLockContract: ManageAppLockContract
 ) : ViewModel() {
 
     //Open terms of use
@@ -273,4 +275,84 @@ class SettingsViewModel @Inject constructor(
     }
     //
 
+    //VideoSplitLimitSelectDialog
+    internal val videoSplitLimit: kotlinx.coroutines.flow.Flow<com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit> =
+        manageCameraConfigContract.videoSplitLimit
+
+    internal fun showVideoSplitLimitSelectDialog() {
+        viewModelScope.launch {
+            _dialogState.update {
+                it.copy(
+                    videoSplitLimitSelectDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.VideoSplitLimitSelectDialogState.Showed(
+                        manageCameraConfigContract.videoSplitLimit.first()
+                    )
+                )
+            }
+        }
+    }
+
+    internal fun hideVideoSplitLimitSelectDialog() {
+        _dialogState.update {
+            it.copy(videoSplitLimitSelectDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.VideoSplitLimitSelectDialogState.Hidden)
+        }
+    }
+
+    internal fun changeVideoSplitLimit(limit: com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            manageCameraConfigContract.setupVideoSplitLimit(limit)
+        }
+    }
+    //
+
+    // App Lock
+    internal val isAppLockEnabled: kotlinx.coroutines.flow.Flow<Boolean> =
+        manageAppLockContract.isAppLockEnabled
+
+    internal val isBiometricEnabled: kotlinx.coroutines.flow.Flow<Boolean> =
+        manageAppLockContract.isBiometricEnabled
+
+    internal val isBiometricsSupported: Boolean
+        get() = manageAppLockContract.isBiometricsSupported
+
+    internal fun onAppLockSwitchChanged(enabled: Boolean) {
+        viewModelScope.launch {
+            if (enabled) {
+                val isPinSet = manageAppLockContract.isPinCodeSet.first()
+                if (!isPinSet) {
+                    showSetPinDialog(isChangeMode = false)
+                } else {
+                    manageAppLockContract.setAppLockEnabled(true)
+                }
+            } else {
+                manageAppLockContract.setAppLockEnabled(false)
+            }
+        }
+    }
+
+    internal fun showSetPinDialog(isChangeMode: Boolean = true) {
+        _dialogState.update {
+            it.copy(setPinDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.SetPinDialogState.Showed(isChangeMode))
+        }
+    }
+
+    internal fun hideSetPinDialog() {
+        _dialogState.update {
+            it.copy(setPinDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.SetPinDialogState.Hidden)
+        }
+    }
+
+    internal fun onPinCodeConfirmed(pin: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            manageAppLockContract.setPinCode(pin)
+            manageAppLockContract.setAppLockEnabled(true)
+            hideSetPinDialog()
+        }
+    }
+
+    internal fun onBiometricSwitchChanged(enabled: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            manageAppLockContract.setBiometricEnabled(enabled)
+        }
+    }
+    //
 }

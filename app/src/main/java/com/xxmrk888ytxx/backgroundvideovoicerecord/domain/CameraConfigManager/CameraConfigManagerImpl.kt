@@ -85,4 +85,17 @@ class CameraConfigManagerImpl @Inject constructor(
             preferencesStorage.writeProperty(cameraRotationKey,cameraRotation.id)
         }
     }
+
+    private val videoSplitLimitKey = intPreferencesKey("videoSplitLimitKey")
+
+    override val videoSplitLimit: Flow<com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit> =
+        preferencesStorage.getProperty(videoSplitLimitKey, com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.DISABLED.id).map {
+            com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.fromId(it)
+        }
+
+    override suspend fun setVideoSplitLimit(splitLimit: com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit) {
+        withContext(Dispatchers.IO) {
+            preferencesStorage.writeProperty(videoSplitLimitKey, splitLimit.id)
+        }
+    }
 }

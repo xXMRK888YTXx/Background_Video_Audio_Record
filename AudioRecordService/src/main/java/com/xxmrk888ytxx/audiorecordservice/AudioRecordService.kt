@@ -217,16 +217,27 @@ class AudioRecordService : Service(), AudioRecordServiceController {
 
     override val currentState: Flow<RecordAudioState> = _currentState.asStateFlow()
 
+    private fun getChannelId(iconId: Int): String = "${NOTIFICATION_CHANNEL_ID}_$iconId"
+
+    private fun ensureNotificationChannel(iconId: Int) {
+        applicationContext.buildNotificationChannel(
+            id = getChannelId(iconId),
+            name = getString(R.string.Channel_name)
+        )
+    }
+
     private suspend fun createNotification(): Notification {
         val foregroundType = recordAudioParams.recordAudioConfig.first().foregroundNotificationType
+        val channelId = getChannelId(foregroundType.iconId)
+        ensureNotificationChannel(foregroundType.iconId)
 
         return when (foregroundType) {
             is ForegroundNotificationType.CustomNotification -> {
-                applicationContext.buildNotification(NOTIFICATION_CHANNEL_ID) {
+                applicationContext.buildNotification(channelId) {
                     setContentTitle(foregroundType.title)
                     setContentText(foregroundType.text)
                     val iconRes = com.xxmrk888ytxx.coreandroid.models.NotificationIconType.fromId(foregroundType.iconId).iconRes
-                    setSmallIcon(iconRes)
+                    com.xxmrk888ytxx.coreandroid.NotificationHelper.applyNotificationIcon(this, applicationContext, iconRes)
                     setOnlyAlertOnce(true)
                     if (foregroundType.isPauseResumeButtonActive) {
                         when (_currentState.value) {
@@ -264,7 +275,10 @@ class AudioRecordService : Service(), AudioRecordServiceController {
 
     private suspend fun createForegroundNotificationViewRecordStateType(recordAudioState: RecordAudioState): Notification {
         val config = recordAudioParams.recordAudioConfig.first().foregroundNotificationType
-        return applicationContext.buildNotification(NOTIFICATION_CHANNEL_ID) {
+        val channelId = getChannelId(config.iconId)
+        ensureNotificationChannel(config.iconId)
+
+        return applicationContext.buildNotification(channelId) {
             setContentTitle(
                 when (recordAudioState) {
                     is RecordAudioState.Recording -> getString(R.string.Sound_recording_in_progress)
@@ -275,12 +289,8 @@ class AudioRecordService : Service(), AudioRecordServiceController {
                 "${getString(R.string.Recording_is_going_on)} " +
                         recordAudioState.recordDuration.milliSecondToString()
             )
-            val iconRes = if (config.iconId != 0) {
-                com.xxmrk888ytxx.coreandroid.models.NotificationIconType.fromId(config.iconId).iconRes
-            } else {
-                R.drawable.record
-            }
-            setSmallIcon(iconRes)
+            val iconRes = com.xxmrk888ytxx.coreandroid.models.NotificationIconType.fromId(config.iconId).iconRes
+            com.xxmrk888ytxx.coreandroid.NotificationHelper.applyNotificationIcon(this, applicationContext, iconRes)
             setOnlyAlertOnce(true)
             if (config.isPauseResumeButtonActive) {
                 when (_currentState.value) {

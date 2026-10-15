@@ -62,6 +62,12 @@ class ManageCameraConfigContractImpl @Inject constructor(
         dualCameraSettingsManager.setPipPosition(position)
     }
 
+    override val videoSplitLimit: Flow<com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit> = cameraConfigManager.videoSplitLimit
+
+    override suspend fun setupVideoSplitLimit(limit: com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit) {
+        cameraConfigManager.setVideoSplitLimit(limit)
+    }
+
     private fun CameraType.toCameraConfigType() : CameraConfigCameraType {
         return when(this) {
             CameraType.Front -> CameraConfigCameraType.Front

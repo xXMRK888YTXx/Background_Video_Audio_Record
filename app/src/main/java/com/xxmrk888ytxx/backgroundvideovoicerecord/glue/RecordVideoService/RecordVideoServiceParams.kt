@@ -33,14 +33,17 @@ class RecordVideoServiceParams @Inject constructor(
 
 
     override val cameraConfig: Flow<RecordVideoConfig> = combine(
-        cameraConfigManager.config, videoForegroundNotificationConfig.config
-    ) { cameraConfig, videoForegroundNotificationConfig ->
+        cameraConfigManager.config,
+        videoForegroundNotificationConfig.config,
+        cameraConfigManager.videoSplitLimit
+    ) { cameraConfig, videoForegroundNotificationConfig, splitLimit ->
 
         RecordVideoConfig(
             cameraType = cameraConfig.cameraType.toServiceCameraType(),
             maxQuality = cameraConfig.maxQuality.toServiceMaxQuality(),
             cameraRotation = cameraConfig.cameraRotation.toServiceCameraRotation(),
             foregroundNotificationType = videoForegroundNotificationConfig.toServiceForegroundType(),
+            videoSplitLimitId = splitLimit.id
         )
     }
 

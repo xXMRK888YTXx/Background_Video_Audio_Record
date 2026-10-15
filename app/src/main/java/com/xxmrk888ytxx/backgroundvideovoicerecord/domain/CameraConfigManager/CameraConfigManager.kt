@@ -15,4 +15,8 @@ interface CameraConfigManager {
     suspend fun setMaxQuality(maxQuality: MaxQuality)
 
     suspend fun setCameraRotation(cameraRotation: CameraRotation)
+
+    val videoSplitLimit: Flow<com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit>
+
+    suspend fun setVideoSplitLimit(splitLimit: com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit)
 }

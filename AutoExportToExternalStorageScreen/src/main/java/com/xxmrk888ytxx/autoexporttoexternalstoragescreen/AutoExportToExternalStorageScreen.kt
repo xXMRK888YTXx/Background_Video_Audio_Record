@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.autoexporttoexternalstoragescreen
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -41,7 +42,7 @@ fun AutoExportToExternalStorageScreen(autoExportToExternalStorageViewModel: Auto
         remember(screenState) { screenState.isExportEnabled && screenState.isExportFolderSelected }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().statusBarsPadding(),
         backgroundColor = Color.Transparent,
         topBar = {
             TopBar { navigator.backScreen() }

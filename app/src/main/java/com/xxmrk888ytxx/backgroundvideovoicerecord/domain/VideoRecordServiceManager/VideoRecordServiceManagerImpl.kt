@@ -76,6 +76,13 @@ class VideoRecordServiceManagerImpl @Inject constructor(
                         _hasPendingDualRecord.update { videoRecordRepository.hasPendingDualRecord() }
                     }
 
+                    try {
+                        android.service.quicksettings.TileService.requestListeningState(
+                            context,
+                            ComponentName(context, "com.xxmrk888ytxx.fastopenappquicksettingsservice.FastOpenAppQuickSettingsService")
+                        )
+                    } catch (_: Exception) {}
+
                     lastRecordState = state
                 }
             }
