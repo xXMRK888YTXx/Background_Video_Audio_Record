@@ -35,4 +35,6 @@
     <string name="preparing_video">Подготовка видео...</string>
     <string name="save_dual_second_prompt">Основная камера сохранена. Выберите место для фронтальной</string>
     <string name="both_videos_exported_successfully">Оба видео успешно сохранены</string>
+    <string name="video_record_default_title">Видеозапись</string>
+    <string name="audio_record_default_title">Аудиозапись</string>
 </resources>

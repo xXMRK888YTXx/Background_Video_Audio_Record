@@ -35,4 +35,6 @@
     <string name="preparing_video">Preparing video...</string>
     <string name="save_dual_second_prompt">Main camera saved. Now choose location for front camera</string>
     <string name="both_videos_exported_successfully">Both videos exported successfully</string>
+    <string name="video_record_default_title">Video record</string>
+    <string name="audio_record_default_title">Audio record</string>
 </resources>

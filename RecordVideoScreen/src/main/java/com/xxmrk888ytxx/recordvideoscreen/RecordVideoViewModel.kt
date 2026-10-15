@@ -43,6 +43,16 @@ class RecordVideoViewModel @Inject constructor(
     private val ignoreBatteryOptimizationManageContract: IgnoreBatteryOptimizationManageContract
 ) : ViewModel() {
 
+    init {
+        viewModelScope.launch {
+            recordVideoStateProviderContract.currentState.collect { state ->
+                if (state !is RecordState.Idle) {
+                    _isRecordStarting.update { false }
+                }
+            }
+        }
+    }
+
     //Ingnore batteaty optimization
 
     private var isIgnoreBatteryOptimizationAlreadyShowed = false
@@ -308,11 +318,19 @@ class RecordVideoViewModel @Inject constructor(
             try {
                 _isRecordStarting.update { true }
                 // Let Compose UI preview unbind cleanly before Service binds
-                delay(120)
+                delay(300)
                 recordVideoManageContract.start()
+                // Safety watchdog: if after 6 seconds recording didn't start, reset starting flag
+                viewModelScope.launch {
+                    delay(6000)
+                    if (currentRecordState.value is RecordState.Idle) {
+                        _isRecordStarting.update { false }
+                    }
+                }
             } catch (e: OtherRecordServiceStartedException) {
                 snackBarHostState?.showSnackbar(context.getString(R.string.Audio_recording_is_started))
-            } finally {
+                _isRecordStarting.update { false }
+            } catch (e: Exception) {
                 _isRecordStarting.update { false }
             }
         }
@@ -320,6 +338,7 @@ class RecordVideoViewModel @Inject constructor(
 
     fun stopRecord() {
         viewModelScope.launch {
+            _isRecordStarting.update { false }
             recordVideoManageContract.stop()
             toastManager.showToast(R.string.video_saved_to_internal_storage)
         }

@@ -68,7 +68,8 @@ fun AudioStorageList(audioStorageListViewModel: AudioStorageListViewModel) {
                     duration = it.duration,
                     created = it.created,
                     name = it.name ?: "",
-                    buttons = mediaButtons
+                    buttons = mediaButtons,
+                    isVideo = false
                 )
             }
         }

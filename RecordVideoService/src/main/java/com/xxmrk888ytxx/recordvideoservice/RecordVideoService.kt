@@ -146,7 +146,16 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
                 name = getString(R.string.Channel_name)
             )
 
-            startForeground(NOTIFICATION_ID, createNotification())
+            val notification = createNotification()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                var serviceType = android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    serviceType = serviceType or android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+                }
+                startForeground(NOTIFICATION_ID, notification, serviceType)
+            } else {
+                startForeground(NOTIFICATION_ID, notification)
+            }
             Log.i(LOG_TAG, "foreground started")
         }
     }

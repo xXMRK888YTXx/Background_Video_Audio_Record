@@ -84,7 +84,8 @@ fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
                     created = it.created,
                     name = it.name ?: "",
                     buttons = buttons,
-                    isDualRecord = it.isDualRecord
+                    isDualRecord = it.isDualRecord,
+                    isVideo = true
                 )
             }
         }

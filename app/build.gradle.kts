@@ -88,6 +88,7 @@ dependencies {
 
     //Compose
     implementation(libs.compose.navigation)
+    implementation(libs.androidx.fragment)
 
     //Serialization
     implementation(libs.kotlin.serialization.json)

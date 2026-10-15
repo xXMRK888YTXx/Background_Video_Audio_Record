@@ -73,8 +73,17 @@ internal class VideoRecorderImpl constructor(
 
     private val listener by lazy {
         Consumer<VideoRecordEvent> { recordInfo ->
+            if (recordInfo == null) return@Consumer
+            if (recordInfo is VideoRecordEvent.Finalize) {
+                if (recordInfo.hasError()) {
+                    Log.e("VideoRecorder", "Recording finalized with error: ${recordInfo.error}, cause: ${recordInfo.cause}")
+                    observerRecordDurationScope.launch {
+                        _recordState.update { RecorderState.Idle }
+                    }
+                    return@Consumer
+                }
+            }
             observerRecordDurationScope.launch {
-                if(recordInfo == null) return@launch
                 val recordedMillis = recordInfo.recordingStats.recordedDurationNanos / 1_000_000
                 _recordState.update {
                     when(it) {
@@ -274,13 +283,23 @@ internal class VideoRecorderImpl constructor(
                     .Builder(outputFile)
                     .build()
 
-                recording = videoCapture!!.output
-                    .prepareRecording(context, mediaStoreOutput)
-                    .withAudioEnabled()
-                    .start(
-                        Dispatchers.IO.asExecutor(),
-                        listener
-                    )
+                try {
+                    recording = videoCapture!!.output
+                        .prepareRecording(context, mediaStoreOutput)
+                        .withAudioEnabled()
+                        .start(
+                            Dispatchers.IO.asExecutor(),
+                            listener
+                        )
+                } catch (audioEx: SecurityException) {
+                    Log.w("VideoRecorder", "Audio record permission missing, recording video only", audioEx)
+                    recording = videoCapture!!.output
+                        .prepareRecording(context, mediaStoreOutput)
+                        .start(
+                            Dispatchers.IO.asExecutor(),
+                            listener
+                        )
+                }
 
                 if (secondaryVideoCapture != null && secondaryOutputFile != null) {
                     val secondaryMediaStoreOutput = FileOutputOptions
@@ -297,6 +316,7 @@ internal class VideoRecorderImpl constructor(
                 toRecordState()
             } catch (e: Exception) {
                 Log.e("VideoRecorder", "Failed to start recording session", e)
+                _recordState.update { RecorderState.Idle }
             }
         }
     }
