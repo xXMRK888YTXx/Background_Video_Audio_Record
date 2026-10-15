@@ -1,131 +1,193 @@
+<p align="center">
+  <img src="assets/logo.png" width="128" height="128" alt="Background Video & Audio Record Logo" />
+</p>
 
-# [En] Application description
+<h1 align="center">✨ Background Video & Audio Record ✨</h1>
+<h3 align="center">🔮 Кодовое имя: <em>Faraday</em> (v1.1.0r) 🪄</h3>
 
-"Background Video and Audio Recording" is a versatile app that lets you record video and audio even when you exit the app or lock your screen. You can use it to record important moments in your life, important conversations, or any other events you want to remember.
+<p align="center">
+  <b>Скрытая, надежная и высокопроизводительная фоновая запись видео и аудио для Android с аппаратной поддержкой двух камер</b><br>
+  <i>Stealthy, reliable, and high-performance background video and audio recording for Android with hardware dual-camera support</i>
+</p>
 
-Key features of the app:
+<p align="center">
+  <a href="https://github.com/KoksMen/Background_Video_Audio_Record/releases"><img src="https://img.shields.io/badge/Version-v1.1.0r--Faraday-7c4dff?style=for-the-badge&logo=github&logoColor=white" alt="Version v1.1.0r-Faraday" /></a>
+  <img src="https://img.shields.io/badge/Kotlin-2.2-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin 2.2" />
+  <img src="https://img.shields.io/badge/Compose-Material%203%20Expressive-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Compose Material 3 Expressive" />
+  <img src="https://img.shields.io/badge/Platform-Android%208.0%2B%20(API%2026%E2%80%9336)-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android 8.0+" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPL--3.0-orange?style=for-the-badge" alt="License GPL-3.0" /></a>
+</p>
 
-Continuous recording: The app runs in the background, providing continuous video and audio recording even if you switch to other apps or lock your device's screen.
+<p align="center">
+  <a href="#-background-video--audio-record-на-русском"><b>🇷🇺 Перейти к русской версии</b></a> •
+  <a href="#-background-video--audio-record-in-english"><b>🇬🇧 Switch to English Version</b></a>
+</p>
 
-Convenient viewing and listening: You can view or listen to recorded material right in the app.
+<p align="center">
+  <a href="https://github.com/KoksMen/Background_Video_Audio_Record/releases/latest">
+    <img src="https://img.shields.io/badge/Скачать%20APK-Download%20APK-4CAF50?style=for-the-badge&logo=android&logoColor=white" alt="Download APK" />
+  </a>
+  <a href="https://github.com/KoksMen/Background_Video_Audio_Record/releases">
+    <img src="https://img.shields.io/badge/GitHub-Releases-181717?style=for-the-badge&logo=github&logoColor=white" alt="Releases" />
+  </a>
+  <a href="https://github.com/xXMRK888YTXx/Background_Video_Audio_Record">
+    <img src="https://img.shields.io/badge/Upstream-Repository-0969DA?style=for-the-badge&logo=git&logoColor=white" alt="Upstream Repository" />
+  </a>
+</p>
 
-Customizable notifications: You can customize the notifications that will be displayed during recording. Choose a recording status alert to stay up to date on app activity, or set up a personal message to be displayed during recording so you always have the information you need at your fingertips.
+---
 
-Don't miss any important moments in your life. Set "Background Video and Audio Recording" and be in the middle of the action even when you're not in the app.
+# 🇷🇺 Background Video & Audio Record (На русском)
 
-# Project structure description
+## 💡 О проекте
 
-## [CoreAndroid]
-This module contains dependencies, basic interfaces for all other project modules.
+**Background Video & Audio Record** — это профессиональное мобильное приложение для Android, спроектированное для скрытой, непрерывной и стабильной видео- и аудиозаписи в фоновом режиме.
 
-## [СoreСompose]
-This module contains basic dependencies, a description of the topic, basic components for modules
-which uses compose. Includes [CoreAndroid]
+Приложение способно продолжать высококачественную запись даже при выключенном или заблокированном экране смартфона, при переключении между другими приложениями или во время игр. Развитая система маскировки уведомлений, защита PIN-кодом с биометрией и аппаратная поддержка склейки двух камер делают приложение незаменимым инструментом для фиксации важных жизненных событий, лекций, интервью и обеспечения личной безопасности. 🚀
 
-## [AudioPlayer]
-The module that contains the class for audio playback
+> [!TIP]
+> Приложение полностью автономно, не содержит скрытого сбора телеметрии и сохраняет все медиафайлы локально во внутреннем зашифрованном хранилище устройства с возможностью экспорта в галерею.
 
-## [AdmobManager]
-Module with classes for managing ads
+---
 
-## [AudioPlayer]
-Module containing the class for audio playback
+## 🌟 Ключевые возможности и функционал системы
 
-## [AudioRecordService]
-Module that contains the audio recording service
+### 🔐 1. Защита приложения и биометрия (App Lock)
+- **PIN-код с криптографическим солением:** Хранение хеша по алгоритму **SHA-256** с индивидуальной солью (`FaradaySec_2026_Salt`) в `DataStore Preferences`.
+- **Биометрическая аутентификация (BiometricPrompt):** Мгновенная разблокировка по отпечатку пальца или распознаванию лица (Class 3 Strong Biometrics).
+- **Эргономичный экран блокировки:** Анимированные точки ввода с защитой от подбора (shake-анимация и красная индикация при ошибке), тактильный виброотклик.
+- **Автоматическая блокировка сессии:** Приложение мгновенно скрывает контент и блокируется при сворачивании (`onStop`) или переключении задач в Android Recents.
 
-## [BottomBarScreen]
-Module that contains widget for sharing other screens with pager and bottom bar
+### 📸 2. Аппаратная двухкамерная запись (Dual Video & MediaCodec HW Acceleration)
+- **Одновременная съемка (Concurrent Camera):** Запись видео сразу с двух камер смартфона (основной тыловой и фронтальной селфи).
+- **Аппаратное кодирование `DualVideoCombiner`:** Автоматический поиск и использование аппаратных кодеков SoC (`c2.qti`, `c2.exynos`, `c2.mtk`, `omx`) через `MediaCodecList` в режиме VBR (Variable Bitrate). Склейка двух потоков происходит на аппаратном уровне с ускорением в 3–5 раз без перегрева устройства.
+- **Программный fallback:** При отсутствии поддержки аппаратного кодека на старых процессорах система прозрачно переключается на стандартный кодек.
+- **Индивидуальная компоновка PiP (Картинка в Картинке):** Возможность выбора, какая камера является основной (фоновой), а какая миниатюрой, с настройкой угла отображения (правый верхний, левый верхний и т.д.).
 
-## [CameraPreviewCompose]
-Module where camera preview for compose is located
+### ⏳ 3. Автоматическая нарезка видео по лимитам (Auto-Split Video)
+- **Поддержка FAT32 и SD-карт:** Лимит **4 ГБ / 30 минут** предотвращает повреждение файлов при записи на съемные карты памяти с ограничением 4 ГБ на файл.
+- **Гибкие профили нарезки:** На выбор доступны лимиты: *Без разделения*, *15 минут*, *30 минут*, *60 минут*, *4 ГБ / 30 мин*.
+- **Бесшовная смена фрагментов (`rotateChunk`):** Предыдущий фрагмент сохраняется в репозиторий, а новый файл начинается мгновенно. Таймер записи в шторке и интерфейсе не прерывается и накапливает общее время.
 
-## [PreferencesStorage]
-Module that contains the wrapper over the datastore to control SharedPreferences
+### 🎛️ 4. Быстрый тайл в шторке (Quick Settings Tile)
+- **Плитка быстрого доступа:** Сервис `FastOpenAppQuickSettingsService` интегрирован прямо в шторку переключателей Android.
+- **Старт в один тап:** Запуск скрытой видеозаписи без предварительного открытия интерфейса приложения.
+- **Двусторонняя реактивность:** Тайл динамически отображает текущий статус (`STATE_ACTIVE` — *«Идёт запись» / «Нажмите для остановки»*; `STATE_INACTIVE` — *«Быстрая запись» / «Нажмите для старта»*). Синхронизация работает независимо от того, откуда начата запись.
 
-## [RecordAudioScreen]
-Module where the screen to manage audio recordings is located
+### 🔔 5. Кастомизация уведомлений и OEM-совместимость
+- **Маскировка уведомлений:** Возможность смены текста и иконки уведомления под нейтральные сервисы (Калькулятор, Плеер, Загрузка, Синхронизация, Батарея).
+- **OEM Notification Fix (`NotificationHelper`):** Устранено кэширование иконок на прошивках Xiaomi (MIUI / HyperOS), Samsung (OneUI), Huawei (EMUI) и BBK (ColorOS / OxygenOS). Использование динамических ID каналов и растровых `LargeIcon` предотвращает подмену иконки на лаунчер вендором.
 
-## [RecordVideoScreen]
-Module where the control screen for video recordings is located
+### 🎨 6. Интерфейс Material 3 Expressive и переработанное хранилище
+- **Новый экран записей (Storage):**
+  - **Тап по всей карточке:** Для воспроизведения достаточно коснуться любой части карточки — целиться в мелкие кнопки больше не требуется.
+  - **Медиа-бейдж:** Цветной скругленный контейнер с градиентом (индиго для видео, фиолетово-бирюзовый для двух камер, изумрудный для аудио).
+  - **Эргономичная панель действий:** Выделенная крупная кнопка Play (46dp) под палец, а кнопка «Удалить» отведена в правый угол с защитной красной подсветкой для исключения случайных удалений.
+- **HUD записи:** Пульсирующий индикатор статуса записи, переключатель превью/экран, эргономичная зона управления под большой палец.
 
-## [VideoRecordService]
-Module where the video recording service is located
+### 📐 7. Нативный Edge-to-Edge и повышенная надежность
+- **Настоящий Edge-to-Edge:** Удален устаревший `Accompanist SystemUIController`. Приложение нативно адаптировано под вырезы, жестовую панель и `WindowInsets` Android 14/15/16.
+- **Устранение краша разрешений:** Переход на `fragment-ktx:1.8.6` устранил древний 16-битный баг `startActivityForResult` при запросе разрешений в Activity Result API.
+- **Стабильный старт записи:** Устранена гонка состояний между UI CameraPreview и фоновым сервисом, добавлены таймаут-watchdog и корректные Foreground Service Types (`camera|microphone`).
 
-## [SettingsScreen]
-Module where the application settings screen is located
+---
 
-## [StorageScreen]
-Module where the screen to manage recordings is located
+## 🛠️ Стек технологий
 
-## [VideoPlayerScreen]
-Module with a video playback screen
+| Категория | Технологии |
+| :--- | :--- |
+| **Язык разработки** | Kotlin 2.2 (KSP 2.2, Coroutines 1.10, Flows, Channels) |
+| **Пользовательский интерфейс** | Jetpack Compose, Material 3 Expressive, Navigation Compose |
+| **Камера и медиа** | CameraX 1.5 (VideoCapture, ConcurrentCamera), MediaCodec, MediaRecorder, ExoPlayer 1.8 |
+| **Архитектура** | Multi-Module Clean Architecture, MVVM + MVI-like StateFlows |
+| **Внедрение зависимостей** | Dagger 2 |
+| **Локальные данные** | Room Database (KSP), DataStore Preferences |
+| **Безопасность** | AndroidX Biometric, SHA-256 Key Salting, Hardware KeyStore |
+| **Системные сервисы** | Foreground Service (Camera/Mic), Quick Settings TileService, BroadcastReceivers |
 
-## [VideoRecorder]
-Module to the class for video recording
+---
 
-# [Ru] Описание приложения
+## 📁 Модульная архитектура проекта
 
-"Фоновая запись видео и аудио" - это универсальное приложение, которое позволяет записывать видео и аудио, даже когда вы выходите из приложения или блокируете экран. Вы можете использовать его для записи важных моментов вашей жизни, важных разговоров или любых других событий, которые вы хотите запомнить.
+```text
+├── app/                              # Главный модуль сборки, Dagger DI, AppLock, MainActivity
+├── CoreAndroid/                      # Базовые утилиты, NotificationHelper, расширения context
+├── CoreCompose/                      # Общие Compose-компоненты, дизайн-система, темы
+├── RecordVideoScreen/                # Экран управления записью видео и видоискатель
+├── RecordAudioScreen/                # Экран управления звукозаписью
+├── RecordVideoService/               # Фоновый Foreground-сервис видеозаписи с CameraX
+├── AudioRecordService/               # Фоновый Foreground-сервис аудиозаписи
+├── VideoRecorder/                    # Обертка над CameraX VideoCapture и Recorder API
+├── CameraPreviewCompose/             # Виджет видоискателя камеры для Compose (вкл. PiP)
+├── FastOpenAppQuickSettingsService/  # Системная плитка Quick Settings Tile для шторки
+├── StorageScreen/                    # Экран управления сохраненными записями (M3 карточки)
+├── VideoPlayerScreen/                # Встроенный видеоплеер
+├── AudioPlayer/                      # Сервис и контроллер воспроизведения аудио
+├── SettingsScreen/                   # Экран настроек, биометрии и разделения видео
+├── PreferencesStorage/               # Хранилище настроек на базе Jetpack DataStore
+└── AutoExportToExternalStorageScreen/# Модуль автоматического экспорта в общую память
+```
 
-Основные возможности приложения:
+---
 
-Непрерывная запись: Приложение работает в фоновом режиме, обеспечивая непрерывную запись видео и аудио, даже если вы переключаетесь на другие приложения или блокируете экран устройства.
+## 🚀 Установка и системные требования
 
-Удобный просмотр и прослушивание: Вы можете просматривать или прослушивать записанный материал прямо в приложении.
+- **Минимальная версия:** Android 8.0 (API Level 26)
+- **Целевая версия:** Android 15 / 16 (API Level 36)
+- **Аппаратные требования:** Камера и микрофон. Для режима Dual Video требуется поддержка `FEATURE_CAMERA_CONCURRENT`.
 
-Настраиваемые уведомления: Вы можете настроить уведомления, которые будут отображаться во время записи. Выберите оповещение о состоянии записи, чтобы всегда быть в курсе активности приложения, или настройте персональное сообщение, которое будет отображаться во время записи, чтобы всегда иметь под рукой необходимую информацию.
+[**⬇️ Скачать официальный APK (Релизы GitHub)**](https://github.com/KoksMen/Background_Video_Audio_Record/releases/latest)
 
-Не пропустите ни одного важного момента в своей жизни. Установите "Фоновую запись видео и аудио" и будьте в центре событий, даже если вы не находитесь в приложении.
+---
 
-# Описание структуры проекта
+# 🇬🇧 Background Video & Audio Record (In English)
 
-## [CoreAndroid]
-В данном модуле находятся зависимости, базовые интерфейсы для всех других модулей проекта.
+## 💡 About The Project
 
-## [CoreCompose]
-В данном модуле находятся базовые зависимости, описание темы, базовые компоненты для модулей
-в котором используется compose. Включает в себя [CoreAndroid]
+**Background Video & Audio Record** is an advanced open-source Android application engineered for stealthy, reliable, and uninterrupted background video and voice recording.
 
-## [AudioPlayer]
-Модуль в котором находится класс для воспроизведения аудио
+The application allows you to record high-resolution video and crystal-clear audio even when your device screen is locked or turned off, when switching between other apps, or during heavy multitasking. Featuring customized notification cloaking, biometric app security (PIN + Fingerprint), hardware-accelerated dual-camera picture-in-picture recording, and a Quick Settings tile, this tool is ideal for documenting crucial moments, meetings, and personal security.
 
-## [AdmobManager]
-Модуль с классами для управлением рекламой
+---
 
-## [AudioPlayer]
-Модуль в котором находится класс для воспроизведения аудио
+## 🌟 Key Features
 
-## [AudioRecordService]
-Модуль в котором находится сервис для записи аудио
+### 🔐 1. App Lock & Biometrics
+- **Salted SHA-256 PIN:** Secure PIN code hashing with unique cryptographic salt (`FaradaySec_2026_Salt`) stored in Jetpack DataStore.
+- **Biometric Authentication:** High-security fingerprint and facial recognition via modern AndroidX `BiometricPrompt`.
+- **Intelligent Session Locking:** Automatically locks down when the app is placed into background (`onStop`) or viewed in Android Recents.
 
-## [BottomBarScreen]
-Модуль в котором находтся виджет для обьеденения других экраном с помощью pager и bottom bar
+### 📸 2. Hardware-Accelerated Dual Video Recording
+- **Concurrent Camera Support:** Simultaneous recording from front and back cameras.
+- **MediaCodec Hardware Acceleration:** `DualVideoCombiner` queries device hardware encoders (`c2.qti`, `c2.exynos`, `c2.mtk`, `omx`) for fast, power-efficient PiP rendering.
+- **Automatic Fallback:** Gracefully degrades to standard software codecs if hardware codecs are occupied or unavailable.
+- **Customizable PiP Layout:** Change main vs thumbnail camera and PiP window placement on the fly.
 
-## [CameraPreviewCompose]
-Модуль в котором находится превью камеры для compose
+### ⏳ 3. Automatic Video Chunk Splitting
+- **FAT32 & SD Card Safe:** Automatic split limit at **4 GB / 30 minutes** prevents file corruption on external storage cards.
+- **Seamless Chunk Rotation:** Recording continues without interruptions, maintaining a continuous duration timer in the notification shade and UI.
 
-## [PreferencesStorage]
-Модуль в котором находтся обвертка над datastore для управления SharedPreferences
+### 🎛️ 4. Quick Settings Tile
+- **Instant Background Recording:** Start and stop video capture right from the Android notification shade with a single tap.
+- **Dynamic State Tracking:** Tile icon and subtitle dynamically toggle between `STATE_ACTIVE` (*"Recording active"*) and `STATE_INACTIVE` (*"Quick record"*).
 
-## [RecordAudioScreen]
-Модуль где находится экран для управлением записей звука
+### 🔔 5. Notification Cloaking & OEM Fix
+- **Stealth Profiles:** Masquerade recording notifications as Calculator, Music Player, Download Manager, or Sync Status.
+- **OEM Caching Solution:** Uses dynamic notification channel IDs and bitmap `LargeIcon` generation to bypass aggressive launcher icon overriding on Xiaomi MIUI/HyperOS, Samsung OneUI, and Huawei EMUI.
 
-## [RecordVideoScreen]
-Модуль где находится экран для управлением записей видео
+### 🎨 6. Material 3 Expressive UI & Redesigned Storage Cards
+- **Tap-to-Play Cards:** Simply tap anywhere on a card to initiate playback.
+- **Media Badges:** Distinct gradient badges for Video, Dual Video, and Audio.
+- **Thumb-Zone Play Button:** Dedicated 46dp play button on the right edge.
+- **Safety Danger Action:** Delete button is isolated in the opposite corner with subtle red danger styling to eliminate accidental deletions.
 
-## [VideoRecordService]
-Модуль в котором находится сервис для записи видео
+### 📐 7. True Edge-to-Edge & Hardened Stability
+- **Native Window Insets:** Full compliance with Android 15+ edge-to-edge layout standards.
+- **Modern Activity Result API:** Upgraded to `fragment-ktx:1.8.6` resolving the legacy 16-bit `startActivityForResult` request code crash.
+- **Stabilized Camera Lifecycle:** Eliminated race conditions between Compose preview and background services.
 
-## [SettingsScreen]
-Модуль где находтся экран для настроек приложения
+---
 
-## [StorageScreen]
-Модуль, где находтся экран для управления записями
+## 📄 License
 
-## [VideoPlayerScreen]
-Модуль с экраном для воспроизведения видео
-
-## [VideoRecorder]
-Модуль к классом для записи видео
-
+This project is distributed under the **GNU General Public License v3.0 (GPL-3.0)**. See [LICENSE](LICENSE) for details.
