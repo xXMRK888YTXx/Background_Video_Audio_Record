@@ -49,7 +49,7 @@ fun AudioStorageList(audioStorageListViewModel: AudioStorageListViewModel) {
                     ),
                     MediaFileButton(
                         icon = R.drawable.baseline_delete_24,
-                        onClick = { audioStorageListViewModel.removeAudioFile(it) }
+                        onClick = { audioStorageListViewModel.requestDelete(it) }
                     ),
                     MediaFileButton(
                         icon = R.drawable.remame,
@@ -94,6 +94,13 @@ fun AudioStorageList(audioStorageListViewModel: AudioStorageListViewModel) {
             initialName = state.initialName,
             onDismiss = audioStorageListViewModel::hideRenameDialog,
             onRenamed = { audioStorageListViewModel.changeAudioFileName(state.audioId,it) }
+        )
+    }
+
+    if(dialogState.pendingDeleteAudio != null) {
+        com.xxmrk888ytxx.storagescreen.ConfirmDeleteDialog(
+            onDismiss = audioStorageListViewModel::cancelDelete,
+            onConfirm = audioStorageListViewModel::confirmDelete
         )
     }
 

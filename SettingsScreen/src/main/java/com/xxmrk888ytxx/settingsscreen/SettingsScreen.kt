@@ -51,7 +51,24 @@ import com.xxmrk888ytxx.corecompose.themeTypography
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraMaxQualitySelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraRotationSelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraTypeSelectDialogState
+import androidx.compose.foundation.lazy.LazyRow
+import com.xxmrk888ytxx.coreandroid.models.NotificationIconType
+import com.xxmrk888ytxx.coreandroid.models.DualCameraPrimary
+import com.xxmrk888ytxx.coreandroid.models.PipPosition
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.NotificationConfigurationDialogState
+import com.xxmrk888ytxx.settingsscreen.models.DialogModels.DualCameraPrimarySelectDialogState
+import com.xxmrk888ytxx.settingsscreen.models.DialogModels.PipPositionSelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.NotificationConfigType
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraMaxQuality
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraRotation
@@ -129,6 +146,20 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
             settingsViewModel,
             initialCameraRotation = (dialogState.cameraRotationSelectDialogState
                     as CameraRotationSelectDialogState.Showed).initialCameraRotation
+        )
+    }
+
+    if (dialogState.dualCameraPrimarySelectDialogState is DualCameraPrimarySelectDialogState.Showed) {
+        DualCameraPrimarySelectDialog(
+            settingsViewModel = settingsViewModel,
+            initialPrimary = (dialogState.dualCameraPrimarySelectDialogState as DualCameraPrimarySelectDialogState.Showed).currentSetup
+        )
+    }
+
+    if (dialogState.pipPositionSelectDialogState is PipPositionSelectDialogState.Showed) {
+        PipPositionSelectDialog(
+            settingsViewModel = settingsViewModel,
+            initialPosition = (dialogState.pipPositionSelectDialogState as PipPositionSelectDialogState.Showed).currentSetup
         )
     }
 
@@ -258,6 +289,11 @@ internal fun CameraTypeSelectDialog(
                 title = stringResource(R.string.Back_camera),
                 isSelected = currentSelectedCameraType == CameraType.Back.id,
                 onClick = { currentSelectedCameraType = CameraType.Back.id }
+            ),
+            SelectDialogModel(
+                title = stringResource(R.string.Both_cameras),
+                isSelected = currentSelectedCameraType == CameraType.Both.id,
+                onClick = { currentSelectedCameraType = CameraType.Both.id }
             )
         )
     )
@@ -396,56 +432,78 @@ internal fun NotificationConfigurationDialog(
             ) {
 
                 LazyColumn(
-                    Modifier
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .padding(10.dp)
+                        .padding(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(supportedNotificationTypes) {
+                        val isSelected = it.isSelected
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            modifier = Modifier.clickable(onClick = it.onClick)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(if (isSelected) themeColors.primaryColor.copy(alpha = 0.15f) else Color.Transparent)
+                                .border(
+                                    1.dp,
+                                    if (isSelected) themeColors.primaryColor.copy(alpha = 0.5f) else Color(0xFF263346),
+                                    RoundedCornerShape(12.dp)
+                                )
+                                .clickable(onClick = it.onClick)
+                                .padding(horizontal = 12.dp, vertical = 8.dp)
                         ) {
                             RadioButton(
-                                selected = it.isSelected,
+                                selected = isSelected,
                                 onClick = it.onClick,
                                 colors = RadioButtonDefaults.colors(
                                     selectedColor = themeColors.primaryColor,
-                                    unselectedColor = themeColors.primaryFontColor
+                                    unselectedColor = themeColors.secondFontColor
                                 )
                             )
 
                             Text(
                                 text = it.text,
-                                color = themeColors.primaryFontColor,
-                                style = themeTypography.body
+                                color = if (isSelected) Color.White else themeColors.primaryFontColor,
+                                style = themeTypography.body.copy(
+                                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+                                )
                             )
-
                         }
                     }
 
                     items(additionalNotificationParametersList) {
                         Row(
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(if (it.isSelect) themeColors.primaryColor.copy(alpha = 0.12f) else Color.Transparent)
+                                .border(
+                                    1.dp,
+                                    if (it.isSelect) themeColors.primaryColor.copy(alpha = 0.4f) else Color(0xFF263346),
+                                    RoundedCornerShape(12.dp)
+                                )
+                                .clickable { it.onClick(!it.isSelect) }
+                                .padding(horizontal = 10.dp, vertical = 6.dp)
                         ) {
                             Checkbox(
                                 checked = it.isSelect,
                                 onCheckedChange = it.onClick,
                                 colors = CheckboxDefaults.colors(
                                     checkedColor = themeColors.primaryColor,
-                                    uncheckedColor = themeColors.primaryColor
+                                    uncheckedColor = themeColors.secondFontColor
                                 )
                             )
 
+                            Spacer(modifier = Modifier.width(6.dp))
+
                             Text(
                                 text = it.text,
-                                color = themeColors.primaryFontColor,
+                                color = if (it.isSelect) Color.White else themeColors.primaryFontColor,
                                 style = themeTypography.body,
-                                modifier = Modifier
-                                    .horizontalScroll(rememberScrollState())
-                                    .clickable {
-                                        it.onClick(!it.isSelect)
-                                    }
+                                modifier = Modifier.horizontalScroll(rememberScrollState())
                             )
                         }
                     }
@@ -520,6 +578,105 @@ internal fun NotificationConfigurationDialog(
                                     color = themeColors.primaryFontColor
                                 )
                             )
+
+                            val currentIconId = currentState.iconId
+                            Spacer(modifier = Modifier.height(14.dp))
+                            Text(
+                                text = "Иконка уведомления (маскировка):",
+                                style = themeTypography.head.copy(fontSize = 14.sp),
+                                color = themeColors.primaryFontColor,
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            LazyRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                items(NotificationIconType.values().toList()) { iconType ->
+                                    val isSelected = iconType.id == currentIconId
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(if (isSelected) themeColors.primaryColor else Color(0xFF1E293B))
+                                            .border(
+                                                1.dp,
+                                                if (isSelected) themeColors.primaryColor else Color(0xFF334155),
+                                                RoundedCornerShape(12.dp)
+                                            )
+                                            .clickable {
+                                                currentState = when (val s = currentState) {
+                                                    is NotificationConfigType.CustomNotification -> s.copy(iconId = iconType.id)
+                                                    is NotificationConfigType.ViewRecordStateType -> s.copy(iconId = iconType.id)
+                                                }
+                                            }
+                                            .padding(horizontal = 10.dp, vertical = 7.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Text(text = iconType.emoji, fontSize = 15.sp)
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Text(
+                                                text = iconType.title,
+                                                color = if (isSelected) Color.White else Color(0xFFCBD5E1),
+                                                fontSize = 12.sp,
+                                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Live Status Bar Notification Preview Card
+                            Spacer(modifier = Modifier.height(14.dp))
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Color(0xFF0F172A))
+                                    .border(1.dp, Color(0xFF334155), RoundedCornerShape(16.dp))
+                                    .padding(12.dp)
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    val selectedIconType = NotificationIconType.fromId(currentIconId)
+                                    Box(
+                                        modifier = Modifier
+                                            .size(36.dp)
+                                            .clip(CircleShape)
+                                            .background(Color(0xFF1E293B)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        androidx.compose.material3.Icon(
+                                            painter = painterResource(id = selectedIconType.iconRes),
+                                            contentDescription = null,
+                                            tint = Color.White,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        val previewTitle = when (val s = currentState) {
+                                            is NotificationConfigType.CustomNotification -> s.title.ifEmpty { "Заголовок уведомления" }
+                                            is NotificationConfigType.ViewRecordStateType -> "Фоновая запись звука/видео"
+                                        }
+                                        val previewText = when (val s = currentState) {
+                                            is NotificationConfigType.CustomNotification -> s.text.ifEmpty { "Текст маскировки" }
+                                            is NotificationConfigType.ViewRecordStateType -> "Идёт запись: 00:01:23"
+                                        }
+                                        Text(
+                                            text = previewTitle,
+                                            color = Color.White,
+                                            fontSize = 13.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Text(
+                                            text = previewText,
+                                            color = Color(0xFF94A3B8),
+                                            fontSize = 11.sp
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -536,3 +693,84 @@ internal fun NotificationConfigurationDialog(
         }
     }
 }
+
+@Composable
+internal fun DualCameraPrimarySelectDialog(
+    settingsViewModel: SettingsViewModel,
+    initialPrimary: DualCameraPrimary,
+) {
+    var selected by rememberSaveable {
+        mutableStateOf(initialPrimary.name)
+    }
+
+    SelectDialog(
+        onConfirm = {
+            val primary = try {
+                DualCameraPrimary.valueOf(selected)
+            } catch (e: Exception) {
+                DualCameraPrimary.BACK
+            }
+            settingsViewModel.changeDualCameraPrimary(primary)
+            settingsViewModel.hideDualCameraPrimarySelectDialogState()
+        },
+        onCancel = settingsViewModel::hideDualCameraPrimarySelectDialogState,
+        items = persistentListOf(
+            SelectDialogModel(
+                title = stringResource(R.string.Back_camera),
+                isSelected = selected == DualCameraPrimary.BACK.name,
+                onClick = { selected = DualCameraPrimary.BACK.name }
+            ),
+            SelectDialogModel(
+                title = stringResource(R.string.Front_camera),
+                isSelected = selected == DualCameraPrimary.FRONT.name,
+                onClick = { selected = DualCameraPrimary.FRONT.name }
+            )
+        )
+    )
+}
+
+@Composable
+internal fun PipPositionSelectDialog(
+    settingsViewModel: SettingsViewModel,
+    initialPosition: PipPosition,
+) {
+    var selected by rememberSaveable {
+        mutableStateOf(initialPosition.name)
+    }
+
+    SelectDialog(
+        onConfirm = {
+            val position = try {
+                PipPosition.valueOf(selected)
+            } catch (e: Exception) {
+                PipPosition.TOP_RIGHT
+            }
+            settingsViewModel.changePipPosition(position)
+            settingsViewModel.hidePipPositionSelectDialogState()
+        },
+        onCancel = settingsViewModel::hidePipPositionSelectDialogState,
+        items = persistentListOf(
+            SelectDialogModel(
+                title = stringResource(R.string.pip_top_right),
+                isSelected = selected == PipPosition.TOP_RIGHT.name,
+                onClick = { selected = PipPosition.TOP_RIGHT.name }
+            ),
+            SelectDialogModel(
+                title = stringResource(R.string.pip_top_left),
+                isSelected = selected == PipPosition.TOP_LEFT.name,
+                onClick = { selected = PipPosition.TOP_LEFT.name }
+            ),
+            SelectDialogModel(
+                title = stringResource(R.string.pip_bottom_right),
+                isSelected = selected == PipPosition.BOTTOM_RIGHT.name,
+                onClick = { selected = PipPosition.BOTTOM_RIGHT.name }
+            ),
+            SelectDialogModel(
+                title = stringResource(R.string.pip_bottom_left),
+                isSelected = selected == PipPosition.BOTTOM_LEFT.name,
+                onClick = { selected = PipPosition.BOTTOM_LEFT.name }
+            )
+        )
+    )
+}
+

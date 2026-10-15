@@ -171,7 +171,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     //
 
     //Record control
-    override fun startRecord(outputFile: File) {
+    override fun startRecord(outputFile: File, secondaryOutputFile: File?) {
         if (recorder != null) return
         videoRecordServiceScope.launch {
 
@@ -185,6 +185,9 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
                 setCameraType(config.cameraType.cameraTypeForRecorder)
                 setMaxQuality(config.maxQuality.videoRecorderMaxQuality)
                 setCameraRotation(config.cameraRotation.cameraRotation)
+                if (secondaryOutputFile != null) {
+                    setSecondaryOutputFile(secondaryOutputFile)
+                }
             }.build()
 
             startRecordObserver()
@@ -275,7 +278,8 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
                 applicationContext.buildNotification(NOTIFICATION_CHANNEL_ID) {
                     setContentTitle(foregroundType.title)
                     setContentText(foregroundType.text)
-                    setSmallIcon(R.drawable.baseline_videocam_24)
+                    val iconRes = com.xxmrk888ytxx.coreandroid.models.NotificationIconType.fromId(foregroundType.iconId).iconRes
+                    setSmallIcon(iconRes)
                     setOnlyAlertOnce(true)
                     if (foregroundType.isPauseResumeButtonActive) {
                         when (_currentState.value) {
@@ -324,7 +328,12 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
                 "${getString(R.string.Recording_runs)} " +
                         recordVideoState.recordDuration.milliSecondToString()
             )
-            setSmallIcon(R.drawable.baseline_videocam_24)
+            val iconRes = if (foregroundType.iconId != 0) {
+                com.xxmrk888ytxx.coreandroid.models.NotificationIconType.fromId(foregroundType.iconId).iconRes
+            } else {
+                R.drawable.baseline_videocam_24
+            }
+            setSmallIcon(iconRes)
             setOnlyAlertOnce(true)
             if (foregroundType.isPauseResumeButtonActive) {
                 when (_currentState.value) {

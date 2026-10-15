@@ -19,10 +19,12 @@ import com.xxmrk888ytxx.recordvideoscreen.contract.RecordVideoStateProviderContr
 import com.xxmrk888ytxx.recordvideoscreen.exceptions.OtherRecordServiceStartedException
 import com.xxmrk888ytxx.recordvideoscreen.models.CurrentSelectedCameraModel
 import com.xxmrk888ytxx.recordvideoscreen.models.DialogState
+import com.xxmrk888ytxx.recordvideoscreen.models.DualCameraSaveOption
 import com.xxmrk888ytxx.recordvideoscreen.models.RecordState
 import com.xxmrk888ytxx.recordvideoscreen.models.RecordWidgetColor
 import com.xxmrk888ytxx.recordvideoscreen.models.ViewType
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -75,6 +77,10 @@ class RecordVideoViewModel @Inject constructor(
 
     //Manage Camera Type
 
+    internal val isConcurrentCameraSupported: Boolean by lazy {
+        context.packageManager.hasSystemFeature("android.hardware.camera.concurrent")
+    }
+
     internal val currentCamera = manageCameraTypeContract.cameraType
         .stateIn(
             viewModelScope,
@@ -82,12 +88,43 @@ class RecordVideoViewModel @Inject constructor(
             CurrentSelectedCameraModel.Back
         )
 
+    internal val dualCameraPrimary = manageCameraTypeContract.dualCameraPrimary
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            com.xxmrk888ytxx.coreandroid.models.DualCameraPrimary.BACK
+        )
+
+    internal val pipPosition = manageCameraTypeContract.pipPosition
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            com.xxmrk888ytxx.coreandroid.models.PipPosition.TOP_RIGHT
+        )
+
     internal fun changeCurrentSelectedCamera(currentCamera: CurrentSelectedCameraModel) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (currentCamera is CurrentSelectedCameraModel.Back) {
-                manageCameraTypeContract.setCurrentSelectedCamera(CurrentSelectedCameraModel.Front)
-            } else {
-                manageCameraTypeContract.setCurrentSelectedCamera(CurrentSelectedCameraModel.Back)
+            val nextCamera = when (currentCamera) {
+                is CurrentSelectedCameraModel.Back -> CurrentSelectedCameraModel.Front
+                is CurrentSelectedCameraModel.Front -> CurrentSelectedCameraModel.Both
+                is CurrentSelectedCameraModel.Both -> CurrentSelectedCameraModel.Back
+            }
+            manageCameraTypeContract.setCurrentSelectedCamera(nextCamera)
+            if (nextCamera is CurrentSelectedCameraModel.Both && !isConcurrentCameraSupported) {
+                snackBarHostState?.showSnackbar(
+                    context.getString(R.string.concurrent_camera_not_supported)
+                )
+            }
+        }
+    }
+
+    internal fun selectCamera(camera: CurrentSelectedCameraModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+            manageCameraTypeContract.setCurrentSelectedCamera(camera)
+            if (camera is CurrentSelectedCameraModel.Both && !isConcurrentCameraSupported) {
+                snackBarHostState?.showSnackbar(
+                    context.getString(R.string.concurrent_camera_not_supported)
+                )
             }
         }
     }
@@ -102,7 +139,10 @@ class RecordVideoViewModel @Inject constructor(
     //
 
     //View type
-    private val _viewType: MutableStateFlow<ViewType> = MutableStateFlow(ViewType.RecordWidget)
+    private val _viewType: MutableStateFlow<ViewType> = MutableStateFlow(
+        if (context.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+            ViewType.CameraPreview else ViewType.RecordWidget
+    )
 
     internal val viewType = _viewType.asStateFlow()
 
@@ -241,6 +281,9 @@ class RecordVideoViewModel @Inject constructor(
     //
 
     //Record
+    private val _isRecordStarting = MutableStateFlow(false)
+    internal val isRecordStarting = _isRecordStarting.asStateFlow()
+
     internal val currentRecordState = recordVideoStateProviderContract.currentState
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RecordState.Idle)
 
@@ -262,17 +305,24 @@ class RecordVideoViewModel @Inject constructor(
                 return@launch
             }
 
-
             try {
+                _isRecordStarting.update { true }
+                // Let Compose UI preview unbind cleanly before Service binds
+                delay(120)
                 recordVideoManageContract.start()
             } catch (e: OtherRecordServiceStartedException) {
                 snackBarHostState?.showSnackbar(context.getString(R.string.Audio_recording_is_started))
+            } finally {
+                _isRecordStarting.update { false }
             }
         }
     }
 
     fun stopRecord() {
-        viewModelScope.launch { recordVideoManageContract.stop() }
+        viewModelScope.launch {
+            recordVideoManageContract.stop()
+            toastManager.showToast(R.string.video_saved_to_internal_storage)
+        }
     }
 
     fun pauseRecord() {
@@ -281,6 +331,28 @@ class RecordVideoViewModel @Inject constructor(
 
     fun resumeRecord() {
         viewModelScope.launch { recordVideoManageContract.resume() }
+    }
+
+    // Dual camera save options
+    internal val hasPendingDualRecord = recordVideoManageContract.hasPendingDualRecord
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            false
+        )
+
+    private val _isSavingDualRecord = MutableStateFlow(false)
+    internal val isSavingDualRecord = _isSavingDualRecord.asStateFlow()
+
+    internal fun saveDualRecord(option: DualCameraSaveOption) {
+        viewModelScope.launch {
+            _isSavingDualRecord.update { true }
+            try {
+                recordVideoManageContract.saveDualRecord(option)
+            } finally {
+                _isSavingDualRecord.update { false }
+            }
+        }
     }
     //
 

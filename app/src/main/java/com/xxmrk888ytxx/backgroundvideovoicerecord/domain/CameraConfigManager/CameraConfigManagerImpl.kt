@@ -29,7 +29,9 @@ class CameraConfigManagerImpl @Inject constructor(
 
             CameraType.Front.id -> CameraType.Front
 
-            else -> error("Not valid camera type")
+            CameraType.Both.id -> CameraType.Both
+
+            else -> CameraType.Back
         }
     }
 

@@ -2,6 +2,7 @@
 <resources>
     <string name="Front_camera">Front camera</string>
     <string name="Back_camera">Back camera</string>
+    <string name="Both_cameras">Both cameras</string>
     <string name="Camera">Camera</string>
     <string name="Camera_type">Camera Type</string>
     <string name="Record_quality">Recording quality</string>
@@ -25,4 +26,10 @@
     <string name="Terms_of_use">Terms of Use</string>
     <string name="automatic_copying_to_external_memory">Automatic copying to external memory</string>
     <string name="export_settings">Export Settings</string>
+    <string name="dual_camera_primary">Primary camera (Dual mode)</string>
+    <string name="dual_camera_pip_position">PiP window position</string>
+    <string name="pip_top_right">Top-Right</string>
+    <string name="pip_top_left">Top-Left</string>
+    <string name="pip_bottom_right">Bottom-Right</string>
+    <string name="pip_bottom_left">Bottom-Left</string>
 </resources>

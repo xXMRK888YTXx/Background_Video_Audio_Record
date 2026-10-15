@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -31,6 +32,21 @@ import com.xxmrk888ytxx.storagescreen.AudioStorageList.AudioStorageListViewModel
 import com.xxmrk888ytxx.storagescreen.AudioStorageList.models.StorageType
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.VideoStorageList
 import com.xxmrk888ytxx.storagescreen.VideoStorageList.VideoStorageListViewModel
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -88,29 +104,55 @@ fun StorageScreen(
 @SuppressLint("ResourceType")
 @Composable
 fun Topbar(storageTypes: ImmutableList<StorageType>, currentPage: Int) {
-    BottomNavigation(
-        backgroundColor = themeColors.background
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 12.dp),
+        contentAlignment = Alignment.Center
     ) {
-        storageTypes.forEachIndexed() { index, it ->
-            BottomNavigationItem(
-                selected = index == currentPage,
-                onClick = { it.onClick() },
-                selectedContentColor = themeColors.bottomBarSelectedContentColor,
-                unselectedContentColor = themeColors.bottomBarUnselectedContentColor,
-                label = {
-                    Text(
-                        text = stringResource(id = it.label),
-                        style = themeTypography.bottomBar
-                    )
-                },
-                icon = {
+        Row(
+            modifier = Modifier
+                .clip(RoundedCornerShape(24.dp))
+                .background(Color(0xFF111827))
+                .border(1.dp, Color(0xFF1E293B), RoundedCornerShape(24.dp))
+                .padding(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            storageTypes.forEachIndexed { index, it ->
+                val isSelected = index == currentPage
+                val animatedBg by animateColorAsState(
+                    targetValue = if (isSelected) Color(0xFF3730A3) else Color.Transparent,
+                    animationSpec = tween(220)
+                )
+                val animatedContentColor by animateColorAsState(
+                    targetValue = if (isSelected) Color.White else Color(0xFF64748B),
+                    animationSpec = tween(220)
+                )
+
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(animatedBg)
+                        .clickable { it.onClick() }
+                        .padding(horizontal = 22.dp, vertical = 9.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     Icon(
                         painter = painterResource(it.icon),
                         contentDescription = null,
-                        modifier = Modifier.size(themeDimensions.iconSize)
+                        modifier = Modifier.size(18.dp),
+                        tint = animatedContentColor
+                    )
+                    Text(
+                        text = stringResource(id = it.label),
+                        fontSize = 14.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        color = animatedContentColor
                     )
                 }
-            )
+            }
         }
     }
 }

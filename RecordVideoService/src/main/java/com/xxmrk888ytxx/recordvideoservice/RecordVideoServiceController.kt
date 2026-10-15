@@ -8,7 +8,7 @@ interface RecordVideoServiceController {
     
     val currentState: Flow<RecordVideoState>
     
-    fun startRecord(outputFile: File)
+    fun startRecord(outputFile: File, secondaryOutputFile: File? = null)
     
     fun pauseRecord()
     

@@ -54,6 +54,7 @@ compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 compose-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 compose-material = { group = "androidx.compose.material", name = "material" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 compose-lifecycle = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 compose-system-ui-controller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "systemUiController" }

@@ -225,7 +225,8 @@ class AudioRecordService : Service(), AudioRecordServiceController {
                 applicationContext.buildNotification(NOTIFICATION_CHANNEL_ID) {
                     setContentTitle(foregroundType.title)
                     setContentText(foregroundType.text)
-                    setSmallIcon(R.drawable.record)
+                    val iconRes = com.xxmrk888ytxx.coreandroid.models.NotificationIconType.fromId(foregroundType.iconId).iconRes
+                    setSmallIcon(iconRes)
                     setOnlyAlertOnce(true)
                     if (foregroundType.isPauseResumeButtonActive) {
                         when (_currentState.value) {
@@ -274,7 +275,12 @@ class AudioRecordService : Service(), AudioRecordServiceController {
                 "${getString(R.string.Recording_is_going_on)} " +
                         recordAudioState.recordDuration.milliSecondToString()
             )
-            setSmallIcon(R.drawable.record)
+            val iconRes = if (config.iconId != 0) {
+                com.xxmrk888ytxx.coreandroid.models.NotificationIconType.fromId(config.iconId).iconRes
+            } else {
+                R.drawable.record
+            }
+            setSmallIcon(iconRes)
             setOnlyAlertOnce(true)
             if (config.isPauseResumeButtonActive) {
                 when (_currentState.value) {

@@ -10,4 +10,18 @@
     <string name="ad_key">ca-app-pub-6313040706847570/4137023039</string>
     <string name="back">Back</string>
     <string name="front">Front</string>
+    <string name="both_cameras">Both cameras</string>
+    <string name="concurrent_camera_not_supported">Hardware dual-camera recording is not supported on this device (FEATURE_CAMERA_CONCURRENT missing). Main camera will be used.</string>
+    <string name="save_dual_dialog_title">Save Dual Recording</string>
+    <string name="save_dual_dialog_subtitle">Select how to save the recorded video:</string>
+    <string name="save_dual_back_only">Back camera only</string>
+    <string name="save_dual_back_only_desc">Save video from the primary camera only</string>
+    <string name="save_dual_front_only">Front camera only</string>
+    <string name="save_dual_front_only_desc">Save video from the front selfie camera only</string>
+    <string name="save_dual_both_separately">Both separately</string>
+    <string name="save_dual_both_separately_desc">Save 2 distinct video files to storage</string>
+    <string name="save_dual_both_together">Both together (Combined)</string>
+    <string name="save_dual_both_together_desc">Combine both cameras into a single Picture-in-Picture video</string>
+    <string name="save_dual_processing">Processing and saving video…</string>
+    <string name="video_saved_to_internal_storage">Video saved to internal storage</string>
 </resources>

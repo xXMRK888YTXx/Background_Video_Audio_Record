@@ -45,4 +45,5 @@ android {
 
 dependencies {
     implementation(project(":CoreCompose"))
+    implementation(project(":CoreAndroid"))
 }

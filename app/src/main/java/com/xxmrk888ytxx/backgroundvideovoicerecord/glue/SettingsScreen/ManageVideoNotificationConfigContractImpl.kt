@@ -12,19 +12,21 @@ class ManageVideoNotificationConfigContractImpl @Inject constructor(
     private val videoForegroundNotificationConfig: VideoForegroundNotificationConfig,
 ) : ManageVideoNotificationConfigContract {
 
-
     override val currentConfig: Flow<NotificationConfigType> =
         videoForegroundNotificationConfig.config.map {
             when (it) {
                 is ForegroundNotificationConfig.CustomNotification -> NotificationConfigType.CustomNotification(
-                    it.isStopRecordButtonEnabled,
-                    it.isPauseResumeButtonActive,
-                    it.title,
-                    it.text
+                    isStopRecordButtonEnabled = it.isStopRecordButtonEnabled,
+                    isPauseResumeButtonActive = it.isPauseResumeButtonActive,
+                    title = it.title,
+                    text = it.text,
+                    iconId = it.iconId
                 )
 
                 is ForegroundNotificationConfig.ViewRecordStateType -> NotificationConfigType.ViewRecordStateType(
-                    it.isStopRecordButtonEnabled,it.isPauseResumeButtonActive
+                    isStopRecordButtonEnabled = it.isStopRecordButtonEnabled,
+                    isPauseResumeButtonActive = it.isPauseResumeButtonActive,
+                    iconId = it.iconId
                 )
             }
         }
@@ -36,10 +38,16 @@ class ManageVideoNotificationConfigContractImpl @Inject constructor(
     private fun NotificationConfigType.toForegroundConfig() : ForegroundNotificationConfig {
         return when(this) {
             is NotificationConfigType.CustomNotification -> ForegroundNotificationConfig.CustomNotification(
-                isPauseResumeButtonActive,isStopRecordButtonEnabled,title,text
+                _isPauseResumeButtonActive = isPauseResumeButtonActive,
+                _isStopRecordButtonEnabled = isStopRecordButtonEnabled,
+                title = title,
+                text = text,
+                _iconId = iconId
             )
             is NotificationConfigType.ViewRecordStateType -> ForegroundNotificationConfig.ViewRecordStateType(
-                isPauseResumeButtonActive,isStopRecordButtonEnabled
+                _isPauseResumeButtonActive = isPauseResumeButtonActive,
+                _isStopRecordButtonEnabled = isStopRecordButtonEnabled,
+                _iconId = iconId
             )
         }
     }

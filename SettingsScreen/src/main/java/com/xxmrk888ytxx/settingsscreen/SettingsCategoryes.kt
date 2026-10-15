@@ -29,6 +29,16 @@ internal fun cameraParams(settingsViewModel: SettingsViewModel): ImmutableList<S
             text = stringResource(R.string.Camera_rotation),
             icon = R.drawable.rotation,
             onClick = settingsViewModel::showCameraRotationSelectDialogState
+        ),
+        SettingsParamType.Button(
+            text = stringResource(R.string.dual_camera_primary),
+            icon = R.drawable.camera_type,
+            onClick = settingsViewModel::showDualCameraPrimarySelectDialogState
+        ),
+        SettingsParamType.Button(
+            text = stringResource(R.string.dual_camera_pip_position),
+            icon = R.drawable.rotation,
+            onClick = settingsViewModel::showPipPositionSelectDialogState
         )
     )
 }

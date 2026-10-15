@@ -11,3 +11,7 @@ val LocalTheme = staticCompositionLocalOf<AppTheme> {
 val LocalNavigator = compositionLocalOf<Navigator> {
     error("Navigator not provided")
 }
+
+val LocalCurrentBottomBarPage = compositionLocalOf<Int> { 1 }
+
+val LocalIsPageActive = compositionLocalOf<Boolean> { true }

@@ -49,5 +49,6 @@ dependencies {
     api (libs.compose.graphics)
     api (libs.compose.tooling.preview)
     api (libs.compose.material)
+    api (libs.compose.material3)
     api (libs.compose.lifecycle)
 }

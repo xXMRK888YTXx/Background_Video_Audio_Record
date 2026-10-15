@@ -13,6 +13,10 @@ import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraRotationSelectD
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.CameraTypeSelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.NotificationConfigurationDialogState
 import com.xxmrk888ytxx.settingsscreen.models.DialogState
+import com.xxmrk888ytxx.coreandroid.models.DualCameraPrimary
+import com.xxmrk888ytxx.coreandroid.models.PipPosition
+import com.xxmrk888ytxx.settingsscreen.models.DialogModels.DualCameraPrimarySelectDialogState
+import com.xxmrk888ytxx.settingsscreen.models.DialogModels.PipPositionSelectDialogState
 import com.xxmrk888ytxx.settingsscreen.models.NotificationConfigType
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraMaxQuality
 import com.xxmrk888ytxx.settingsscreen.models.configs.CameraRotation
@@ -213,6 +217,58 @@ class SettingsViewModel @Inject constructor(
                     cameraRotationSelectDialogState = CameraRotationSelectDialogState.Hidden
                 )
             }
+        }
+    }
+    //
+
+    //DualCameraPrimarySelectDialog
+    internal fun showDualCameraPrimarySelectDialogState() {
+        viewModelScope.launch {
+            _dialogState.update {
+                it.copy(
+                    dualCameraPrimarySelectDialogState = DualCameraPrimarySelectDialogState.Showed(
+                        manageCameraConfigContract.dualCameraPrimary.first()
+                    )
+                )
+            }
+        }
+    }
+
+    internal fun hideDualCameraPrimarySelectDialogState() {
+        _dialogState.update {
+            it.copy(dualCameraPrimarySelectDialogState = DualCameraPrimarySelectDialogState.Hidden)
+        }
+    }
+
+    internal fun changeDualCameraPrimary(primary: DualCameraPrimary) {
+        viewModelScope.launch(Dispatchers.IO) {
+            manageCameraConfigContract.setupDualCameraPrimary(primary)
+        }
+    }
+    //
+
+    //PipPositionSelectDialog
+    internal fun showPipPositionSelectDialogState() {
+        viewModelScope.launch {
+            _dialogState.update {
+                it.copy(
+                    pipPositionSelectDialogState = PipPositionSelectDialogState.Showed(
+                        manageCameraConfigContract.pipPosition.first()
+                    )
+                )
+            }
+        }
+    }
+
+    internal fun hidePipPositionSelectDialogState() {
+        _dialogState.update {
+            it.copy(pipPositionSelectDialogState = PipPositionSelectDialogState.Hidden)
+        }
+    }
+
+    internal fun changePipPosition(position: PipPosition) {
+        viewModelScope.launch(Dispatchers.IO) {
+            manageCameraConfigContract.setupPipPosition(position)
         }
     }
     //

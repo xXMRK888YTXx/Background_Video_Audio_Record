@@ -15,27 +15,38 @@ import androidx.compose.ui.unit.dp
 import com.xxmrk888ytxx.corecompose.themeColors
 import com.xxmrk888ytxx.corecompose.themeShapes
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ControlRecordButtonHolderWidget(
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit
 ) {
-    Card(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(horizontal = 20.dp, vertical = 6.dp)
             .then(modifier),
-        shape = themeShapes.card,
-        backgroundColor = themeColors.cardColor
+        contentAlignment = Alignment.Center
     ) {
-        FlowRow(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(15.dp),
-            horizontalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterHorizontally),
-            content = content,
-            verticalArrangement = Arrangement.Center,
-        )
+                .clip(RoundedCornerShape(36.dp))
+                .background(themeColors.cardColor)
+                .border(1.dp, Color(0xFF263346), RoundedCornerShape(36.dp))
+                .padding(horizontal = 24.dp, vertical = 12.dp)
+        ) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally),
+                content = content,
+                verticalArrangement = Arrangement.Center,
+            )
+        }
     }
 }

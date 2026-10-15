@@ -15,4 +15,12 @@ interface ManageCameraConfigContract {
     suspend fun setupCameraRotation(cameraRotation: CameraRotation)
 
     val cameraConfig: Flow<CameraConfig>
+
+    val dualCameraPrimary: Flow<com.xxmrk888ytxx.coreandroid.models.DualCameraPrimary>
+
+    suspend fun setupDualCameraPrimary(primary: com.xxmrk888ytxx.coreandroid.models.DualCameraPrimary)
+
+    val pipPosition: Flow<com.xxmrk888ytxx.coreandroid.models.PipPosition>
+
+    suspend fun setupPipPosition(position: com.xxmrk888ytxx.coreandroid.models.PipPosition)
 }

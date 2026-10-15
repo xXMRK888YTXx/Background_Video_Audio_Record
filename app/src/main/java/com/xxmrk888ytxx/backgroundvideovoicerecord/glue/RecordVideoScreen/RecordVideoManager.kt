@@ -36,6 +36,12 @@ class RecordVideoManager @Inject constructor(
         recordVideoServiceManager.stopRecord()
     }
 
+    override val hasPendingDualRecord: Flow<Boolean> = recordVideoServiceManager.hasPendingDualRecord
+
+    override suspend fun saveDualRecord(option: com.xxmrk888ytxx.recordvideoscreen.models.DualCameraSaveOption) {
+        recordVideoServiceManager.saveDualRecord(option)
+    }
+
     override val currentState: Flow<RecordState> = recordVideoServiceManager
         .currentRecordState
         .map { state ->

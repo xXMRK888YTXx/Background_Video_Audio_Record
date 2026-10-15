@@ -29,7 +29,7 @@ class WriteFileToExternalStorageUseCaseImpl @Inject constructor(
             var readerBytes = exportFileStream.read(buffer)
 
             while (readerBytes != -1) {
-                outputFileStream.write(buffer)
+                outputFileStream.write(buffer, 0, readerBytes)
                 readerBytes = exportFileStream.read(buffer)
             }
 
