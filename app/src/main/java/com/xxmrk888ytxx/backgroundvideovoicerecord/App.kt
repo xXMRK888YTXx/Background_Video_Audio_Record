@@ -20,7 +20,8 @@ internal class App : Application(),DepsProvider {
             appComponent.recordAudioParams.toProvidedDeps(),
             appComponent.recordVideoParams.toProvidedDeps(),
             (appComponent as WorkerDeps).toProvidedDeps(),
-            appComponent.fastOpenAppQuickSettingsServiceCallback.toProvidedDeps()
+            appComponent.fastOpenAppQuickSettingsServiceCallback.toProvidedDeps(),
+            appComponent.hardwareTriggerManager.toProvidedDeps()
         )
     }
 

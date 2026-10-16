@@ -7,9 +7,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import android.util.Log
 import androidx.core.content.getSystemService
 import androidx.lifecycle.Lifecycle
@@ -44,6 +48,9 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
+
+private const val MIN_STORAGE_START_BYTES = 200 * 1024 * 1024L
+private const val MIN_STORAGE_CRITICAL_BYTES = 100 * 1024 * 1024L
 
 class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwner {
 
@@ -167,6 +174,8 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
         unregisterReceiver(notificationCommandReceiver)
         Log.i(LOG_TAG, "onDestroy")
+        releaseWakeLock()
+        abandonAudioFocus()
         videoRecordServiceScope.launch(NonCancellable) {
             stopRecord()
             recordStateObserverScope.cancel()
@@ -184,13 +193,157 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     private var accumulatedDurationMs: Long = 0L
     private var isRotating: Boolean = false
 
+    // WakeLock
+    private val powerManager: PowerManager? by lazy {
+        applicationContext.getSystemService()
+    }
+    private var wakeLock: PowerManager.WakeLock? = null
+
+    private fun acquireWakeLock() {
+        try {
+            if (wakeLock == null) {
+                wakeLock = powerManager?.newWakeLock(
+                    PowerManager.PARTIAL_WAKE_LOCK,
+                    "BVAS:VideoRecordWakeLock"
+                )?.apply {
+                    setReferenceCounted(false)
+                }
+            }
+            if (wakeLock?.isHeld == false) {
+                wakeLock?.acquire(6 * 60 * 60 * 1000L) // 6 hours safety timeout
+                Log.i(LOG_TAG, "WakeLock acquired")
+            }
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Failed to acquire WakeLock", e)
+        }
+    }
+
+    private fun releaseWakeLock() {
+        try {
+            if (wakeLock?.isHeld == true) {
+                wakeLock?.release()
+                Log.i(LOG_TAG, "WakeLock released")
+            }
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Failed to release WakeLock", e)
+        }
+    }
+
+    // Audio Focus & Call Handling
+    private val audioManager: AudioManager? by lazy {
+        applicationContext.getSystemService()
+    }
+    private var audioFocusRequest: AudioFocusRequest? = null
+    private var wasRecordingBeforeFocusLoss = false
+
+    private val audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
+        when (focusChange) {
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                Log.i(LOG_TAG, "Audio focus lost transiently (e.g. phone call), pausing video recording")
+                if (_currentState.value is RecordVideoState.Recording) {
+                    wasRecordingBeforeFocusLoss = true
+                    pauseRecord()
+                }
+            }
+            AudioManager.AUDIOFOCUS_GAIN -> {
+                Log.i(LOG_TAG, "Audio focus regained")
+                if (wasRecordingBeforeFocusLoss) {
+                    wasRecordingBeforeFocusLoss = false
+                    resumeRecord()
+                }
+            }
+            AudioManager.AUDIOFOCUS_LOSS -> {
+                Log.i(LOG_TAG, "Audio focus permanently lost, pausing video recording")
+                wasRecordingBeforeFocusLoss = false
+                pauseRecord()
+            }
+        }
+    }
+
+    private fun requestAudioFocus() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val playbackAttributes = AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .build()
+                audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+                    .setAudioAttributes(playbackAttributes)
+                    .setAcceptsDelayedFocusGain(true)
+                    .setOnAudioFocusChangeListener(audioFocusChangeListener)
+                    .build()
+                audioFocusRequest?.let { audioManager?.requestAudioFocus(it) }
+            } else {
+                @Suppress("DEPRECATION")
+                audioManager?.requestAudioFocus(
+                    audioFocusChangeListener,
+                    AudioManager.STREAM_MUSIC,
+                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
+                )
+            }
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Failed to request audio focus", e)
+        }
+    }
+
+    private fun abandonAudioFocus() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                audioFocusRequest?.let { audioManager?.abandonAudioFocusRequest(it) }
+            } else {
+                @Suppress("DEPRECATION")
+                audioManager?.abandonAudioFocus(audioFocusChangeListener)
+            }
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Failed to abandon audio focus", e)
+        }
+    }
+
+    // Storage Monitoring
+    private fun getAvailableStorageBytes(): Long {
+        val targetDir = currentPrimaryFile?.parentFile ?: applicationContext.filesDir
+        return try {
+            targetDir.usableSpace
+        } catch (_: Exception) {
+            Long.MAX_VALUE
+        }
+    }
+
+    private fun showLowStorageNotification() {
+        try {
+            val channelId = getChannelId(com.xxmrk888ytxx.coreandroid.models.NotificationIconType.VIDEOCAM.id)
+            ensureNotificationChannel(com.xxmrk888ytxx.coreandroid.models.NotificationIconType.VIDEOCAM.id)
+            val notif = applicationContext.buildNotification(channelId) {
+                setContentTitle("Запись видео остановлена")
+                setContentText("Недостаточно свободного места на устройстве")
+                setSmallIcon(android.R.drawable.stat_notify_error)
+                setAutoCancel(true)
+            }
+            notificationManager.notify(NOTIFICATION_ID + 10, notif)
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Failed to show low storage notification", e)
+        }
+    }
+
     //Record control
     override fun startRecord(outputFile: File, secondaryOutputFile: File?) {
         if (recorder != null) return
+
+        val availableSpace = outputFile.parentFile?.usableSpace ?: applicationContext.filesDir.usableSpace
+        if (availableSpace < MIN_STORAGE_START_BYTES) {
+            Log.e(LOG_TAG, "Insufficient storage to start video recording: $availableSpace bytes available")
+            showLowStorageNotification()
+            return
+        }
+
         currentPrimaryFile = outputFile
         currentSecondaryFile = secondaryOutputFile
         accumulatedDurationMs = 0L
         isRotating = false
+
+        acquireWakeLock()
+        requestAudioFocus()
 
         videoRecordServiceScope.launch {
             val config = recordVideoParams.cameraConfig.first()
@@ -263,6 +416,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
 
     override fun pauseRecord() {
         if (recorder == null) return
+        releaseWakeLock()
         videoRecordServiceScope.launch {
             recorder?.run {
                 pauseRecord()
@@ -273,6 +427,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
 
     override fun resumeRecord() {
         if (recorder == null) return
+        acquireWakeLock()
         videoRecordServiceScope.launch {
             recorder?.run {
                 resumeRecord()
@@ -284,6 +439,8 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
 
     override fun stopRecord() {
         if (recorder == null) return
+        releaseWakeLock()
+        abandonAudioFocus()
         videoRecordServiceScope.launch {
             stopRecordObserver(resetState = true)
             recorder?.run {
@@ -323,6 +480,15 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
                                 is RecorderState.Paused -> RecordVideoState.Pause(totalDuration)
                                 else -> RecordVideoState.Idle
                             }
+                        }
+
+                        // Check low storage limit
+                        val usableSpace = getAvailableStorageBytes()
+                        if (usableSpace < MIN_STORAGE_CRITICAL_BYTES && !isRotating) {
+                            Log.e(LOG_TAG, "Critical low storage (< 100MB)! Stopping video recording safely.")
+                            showLowStorageNotification()
+                            stopRecord()
+                            return@collect
                         }
 
                         // Check video chunk split limit

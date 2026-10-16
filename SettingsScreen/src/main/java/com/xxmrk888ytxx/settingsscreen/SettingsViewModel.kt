@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.xxmrk888ytxx.settingsscreen.contracts.ManageAppLockContract
+import com.xxmrk888ytxx.settingsscreen.contracts.ManageHardwareTriggerContract
 import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
@@ -36,7 +37,8 @@ class SettingsViewModel @Inject constructor(
     private val manageVideoNotificationConfigContract: ManageVideoNotificationConfigContract,
     private val provideAppVersionContract: ProvideAppVersionContract,
     private val openActivityContract: OpenActivityContract,
-    private val manageAppLockContract: ManageAppLockContract
+    private val manageAppLockContract: ManageAppLockContract,
+    private val manageHardwareTriggerContract: ManageHardwareTriggerContract
 ) : ViewModel() {
 
     //Open terms of use
@@ -355,4 +357,42 @@ class SettingsViewModel @Inject constructor(
         }
     }
     //
+
+    // Hardware Trigger
+    internal val isVolumeTriggerEnabled: kotlinx.coroutines.flow.Flow<Boolean> =
+        manageHardwareTriggerContract.isVolumeTriggerEnabled
+
+    internal val isProximityTriggerEnabled: kotlinx.coroutines.flow.Flow<Boolean> =
+        manageHardwareTriggerContract.isProximityTriggerEnabled
+
+    internal val isHapticFeedbackEnabled: kotlinx.coroutines.flow.Flow<Boolean> =
+        manageHardwareTriggerContract.isHapticFeedbackEnabled
+
+    internal val isAccessibilityServiceEnabled: Boolean
+        get() = manageHardwareTriggerContract.isAccessibilityServiceEnabled()
+
+    internal fun onVolumeTriggerSwitchChanged(enabled: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            manageHardwareTriggerContract.setVolumeTriggerEnabled(enabled)
+            if (enabled && !manageHardwareTriggerContract.isAccessibilityServiceEnabled()) {
+                manageHardwareTriggerContract.openAccessibilitySettings()
+            }
+        }
+    }
+
+    internal fun onProximityTriggerSwitchChanged(enabled: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            manageHardwareTriggerContract.setProximityTriggerEnabled(enabled)
+        }
+    }
+
+    internal fun onHapticFeedbackSwitchChanged(enabled: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            manageHardwareTriggerContract.setHapticFeedbackEnabled(enabled)
+        }
+    }
+
+    internal fun openAccessibilitySettings() {
+        manageHardwareTriggerContract.openAccessibilitySettings()
+    }
 }

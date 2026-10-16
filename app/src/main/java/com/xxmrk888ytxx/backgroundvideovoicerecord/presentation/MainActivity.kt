@@ -17,6 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -114,6 +117,14 @@ internal class MainActivity : androidx.fragment.app.FragmentActivity(), LockBloc
                 activityViewModel.navController = navController
             })
 
+            LaunchedEffect(isAppLockEnabled, isSessionUnlocked) {
+                if (isAppLockEnabled) {
+                    window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+                } else {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                }
+            }
+
             Box(
                 modifier = Modifier.fillMaxSize().background(themeColors.background)
             ) {
@@ -140,7 +151,8 @@ internal class MainActivity : androidx.fragment.app.FragmentActivity(), LockBloc
                             modifier = Modifier.fillMaxSize(),
                             videoPlayerViewModel = composeViewModel() {
                                 videoPlayerViewModel.create(uri.toUri())
-                            }
+                            },
+                            onBackClick = activityViewModel::backScreen
                         )
                     }
 
@@ -261,5 +273,10 @@ internal class MainActivity : androidx.fragment.app.FragmentActivity(), LockBloc
     override fun onStop() {
         super.onStop()
         appLockManager.lockSession()
+        lifecycleScope.launch {
+            if (appLockManager.isAppLockEnabled.first()) {
+                window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+            }
+        }
     }
 }
