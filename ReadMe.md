@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">✨ Background Video & Audio Record ✨</h1>
-<h3 align="center">🔮 Кодовое имя: <em>Faraday</em> (v1.1.0r) 🪄</h3>
+<h3 align="center">🔮 Кодовое имя: <em>Faraday</em> (v1.2.0r — Stealth & Reliability) 🪄</h3>
 
 <p align="center">
   <b>Скрытая, надежная и высокопроизводительная фоновая запись видео и аудио для Android с аппаратной поддержкой двух камер</b><br>
@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/KoksMen/Background_Video_Audio_Record/releases"><img src="https://img.shields.io/badge/Version-v1.1.0r--Faraday-7c4dff?style=for-the-badge&logo=github&logoColor=white" alt="Version v1.1.0r-Faraday" /></a>
+  <a href="https://github.com/KoksMen/Background_Video_Audio_Record/releases"><img src="https://img.shields.io/badge/Version-v1.2.0r--Faraday-7c4dff?style=for-the-badge&logo=github&logoColor=white" alt="Version v1.2.0r-Faraday" /></a>
   <img src="https://img.shields.io/badge/Kotlin-2.2-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin 2.2" />
   <img src="https://img.shields.io/badge/Compose-Material%203%20Expressive-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Compose Material 3 Expressive" />
   <img src="https://img.shields.io/badge/Platform-Android%208.0%2B%20(API%2026%E2%80%9336)-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android 8.0+" />
@@ -43,7 +43,7 @@
 
 **Background Video & Audio Record** — это профессиональное мобильное приложение для Android, спроектированное для скрытой, непрерывной и стабильной видео- и аудиозаписи в фоновом режиме.
 
-Приложение способно продолжать высококачественную запись даже при выключенном или заблокированном экране смартфона, при переключении между другими приложениями или во время игр. Развитая система маскировки уведомлений, защита PIN-кодом с биометрией и аппаратная поддержка склейки двух камер делают приложение незаменимым инструментом для фиксации важных жизненных событий, лекций, интервью и обеспечения личной безопасности. 🚀
+Приложение способно продолжать высококачественную запись даже при выключенном или заблокированном экране смартфона, при переключении между другими приложениями или во время игр. Развитая система маскировки уведомлений, защита PIN-кодом с биометрией, аппаратный запуск без включения экрана, контроль аудиофокуса звонков и аппаратная поддержка склейки двух камер делают приложение надежным инструментом для фиксации важных событий и обеспечения личной безопасности. 🚀
 
 > [!TIP]
 > Приложение полностью автономно, не содержит скрытого сбора телеметрии и сохраняет все медиафайлы локально во внутреннем зашифрованном хранилище устройства с возможностью экспорта в галерею.
@@ -52,43 +52,54 @@
 
 ## 🌟 Ключевые возможности и функционал системы
 
-### 🔐 1. Защита приложения и биометрия (App Lock)
+### 📴 1. Аппаратный запуск без экрана и тактильный отклик (Hardware Stealth Triggers)
+- **Тройное нажатие кнопки «Громкость Вниз»:** Служба специальных возможностей (`HardwareTriggerAccessibilityService`) отслеживает тройное быстрое нажатие кнопки громкости за 1.5 сек и вслепую запускает или останавливает фоновую запись.
+- **Жест над датчиком приближения:** Служба `ProximityTriggerService` отслеживает двойной взмах ладонью над экраном смартфона с фильтрацией случайных помех в кармане (интервал 0.2–2.0 сек). Поддерживает foregroundServiceType `specialUse` на Android 14+.
+- **Тактильная обратная связь (Haptic Feedback):** Мотор смартфона подтверждает статус записи вибрацией без включения экрана: **2 коротких импульса** при начале записи и **1 длинный импульс** при остановке.
+
+### 🛡️ 2. Безопасность экрана и защита Recent Apps (`FLAG_SECURE`)
+- **Динамический `FLAG_SECURE`:** При активном App Lock окну приложения выставляется флаг безопасности, предотвращающий создание скриншотов или запись экрана посторонними приложениями.
+- **Защита списка недавних приложений:** При сворачивании в фон (`onStop`) снимок окна в системном диспетчере задач Android заменяется на защищенный черный экран.
+
+### 🔋 3. Защита от засыпания процессора (`PARTIAL_WAKE_LOCK`)
+- **Непрерывная работа в Doze Mode:** Сервисы `RecordVideoService` и `AudioRecordService` удерживают `PowerManager.WakeLock` с таймаутом безопасности на 6 часов.
+- **Стабильный захват медиа:** Процессор не приостанавливает выполнение потоков при заблокированном экране, устраняя заикания звука и выпадение кадров. Корректно освобождается при паузе, остановке и уничтожении службы.
+
+### 💾 4. Контроль свободного места на накопителе (`freeSpace` / `StatFs`)
+- **Превентивная проверка перед стартом:** Если доступно менее 200 МБ для видео или менее 50 МБ для аудио, запись не стартует вхолостую и отправляет понятное уведомление в шторку.
+- **Защита файлов от повреждения во время записи:** Если память устройства опускается ниже критической отметки (100 МБ для видео, 20 МБ для аудио), служба корректно останавливает съемку, сохраняет контейнер MP4/AMR целым и информирует пользователя.
+
+### 📞 5. Умная обработка входящих звонков (`Audio Focus`)
+- **Слушатель аудиофокуса (`AudioManager.OnAudioFocusChangeListener`):** При входящем сотовом звонке или вызове в мессенджере (Telegram, WhatsApp) запись автоматически ставится на паузу, предотвращая конфликт за микрофон.
+- **Автоматическое возобновление:** После завершения звонка фоновая запись автоматически продолжается без потери уже записанного материала.
+
+### 🎬 6. Экран встроенного видеоплеера (`VideoPlayerScreen`)
+- **Material 3 Топ-бар:** Верхняя полупрозрачная плашка с градиентом, огибающая вырез фронтальной камеры (`statusBarsPadding`).
+- **Кнопка «Назад»:** Быстрый возврат в медиатеку в один тап.
+- **Имя файла и заголовок:** Четкое отображение названия просматриваемой записи.
+- **Кнопка «Поделиться»:** Прямая отправка файла в Telegram, WhatsApp или облако (`Intent.ACTION_SEND`).
+- **Скрытие по тапу:** Оверлей плавно скрывается и появляется при нажатии на видео.
+
+### 🔐 7. Защита приложения и биометрия (App Lock)
 - **PIN-код с криптографическим солением:** Хранение хеша по алгоритму **SHA-256** с индивидуальной солью (`FaradaySec_2026_Salt`) в `DataStore Preferences`.
-- **Биометрическая аутентификация (BiometricPrompt):** Мгновенная разблокировка по отпечатку пальца или распознаванию лица (Class 3 Strong Biometrics).
-- **Эргономичный экран блокировки:** Анимированные точки ввода с защитой от подбора (shake-анимация и красная индикация при ошибке), тактильный виброотклик.
-- **Автоматическая блокировка сессии:** Приложение мгновенно скрывает контент и блокируется при сворачивании (`onStop`) или переключении задач в Android Recents.
+- **Биометрическая аутентификация (BiometricPrompt):** Мгновенная разблокировка по отпечатку пальца или распознаванию лица.
+- **Анимированный экран блокировки:** Точки ввода с защитой от перебора (shake-анимация и красная индикация при ошибке).
 
-### 📸 2. Аппаратная двухкамерная запись (Dual Video & MediaCodec HW Acceleration)
-- **Одновременная съемка (Concurrent Camera):** Запись видео сразу с двух камер смартфона (основной тыловой и фронтальной селфи).
-- **Аппаратное кодирование `DualVideoCombiner`:** Автоматический поиск и использование аппаратных кодеков SoC (`c2.qti`, `c2.exynos`, `c2.mtk`, `omx`) через `MediaCodecList` в режиме VBR (Variable Bitrate). Склейка двух потоков происходит на аппаратном уровне с ускорением в 3–5 раз без перегрева устройства.
-- **Программный fallback:** При отсутствии поддержки аппаратного кодека на старых процессорах система прозрачно переключается на стандартный кодек.
-- **Индивидуальная компоновка PiP (Картинка в Картинке):** Возможность выбора, какая камера является основной (фоновой), а какая миниатюрой, с настройкой угла отображения (правый верхний, левый верхний и т.д.).
+### 📸 8. Аппаратная двухкамерная запись (Dual Video & MediaCodec HW Acceleration)
+- **Одновременная съемка (Concurrent Camera):** Запись видео сразу с двух камер (основной тыловой и фронтальной).
+- **Аппаратное кодирование `DualVideoCombiner`:** Поиск аппаратных кодеков SoC (`c2.qti`, `c2.exynos`, `c2.mtk`, `omx`) через `MediaCodecList` в режиме VBR. Склейка ускорена в 3–5 раз без нагрева смартфона.
+- **Индивидуальная компоновка PiP:** Выбор основной камеры и угла отображения миниатюры.
 
-### ⏳ 3. Автоматическая нарезка видео по лимитам (Auto-Split Video)
-- **Поддержка FAT32 и SD-карт:** Лимит **4 ГБ / 30 минут** предотвращает повреждение файлов при записи на съемные карты памяти с ограничением 4 ГБ на файл.
-- **Гибкие профили нарезки:** На выбор доступны лимиты: *Без разделения*, *15 минут*, *30 минут*, *60 минут*, *4 ГБ / 30 мин*.
-- **Бесшовная смена фрагментов (`rotateChunk`):** Предыдущий фрагмент сохраняется в репозиторий, а новый файл начинается мгновенно. Таймер записи в шторке и интерфейсе не прерывается и накапливает общее время.
+### ⏳ 9. Автоматическая нарезка видео по лимитам (Auto-Split Video)
+- **Поддержка FAT32 и SD-карт:** Лимит **4 ГБ / 30 минут** предотвращает повреждение файлов при записи на съемные карты памяти.
+- **Бесшовная смена фрагментов (`rotateChunk`):** Ротация файлов без остановки сервиса и без сброса общего таймера.
 
-### 🎛️ 4. Быстрый тайл в шторке (Quick Settings Tile)
-- **Плитка быстрого доступа:** Сервис `FastOpenAppQuickSettingsService` интегрирован прямо в шторку переключателей Android.
-- **Старт в один тап:** Запуск скрытой видеозаписи без предварительного открытия интерфейса приложения.
-- **Двусторонняя реактивность:** Тайл динамически отображает текущий статус (`STATE_ACTIVE` — *«Идёт запись» / «Нажмите для остановки»*; `STATE_INACTIVE` — *«Быстрая запись» / «Нажмите для старта»*). Синхронизация работает независимо от того, откуда начата запись.
+### 🎛️ 10. Быстрый тайл в шторке (Quick Settings Tile)
+- **Плитка быстрого доступа:** Старт и остановка скрытой видеозаписи прямо из шторки Android в один тап с двусторонней синхронизацией статуса.
 
-### 🔔 5. Кастомизация уведомлений и OEM-совместимость
-- **Маскировка уведомлений:** Возможность смены текста и иконки уведомления под нейтральные сервисы (Калькулятор, Плеер, Загрузка, Синхронизация, Батарея).
-- **OEM Notification Fix (`NotificationHelper`):** Устранено кэширование иконок на прошивках Xiaomi (MIUI / HyperOS), Samsung (OneUI), Huawei (EMUI) и BBK (ColorOS / OxygenOS). Использование динамических ID каналов и растровых `LargeIcon` предотвращает подмену иконки на лаунчер вендором.
-
-### 🎨 6. Интерфейс Material 3 Expressive и переработанное хранилище
-- **Новый экран записей (Storage):**
-  - **Тап по всей карточке:** Для воспроизведения достаточно коснуться любой части карточки — целиться в мелкие кнопки больше не требуется.
-  - **Медиа-бейдж:** Цветной скругленный контейнер с градиентом (индиго для видео, фиолетово-бирюзовый для двух камер, изумрудный для аудио).
-  - **Эргономичная панель действий:** Выделенная крупная кнопка Play (46dp) под палец, а кнопка «Удалить» отведена в правый угол с защитной красной подсветкой для исключения случайных удалений.
-- **HUD записи:** Пульсирующий индикатор статуса записи, переключатель превью/экран, эргономичная зона управления под большой палец.
-
-### 📐 7. Нативный Edge-to-Edge и повышенная надежность
-- **Настоящий Edge-to-Edge:** Удален устаревший `Accompanist SystemUIController`. Приложение нативно адаптировано под вырезы, жестовую панель и `WindowInsets` Android 14/15/16.
-- **Устранение краша разрешений:** Переход на `fragment-ktx:1.8.6` устранил древний 16-битный баг `startActivityForResult` при запросе разрешений в Activity Result API.
-- **Стабильный старт записи:** Устранена гонка состояний между UI CameraPreview и фоновым сервисом, добавлены таймаут-watchdog и корректные Foreground Service Types (`camera|microphone`).
+### 🔔 11. Кастомизация уведомлений и OEM-совместимость
+- **Маскировка уведомлений:** Смена иконки и заголовка под нейтральные системные утилиты.
+- **OEM Notification Fix:** Устранено кэширование иконок на Xiaomi MIUI/HyperOS, Samsung OneUI, Huawei EMUI и BBK (ColorOS).
 
 ---
 
@@ -102,28 +113,28 @@
 | **Архитектура** | Multi-Module Clean Architecture, MVVM + MVI-like StateFlows |
 | **Внедрение зависимостей** | Dagger 2 |
 | **Локальные данные** | Room Database (KSP), DataStore Preferences |
-| **Безопасность** | AndroidX Biometric, SHA-256 Key Salting, Hardware KeyStore |
-| **Системные сервисы** | Foreground Service (Camera/Mic), Quick Settings TileService, BroadcastReceivers |
+| **Безопасность** | AndroidX Biometric, WindowManager FLAG_SECURE, SHA-256 Key Salting |
+| **Системные сервисы** | Foreground Service, AccessibilityService, SensorManager, AudioFocus, Quick Settings Tile |
 
 ---
 
 ## 📁 Модульная архитектура проекта
 
 ```text
-├── app/                              # Главный модуль сборки, Dagger DI, AppLock, MainActivity
+├── app/                              # Главный модуль сборки, Dagger DI, AppLock, HardwareTrigger, MainActivity
 ├── CoreAndroid/                      # Базовые утилиты, NotificationHelper, расширения context
 ├── CoreCompose/                      # Общие Compose-компоненты, дизайн-система, темы
 ├── RecordVideoScreen/                # Экран управления записью видео и видоискатель
 ├── RecordAudioScreen/                # Экран управления звукозаписью
-├── RecordVideoService/               # Фоновый Foreground-сервис видеозаписи с CameraX
-├── AudioRecordService/               # Фоновый Foreground-сервис аудиозаписи
+├── RecordVideoService/               # Фоновый Foreground-сервис видеозаписи с CameraX, WakeLock, AudioFocus
+├── AudioRecordService/               # Фоновый Foreground-сервис аудиозаписи, WakeLock, AudioFocus
 ├── VideoRecorder/                    # Обертка над CameraX VideoCapture и Recorder API
 ├── CameraPreviewCompose/             # Виджет видоискателя камеры для Compose (вкл. PiP)
 ├── FastOpenAppQuickSettingsService/  # Системная плитка Quick Settings Tile для шторки
 ├── StorageScreen/                    # Экран управления сохраненными записями (M3 карточки)
-├── VideoPlayerScreen/                # Встроенный видеоплеер
+├── VideoPlayerScreen/                # Встроенный видеоплеер с Material 3 оверлеем и кнопкой Share
 ├── AudioPlayer/                      # Сервис и контроллер воспроизведения аудио
-├── SettingsScreen/                   # Экран настроек, биометрии и разделения видео
+├── SettingsScreen/                   # Экран настроек, биометрии, аппаратных триггеров и нарезки видео
 ├── PreferencesStorage/               # Хранилище настроек на базе Jetpack DataStore
 └── AutoExportToExternalStorageScreen/# Модуль автоматического экспорта в общую память
 ```
@@ -146,45 +157,43 @@
 
 **Background Video & Audio Record** is an advanced open-source Android application engineered for stealthy, reliable, and uninterrupted background video and voice recording.
 
-The application allows you to record high-resolution video and crystal-clear audio even when your device screen is locked or turned off, when switching between other apps, or during heavy multitasking. Featuring customized notification cloaking, biometric app security (PIN + Fingerprint), hardware-accelerated dual-camera picture-in-picture recording, and a Quick Settings tile, this tool is ideal for documenting crucial moments, meetings, and personal security.
+Featuring customized notification cloaking, biometric app security (PIN + Fingerprint), hardware-accelerated dual-camera picture-in-picture recording, stealth hardware triggers (Volume keys + Proximity sensor), audio focus call management, and low-storage guards, this tool is ideal for documenting crucial moments and ensuring personal security.
 
 ---
 
 ## 🌟 Key Features
 
-### 🔐 1. App Lock & Biometrics
-- **Salted SHA-256 PIN:** Secure PIN code hashing with unique cryptographic salt (`FaradaySec_2026_Salt`) stored in Jetpack DataStore.
-- **Biometric Authentication:** High-security fingerprint and facial recognition via modern AndroidX `BiometricPrompt`.
-- **Intelligent Session Locking:** Automatically locks down when the app is placed into background (`onStop`) or viewed in Android Recents.
+### 📴 1. Stealth Hardware Triggers & Haptic Feedback
+- **Triple Volume Down Press:** Accessibility service catches 3 quick presses within 1.5s to toggle recording blindly without turning the screen on.
+- **Proximity Sensor Double-Wave Gesture:** Double hand wave above the proximity sensor toggles recording. Fully compliant with Android 14+ foreground service standards.
+- **Haptic Confirmation:** 2 short pulses on recording start, 1 long pulse on stop.
 
-### 📸 2. Hardware-Accelerated Dual Video Recording
-- **Concurrent Camera Support:** Simultaneous recording from front and back cameras.
-- **MediaCodec Hardware Acceleration:** `DualVideoCombiner` queries device hardware encoders (`c2.qti`, `c2.exynos`, `c2.mtk`, `omx`) for fast, power-efficient PiP rendering.
-- **Automatic Fallback:** Gracefully degrades to standard software codecs if hardware codecs are occupied or unavailable.
-- **Customizable PiP Layout:** Change main vs thumbnail camera and PiP window placement on the fly.
+### 🛡️ 2. App Lock Screen Protection (`FLAG_SECURE`)
+- Blocks screenshots and obscures recent app task snapshots with a protected black screen when App Lock is active.
 
-### ⏳ 3. Automatic Video Chunk Splitting
-- **FAT32 & SD Card Safe:** Automatic split limit at **4 GB / 30 minutes** prevents file corruption on external storage cards.
-- **Seamless Chunk Rotation:** Recording continues without interruptions, maintaining a continuous duration timer in the notification shade and UI.
+### 🔋 3. Uninterrupted Recording with `PARTIAL_WAKE_LOCK`
+- Prevents CPU sleep in Android Doze mode when the screen is locked, ensuring seamless 60/30fps capture without dropped frames.
 
-### 🎛️ 4. Quick Settings Tile
-- **Instant Background Recording:** Start and stop video capture right from the Android notification shade with a single tap.
-- **Dynamic State Tracking:** Tile icon and subtitle dynamically toggle between `STATE_ACTIVE` (*"Recording active"*) and `STATE_INACTIVE` (*"Quick record"*).
+### 💾 4. Dynamic Disk Space Guard (`freeSpace` / `StatFs`)
+- Pre-flight check (<200MB video / <50MB audio) and active recording safety threshold (<100MB video / <20MB audio) ensures MP4/AMR containers are properly finalized without corrupting files.
 
-### 🔔 5. Notification Cloaking & OEM Fix
-- **Stealth Profiles:** Masquerade recording notifications as Calculator, Music Player, Download Manager, or Sync Status.
-- **OEM Caching Solution:** Uses dynamic notification channel IDs and bitmap `LargeIcon` generation to bypass aggressive launcher icon overriding on Xiaomi MIUI/HyperOS, Samsung OneUI, and Huawei EMUI.
+### 📞 5. Intelligent Call & Audio Focus Handling
+- Automatically pauses recording when a phone or messenger call begins, and seamlessly resumes when the call ends.
 
-### 🎨 6. Material 3 Expressive UI & Redesigned Storage Cards
-- **Tap-to-Play Cards:** Simply tap anywhere on a card to initiate playback.
-- **Media Badges:** Distinct gradient badges for Video, Dual Video, and Audio.
-- **Thumb-Zone Play Button:** Dedicated 46dp play button on the right edge.
-- **Safety Danger Action:** Delete button is isolated in the opposite corner with subtle red danger styling to eliminate accidental deletions.
+### 🎬 6. Enhanced Video Player Screen (`VideoPlayerScreen`)
+- Material 3 top bar with edge-to-edge status bar insets, one-tap Back navigation, video filename display, and instant Share action.
 
-### 📐 7. True Edge-to-Edge & Hardened Stability
-- **Native Window Insets:** Full compliance with Android 15+ edge-to-edge layout standards.
-- **Modern Activity Result API:** Upgraded to `fragment-ktx:1.8.6` resolving the legacy 16-bit `startActivityForResult` request code crash.
-- **Stabilized Camera Lifecycle:** Eliminated race conditions between Compose preview and background services.
+### 🔐 7. App Lock & Biometrics
+- Salted SHA-256 PIN code, fingerprint and face authentication via AndroidX `BiometricPrompt`.
+
+### 📸 8. Hardware-Accelerated Dual Video Recording
+- Concurrent Camera recording with `MediaCodec` hardware acceleration (AVC/HEVC) for fast, cool PiP encoding.
+
+### ⏳ 9. Automatic Video Chunk Splitting
+- FAT32-safe **4 GB / 30-minute** limits with seamless `rotateChunk` rotation.
+
+### 🎛️ 10. Quick Settings Tile
+- One-tap toggle directly from the Android notification quick settings shade.
 
 ---
 
