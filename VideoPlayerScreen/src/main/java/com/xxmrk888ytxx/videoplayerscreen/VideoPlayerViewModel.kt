@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class VideoPlayerViewModel @AssistedInject constructor(
     private val context: Context,
-    @Assisted private val videoUri:Uri
+    @Assisted internal val videoUri: Uri
 ) : ViewModel() {
 
     //player

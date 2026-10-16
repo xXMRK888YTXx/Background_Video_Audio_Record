@@ -104,6 +104,12 @@ interface DomainModule {
         appLockManagerImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.appLock.AppLockManagerImpl
     ): com.xxmrk888ytxx.backgroundvideovoicerecord.domain.appLock.AppLockManager
 
+    @Binds
+    @AppScope
+    fun bindHardwareTriggerManager(
+        hardwareTriggerManagerImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.hardwareTrigger.HardwareTriggerManagerImpl
+    ): com.xxmrk888ytxx.backgroundvideovoicerecord.domain.hardwareTrigger.HardwareTriggerManager
+
     companion object {
         @Provides
         fun bindsExternalStorageRepositoryFactory() : ExternalStorageRepositoryFactory = Factory()

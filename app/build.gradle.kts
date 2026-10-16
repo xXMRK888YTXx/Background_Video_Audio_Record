@@ -89,6 +89,8 @@ dependencies {
     //Compose
     implementation(libs.compose.navigation)
     implementation(libs.androidx.fragment)
+    implementation(libs.androidx.lifecycle)
+    implementation(libs.coroutines.android)
 
     //Serialization
     implementation(libs.kotlin.serialization.json)

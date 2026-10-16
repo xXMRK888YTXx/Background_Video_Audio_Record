@@ -12,4 +12,5 @@
     <string name="do_not_close_the_app">Не закрывайте приложение</string>
     <string name="the_folder_for_export_is_unavailable">Папка для экспорта не доступна</string>
     <string name="specify_the_folder_to_export_again">Укажите папку для экспорта ещё раз</string>
+    <string name="accessibility_service_description">Отслеживает тройное нажатие кнопки громкости для скрытого старта и остановки записи.</string>
 </resources>

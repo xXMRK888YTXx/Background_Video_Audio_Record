@@ -177,3 +177,54 @@ internal fun securityParams(
 
     return list.build()
 }
+
+@SuppressLint("ResourceType")
+@Composable
+internal fun hardwareTriggerParams(
+    settingsViewModel: SettingsViewModel
+): ImmutableList<SettingsParamType> {
+    val isVolumeTriggerEnabled by settingsViewModel.isVolumeTriggerEnabled.collectAsState(initial = false)
+    val isProximityTriggerEnabled by settingsViewModel.isProximityTriggerEnabled.collectAsState(initial = false)
+    val isHapticFeedbackEnabled by settingsViewModel.isHapticFeedbackEnabled.collectAsState(initial = true)
+
+    val list = persistentListOf<SettingsParamType>().builder()
+
+    list.add(
+        SettingsParamType.Switch(
+            text = "Запуск кнопками громкости (3x Вниз)",
+            icon = R.drawable.baseline_edit_notifications_24,
+            isSwitched = isVolumeTriggerEnabled,
+            onStateChanged = settingsViewModel::onVolumeTriggerSwitchChanged
+        )
+    )
+
+    if (isVolumeTriggerEnabled && !settingsViewModel.isAccessibilityServiceEnabled) {
+        list.add(
+            SettingsParamType.Button(
+                text = "Включить службу в спец. возможностях",
+                icon = R.drawable.arrow,
+                onClick = settingsViewModel::openAccessibilitySettings
+            )
+        )
+    }
+
+    list.add(
+        SettingsParamType.Switch(
+            text = "Запуск по датчику приближения (2 взмаха)",
+            icon = R.drawable.camera_type,
+            isSwitched = isProximityTriggerEnabled,
+            onStateChanged = settingsViewModel::onProximityTriggerSwitchChanged
+        )
+    )
+
+    list.add(
+        SettingsParamType.Switch(
+            text = "Виброотклик при старте и остановке",
+            icon = R.drawable.rotation,
+            isSwitched = isHapticFeedbackEnabled,
+            onStateChanged = settingsViewModel::onHapticFeedbackSwitchChanged
+        )
+    )
+
+    return list.build()
+}
