@@ -45,6 +45,21 @@ class HardwareTriggerManagerImpl @Inject constructor(
     override val isHapticFeedbackEnabled: Flow<Boolean> =
         preferencesStorage.getProperty(hapticFeedbackKey, true)
 
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                if (isProximityTriggerEnabled.first()) {
+                    val intent = Intent(context, ProximityTriggerService::class.java)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        context.startForegroundService(intent)
+                    } else {
+                        context.startService(intent)
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
     override suspend fun setVolumeTriggerEnabled(enabled: Boolean) {
         preferencesStorage.writeProperty(volumeTriggerKey, enabled)
     }
