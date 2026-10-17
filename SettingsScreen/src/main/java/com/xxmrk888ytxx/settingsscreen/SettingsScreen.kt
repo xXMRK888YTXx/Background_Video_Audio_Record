@@ -125,13 +125,6 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
 
             item {
                 SettingsCategory(
-                    categoryName = "Аппаратный запуск без экрана",
-                    settingsParams = hardwareTriggerParams(settingsViewModel)
-                )
-            }
-
-            item {
-                SettingsCategory(
                     categoryName = stringResource(R.string.About_the_application),
                     settingsParams = aboutApplicationParams(settingsViewModel)
                 )

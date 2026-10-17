@@ -52,9 +52,6 @@
 
 ## 🌟 Ключевые возможности и функционал системы
 
-### 📴 1. Аппаратный запуск без экрана и тактильный отклик (Hardware Triggers)
-- **Жест над датчиком приближения:** Служба `ProximityTriggerService` отслеживает двойной взмах ладонью над экраном смартфона с фильтрацией случайных помех в кармане (интервал 0.2–2.0 сек).
-- **Тактильная обратная связь (Haptic Feedback):** Мотор смартфона подтверждает статус записи вибрацией без включения экрана: **2 коротких импульса** при начале записи и **1 длинный импульс** при остановке.
 
 ### 🛡️ 2. Безопасность экрана и защита Recent Apps (`FLAG_SECURE`)
 - **Динамический `FLAG_SECURE`:** При активном App Lock окну приложения выставляется флаг безопасности, предотвращающий создание скриншотов или запись экрана посторонними приложениями.
@@ -120,7 +117,7 @@
 ## 📁 Модульная архитектура проекта
 
 ```text
-├── app/                              # Главный модуль сборки, Dagger DI, AppLock, HardwareTrigger, MainActivity
+├── app/                              # Главный модуль сборки, Dagger DI, AppLock, MainActivity
 ├── CoreAndroid/                      # Базовые утилиты, NotificationHelper, расширения context
 ├── CoreCompose/                      # Общие Compose-компоненты, дизайн-система, темы
 ├── RecordVideoScreen/                # Экран управления записью видео и видоискатель
@@ -156,15 +153,11 @@
 
 **Background Video & Audio Record** is an advanced open-source Android application engineered for stealthy, reliable, and uninterrupted background video and voice recording.
 
-Featuring customized notification cloaking, biometric app security (PIN + Fingerprint), hardware-accelerated dual-camera picture-in-picture recording, stealth hardware triggers (Proximity sensor), audio focus call management, and low-storage guards, this tool is ideal for documenting crucial moments and ensuring personal security.
+Featuring customized notification cloaking, biometric app security (PIN + Fingerprint), hardware-accelerated dual-camera picture-in-picture recording, audio focus call management, and low-storage guards, this tool is ideal for documenting crucial moments and ensuring personal security.
 
 ---
 
 ## 🌟 Key Features
-
-### 📴 1. Hardware Triggers & Haptic Feedback
-- **Proximity Sensor Double-Wave Gesture:** Double hand wave above the proximity sensor toggles recording.
-- **Haptic Confirmation:** 2 short pulses on recording start, 1 long pulse on stop.
 
 ### 🛡️ 2. App Lock Screen Protection (`FLAG_SECURE`)
 - Blocks screenshots and obscures recent app task snapshots with a protected black screen when App Lock is active.

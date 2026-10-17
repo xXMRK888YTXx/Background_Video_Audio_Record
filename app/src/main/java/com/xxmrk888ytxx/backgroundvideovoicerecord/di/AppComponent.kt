@@ -67,5 +67,4 @@ internal interface AppComponent : WorkerDeps {
     override val allRecordAutoExportWorkerWork: AllRecordAutoExportWorkerWork
 
     val fastOpenAppQuickSettingsServiceCallback: FastOpenAppQuickSettingsServiceCallback
-    val hardwareTriggerManager: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.hardwareTrigger.HardwareTriggerManager
 }
