@@ -359,26 +359,11 @@ class SettingsViewModel @Inject constructor(
     //
 
     // Hardware Trigger
-    internal val isVolumeTriggerEnabled: kotlinx.coroutines.flow.Flow<Boolean> =
-        manageHardwareTriggerContract.isVolumeTriggerEnabled
-
     internal val isProximityTriggerEnabled: kotlinx.coroutines.flow.Flow<Boolean> =
         manageHardwareTriggerContract.isProximityTriggerEnabled
 
     internal val isHapticFeedbackEnabled: kotlinx.coroutines.flow.Flow<Boolean> =
         manageHardwareTriggerContract.isHapticFeedbackEnabled
-
-    internal val isAccessibilityServiceEnabled: Boolean
-        get() = manageHardwareTriggerContract.isAccessibilityServiceEnabled()
-
-    internal fun onVolumeTriggerSwitchChanged(enabled: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            manageHardwareTriggerContract.setVolumeTriggerEnabled(enabled)
-            if (enabled && !manageHardwareTriggerContract.isAccessibilityServiceEnabled()) {
-                manageHardwareTriggerContract.openAccessibilitySettings()
-            }
-        }
-    }
 
     internal fun onProximityTriggerSwitchChanged(enabled: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -390,9 +375,5 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             manageHardwareTriggerContract.setHapticFeedbackEnabled(enabled)
         }
-    }
-
-    internal fun openAccessibilitySettings() {
-        manageHardwareTriggerContract.openAccessibilitySettings()
     }
 }

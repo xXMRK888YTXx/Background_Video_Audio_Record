@@ -11,18 +11,11 @@ class ManageHardwareTriggerContractImpl @Inject constructor(
     private val hardwareTriggerManager: HardwareTriggerManager
 ) : ManageHardwareTriggerContract {
 
-    override val isVolumeTriggerEnabled: Flow<Boolean> =
-        hardwareTriggerManager.isVolumeTriggerEnabled
-
     override val isProximityTriggerEnabled: Flow<Boolean> =
         hardwareTriggerManager.isProximityTriggerEnabled
 
     override val isHapticFeedbackEnabled: Flow<Boolean> =
         hardwareTriggerManager.isHapticFeedbackEnabled
-
-    override suspend fun setVolumeTriggerEnabled(enabled: Boolean) {
-        hardwareTriggerManager.setVolumeTriggerEnabled(enabled)
-    }
 
     override suspend fun setProximityTriggerEnabled(enabled: Boolean) {
         hardwareTriggerManager.setProximityTriggerEnabled(enabled)
@@ -30,13 +23,5 @@ class ManageHardwareTriggerContractImpl @Inject constructor(
 
     override suspend fun setHapticFeedbackEnabled(enabled: Boolean) {
         hardwareTriggerManager.setHapticFeedbackEnabled(enabled)
-    }
-
-    override fun isAccessibilityServiceEnabled(): Boolean {
-        return hardwareTriggerManager.isAccessibilityServiceEnabled(context)
-    }
-
-    override fun openAccessibilitySettings() {
-        hardwareTriggerManager.openAccessibilitySettings(context)
     }
 }

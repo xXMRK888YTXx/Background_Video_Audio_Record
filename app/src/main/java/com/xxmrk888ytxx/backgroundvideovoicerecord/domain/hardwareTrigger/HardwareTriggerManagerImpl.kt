@@ -1,14 +1,11 @@
 package com.xxmrk888ytxx.backgroundvideovoicerecord.domain.hardwareTrigger
 
-import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import android.provider.Settings
-import android.view.accessibility.AccessibilityManager
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.xxmrk888ytxx.audiorecordservice.models.RecordAudioState
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioRecordServiceManager.AudioRecordServiceManager
@@ -32,12 +29,8 @@ class HardwareTriggerManagerImpl @Inject constructor(
     private val isCanStartRecordVideoServiceUseCase: IsCanStartRecordVideoServiceUseCase
 ) : HardwareTriggerManager {
 
-    private val volumeTriggerKey = booleanPreferencesKey("isVolumeTriggerEnabledKey")
     private val proximityTriggerKey = booleanPreferencesKey("isProximityTriggerEnabledKey")
     private val hapticFeedbackKey = booleanPreferencesKey("isHapticFeedbackEnabledKey")
-
-    override val isVolumeTriggerEnabled: Flow<Boolean> =
-        preferencesStorage.getProperty(volumeTriggerKey, false)
 
     override val isProximityTriggerEnabled: Flow<Boolean> =
         preferencesStorage.getProperty(proximityTriggerKey, false)
@@ -58,10 +51,6 @@ class HardwareTriggerManagerImpl @Inject constructor(
                 }
             } catch (_: Exception) {}
         }
-    }
-
-    override suspend fun setVolumeTriggerEnabled(enabled: Boolean) {
-        preferencesStorage.writeProperty(volumeTriggerKey, enabled)
     }
 
     override suspend fun setProximityTriggerEnabled(enabled: Boolean) {
@@ -149,19 +138,5 @@ class HardwareTriggerManagerImpl @Inject constructor(
         } catch (_: Exception) {}
     }
 
-    override fun isAccessibilityServiceEnabled(context: Context): Boolean {
-        val am = context.getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager ?: return false
-        val enabledServices = am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC)
-        val expectedClassName = HardwareTriggerAccessibilityService::class.java.name
-        return enabledServices.any { it.resolveInfo.serviceInfo.name == expectedClassName }
-    }
 
-    override fun openAccessibilitySettings(context: Context) {
-        try {
-            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            context.startActivity(intent)
-        } catch (_: Exception) {}
-    }
 }

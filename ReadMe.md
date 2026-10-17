@@ -52,9 +52,8 @@
 
 ## 🌟 Ключевые возможности и функционал системы
 
-### 📴 1. Аппаратный запуск без экрана и тактильный отклик (Hardware Stealth Triggers)
-- **Тройное нажатие кнопки «Громкость Вниз»:** Служба специальных возможностей (`HardwareTriggerAccessibilityService`) отслеживает тройное быстрое нажатие кнопки громкости за 1.5 сек и вслепую запускает или останавливает фоновую запись.
-- **Жест над датчиком приближения:** Служба `ProximityTriggerService` отслеживает двойной взмах ладонью над экраном смартфона с фильтрацией случайных помех в кармане (интервал 0.2–2.0 сек). Поддерживает foregroundServiceType `specialUse` на Android 14+.
+### 📴 1. Аппаратный запуск без экрана и тактильный отклик (Hardware Triggers)
+- **Жест над датчиком приближения:** Служба `ProximityTriggerService` отслеживает двойной взмах ладонью над экраном смартфона с фильтрацией случайных помех в кармане (интервал 0.2–2.0 сек).
 - **Тактильная обратная связь (Haptic Feedback):** Мотор смартфона подтверждает статус записи вибрацией без включения экрана: **2 коротких импульса** при начале записи и **1 длинный импульс** при остановке.
 
 ### 🛡️ 2. Безопасность экрана и защита Recent Apps (`FLAG_SECURE`)
@@ -114,7 +113,7 @@
 | **Внедрение зависимостей** | Dagger 2 |
 | **Локальные данные** | Room Database (KSP), DataStore Preferences |
 | **Безопасность** | AndroidX Biometric, WindowManager FLAG_SECURE, SHA-256 Key Salting |
-| **Системные сервисы** | Foreground Service, AccessibilityService, SensorManager, AudioFocus, Quick Settings Tile |
+| **Системные сервисы** | Foreground Service, SensorManager, AudioFocus, Quick Settings Tile |
 
 ---
 
@@ -157,15 +156,14 @@
 
 **Background Video & Audio Record** is an advanced open-source Android application engineered for stealthy, reliable, and uninterrupted background video and voice recording.
 
-Featuring customized notification cloaking, biometric app security (PIN + Fingerprint), hardware-accelerated dual-camera picture-in-picture recording, stealth hardware triggers (Volume keys + Proximity sensor), audio focus call management, and low-storage guards, this tool is ideal for documenting crucial moments and ensuring personal security.
+Featuring customized notification cloaking, biometric app security (PIN + Fingerprint), hardware-accelerated dual-camera picture-in-picture recording, stealth hardware triggers (Proximity sensor), audio focus call management, and low-storage guards, this tool is ideal for documenting crucial moments and ensuring personal security.
 
 ---
 
 ## 🌟 Key Features
 
-### 📴 1. Stealth Hardware Triggers & Haptic Feedback
-- **Triple Volume Down Press:** Accessibility service catches 3 quick presses within 1.5s to toggle recording blindly without turning the screen on.
-- **Proximity Sensor Double-Wave Gesture:** Double hand wave above the proximity sensor toggles recording. Fully compliant with Android 14+ foreground service standards.
+### 📴 1. Hardware Triggers & Haptic Feedback
+- **Proximity Sensor Double-Wave Gesture:** Double hand wave above the proximity sensor toggles recording.
 - **Haptic Confirmation:** 2 short pulses on recording start, 1 long pulse on stop.
 
 ### 🛡️ 2. App Lock Screen Protection (`FLAG_SECURE`)
