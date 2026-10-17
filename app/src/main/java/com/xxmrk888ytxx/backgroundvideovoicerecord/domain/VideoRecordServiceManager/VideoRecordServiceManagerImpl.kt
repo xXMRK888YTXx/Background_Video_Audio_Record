@@ -250,22 +250,34 @@ class VideoRecordServiceManagerImpl @Inject constructor(
         try {
             when (option) {
                 DualCameraSaveOption.BACK_ONLY -> {
-                    val saved = videoRecordRepository.addCustomFile(primary, "Задняя камера")
+                    val saved = videoRecordRepository.addCustomFile(
+                        primary,
+                        context.getString(com.xxmrk888ytxx.coreandroid.R.string.camera_back_label)
+                    )
                     externalStorageExportManager.exportNewVideoFile(saved)
                     secondary?.delete()
                 }
                 DualCameraSaveOption.FRONT_ONLY -> {
                     if (secondary != null && secondary.exists()) {
-                        val saved = videoRecordRepository.addCustomFile(secondary, "Передняя камера")
+                        val saved = videoRecordRepository.addCustomFile(
+                            secondary,
+                            context.getString(com.xxmrk888ytxx.coreandroid.R.string.camera_front_label)
+                        )
                         externalStorageExportManager.exportNewVideoFile(saved)
                     }
                     primary.delete()
                 }
                 DualCameraSaveOption.BOTH_SEPARATELY -> {
-                    val savedBack = videoRecordRepository.addCustomFile(primary, "Задняя камера")
+                    val savedBack = videoRecordRepository.addCustomFile(
+                        primary,
+                        context.getString(com.xxmrk888ytxx.coreandroid.R.string.camera_back_label)
+                    )
                     externalStorageExportManager.exportNewVideoFile(savedBack)
                     if (secondary != null && secondary.exists()) {
-                        val savedFront = videoRecordRepository.addCustomFile(secondary, "Передняя камера")
+                        val savedFront = videoRecordRepository.addCustomFile(
+                            secondary,
+                            context.getString(com.xxmrk888ytxx.coreandroid.R.string.camera_front_label)
+                        )
                         externalStorageExportManager.exportNewVideoFile(savedFront)
                     }
                 }
@@ -274,18 +286,30 @@ class VideoRecordServiceManagerImpl @Inject constructor(
                         val combinedTemp = File(context.cacheDir, "temp_combined_${System.currentTimeMillis()}.mp4")
                         val success = dualVideoCombiner.combine(primary, secondary, combinedTemp)
                         if (success && combinedTemp.exists()) {
-                            val saved = videoRecordRepository.addCustomFile(combinedTemp, "Обе камеры (вместе)")
+                            val saved = videoRecordRepository.addCustomFile(
+                                combinedTemp,
+                                context.getString(com.xxmrk888ytxx.coreandroid.R.string.camera_both_label)
+                            )
                             externalStorageExportManager.exportNewVideoFile(saved)
                             primary.delete()
                             secondary.delete()
                         } else {
-                            val savedBack = videoRecordRepository.addCustomFile(primary, "Задняя камера")
+                            val savedBack = videoRecordRepository.addCustomFile(
+                                primary,
+                                context.getString(com.xxmrk888ytxx.coreandroid.R.string.camera_back_label)
+                            )
                             externalStorageExportManager.exportNewVideoFile(savedBack)
-                            val savedFront = videoRecordRepository.addCustomFile(secondary, "Передняя камера")
+                            val savedFront = videoRecordRepository.addCustomFile(
+                                secondary,
+                                context.getString(com.xxmrk888ytxx.coreandroid.R.string.camera_front_label)
+                            )
                             externalStorageExportManager.exportNewVideoFile(savedFront)
                         }
                     } else {
-                        val saved = videoRecordRepository.addCustomFile(primary, "Задняя камера")
+                        val saved = videoRecordRepository.addCustomFile(
+                            primary,
+                            context.getString(com.xxmrk888ytxx.coreandroid.R.string.camera_back_label)
+                        )
                         externalStorageExportManager.exportNewVideoFile(saved)
                     }
                 }

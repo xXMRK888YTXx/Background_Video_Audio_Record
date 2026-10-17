@@ -12,4 +12,30 @@
     <string name="October">Октябрь</string>
     <string name="November">Ноябрь</string>
     <string name="December">Декабрь</string>
+
+    <!-- Notification Icons -->
+    <string name="notif_icon_camera">Камера</string>
+    <string name="notif_icon_mic">Микрофон</string>
+    <string name="notif_icon_download">Загрузка</string>
+    <string name="notif_icon_settings">Система</string>
+    <string name="notif_icon_battery">Батарея</string>
+    <string name="notif_icon_sync">Синхронизация</string>
+    <string name="notif_icon_shield">Безопасность</string>
+    <string name="notif_icon_music">Плеер</string>
+    <string name="notif_icon_cloud">Облако</string>
+    <string name="notif_icon_check">Готово</string>
+
+    <!-- Video Split Limits -->
+    <string name="split_limit_disabled">Без разделения (Один файл)</string>
+    <string name="split_limit_4gb_or_30min">4 ГБ или 30 минут (Рекомендуется)</string>
+    <string name="split_limit_15min">Каждые 15 минут</string>
+    <string name="split_limit_30min">Каждые 30 минут</string>
+    <string name="split_limit_60min">Каждые 60 минут</string>
+
+    <!-- Camera Titles -->
+    <string name="camera_back_label">Задняя камера</string>
+    <string name="camera_front_label">Передняя камера</string>
+    <string name="camera_both_label">Обе камеры (вместе)</string>
+    <string name="camera_selfie_chip">🤳 Селфи</string>
+    <string name="camera_back_chip">📷 Задняя</string>
 </resources>

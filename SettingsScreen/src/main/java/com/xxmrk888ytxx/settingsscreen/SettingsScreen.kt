@@ -55,6 +55,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import com.xxmrk888ytxx.coreandroid.models.NotificationIconType
 import com.xxmrk888ytxx.coreandroid.models.DualCameraPrimary
 import com.xxmrk888ytxx.coreandroid.models.PipPosition
+import kotlinx.collections.immutable.toPersistentList
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -118,7 +119,7 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
 
             item {
                 SettingsCategory(
-                    categoryName = "Безопасность",
+                    categoryName = stringResource(R.string.security),
                     settingsParams = securityParams(settingsViewModel)
                 )
             }
@@ -605,7 +606,7 @@ internal fun NotificationConfigurationDialog(
                             val currentIconId = currentState.iconId
                             Spacer(modifier = Modifier.height(14.dp))
                             Text(
-                                text = "Иконка уведомления (маскировка):",
+                                text = stringResource(R.string.notification_icon_masking),
                                 style = themeTypography.head.copy(fontSize = 14.sp),
                                 color = themeColors.primaryFontColor,
                                 modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp)
@@ -640,7 +641,7 @@ internal fun NotificationConfigurationDialog(
                                             Text(text = iconType.emoji, fontSize = 15.sp)
                                             Spacer(modifier = Modifier.width(6.dp))
                                             Text(
-                                                text = iconType.title,
+                                                text = stringResource(iconType.titleRes),
                                                 color = if (isSelected) Color.White else Color(0xFFCBD5E1),
                                                 fontSize = 12.sp,
                                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
@@ -679,12 +680,12 @@ internal fun NotificationConfigurationDialog(
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         val previewTitle = when (val s = currentState) {
-                                            is NotificationConfigType.CustomNotification -> s.title.ifEmpty { "Заголовок уведомления" }
-                                            is NotificationConfigType.ViewRecordStateType -> "Фоновая запись звука/видео"
+                                            is NotificationConfigType.CustomNotification -> s.title.ifEmpty { stringResource(R.string.notice_header_preview) }
+                                            is NotificationConfigType.ViewRecordStateType -> stringResource(R.string.background_recording_preview)
                                         }
                                         val previewText = when (val s = currentState) {
-                                            is NotificationConfigType.CustomNotification -> s.text.ifEmpty { "Текст маскировки" }
-                                            is NotificationConfigType.ViewRecordStateType -> "Идёт запись: 00:01:23"
+                                            is NotificationConfigType.CustomNotification -> s.text.ifEmpty { stringResource(R.string.masking_text_preview) }
+                                            is NotificationConfigType.ViewRecordStateType -> stringResource(R.string.recording_in_progress_preview)
                                         }
                                         Text(
                                             text = previewTitle,
@@ -814,33 +815,13 @@ internal fun VideoSplitLimitSelectDialog(
             settingsViewModel.hideVideoSplitLimitSelectDialog()
         },
         onCancel = settingsViewModel::hideVideoSplitLimitSelectDialog,
-        items = kotlinx.collections.immutable.persistentListOf(
+        items = com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.values().map { limit ->
             SelectDialogModel(
-                title = "Без разделения (Один файл)",
-                isSelected = selectedId == com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.DISABLED.id,
-                onClick = { selectedId = com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.DISABLED.id }
-            ),
-            SelectDialogModel(
-                title = "4 ГБ или 30 минут (Рекомендуется)",
-                isSelected = selectedId == com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_4GB_OR_30MIN.id,
-                onClick = { selectedId = com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_4GB_OR_30MIN.id }
-            ),
-            SelectDialogModel(
-                title = "Каждые 15 минут",
-                isSelected = selectedId == com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_15MIN.id,
-                onClick = { selectedId = com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_15MIN.id }
-            ),
-            SelectDialogModel(
-                title = "Каждые 30 минут",
-                isSelected = selectedId == com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_30MIN.id,
-                onClick = { selectedId = com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_30MIN.id }
-            ),
-            SelectDialogModel(
-                title = "Каждые 60 минут",
-                isSelected = selectedId == com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_60MIN.id,
-                onClick = { selectedId = com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.LIMIT_60MIN.id }
+                title = stringResource(limit.titleRes),
+                isSelected = selectedId == limit.id,
+                onClick = { selectedId = limit.id }
             )
-        )
+        }.toPersistentList()
     )
 }
 
@@ -854,6 +835,7 @@ fun SetPinDialog(
     var confirmPin by rememberSaveable { mutableStateOf("") }
     var step by rememberSaveable { mutableStateOf(1) }
     var errorMessage by rememberSaveable { mutableStateOf<String?>(null) }
+    val mismatchError = stringResource(R.string.pins_do_not_match)
 
     Dialog(onDismissRequest = onDismiss) {
         StyleCard(
@@ -869,7 +851,7 @@ fun SetPinDialog(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = if (isChangeMode) "Изменение PIN-кода" else "Установка PIN-кода",
+                    text = if (isChangeMode) stringResource(R.string.change_pin_title) else stringResource(R.string.set_pin_title),
                     style = themeTypography.body,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
@@ -877,7 +859,7 @@ fun SetPinDialog(
                 )
 
                 Text(
-                    text = if (step == 1) "Придумайте 4-значный PIN-код" else "Повторите 4-значный PIN-код",
+                    text = if (step == 1) stringResource(R.string.create_pin_hint) else stringResource(R.string.repeat_pin_hint),
                     style = themeTypography.body,
                     fontSize = 14.sp,
                     color = Color(0xFF94A3B8)
@@ -954,7 +936,7 @@ fun SetPinDialog(
                                                             if (pin == confirmPin) {
                                                                 onConfirm(pin)
                                                             } else {
-                                                                errorMessage = "PIN-коды не совпадают!"
+                                                                errorMessage = mismatchError
                                                                 confirmPin = ""
                                                             }
                                                         }
@@ -983,7 +965,7 @@ fun SetPinDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     androidx.compose.material3.TextButton(onClick = onDismiss) {
-                        Text("Отмена", color = Color(0xFF94A3B8))
+                        Text(stringResource(R.string.cancel), color = Color(0xFF94A3B8))
                     }
                 }
             }

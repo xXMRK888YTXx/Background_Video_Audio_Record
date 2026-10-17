@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -161,7 +162,11 @@ fun CameraPreview(
                                     .padding(horizontal = 6.dp, vertical = 2.dp)
                             ) {
                                 Text(
-                                    text = if (mainCamera == DualCameraPrimary.BACK) "🤳 Селфи" else "📷 Задняя",
+                                    text = if (mainCamera == DualCameraPrimary.BACK) {
+                                        stringResource(com.xxmrk888ytxx.coreandroid.R.string.camera_selfie_chip)
+                                    } else {
+                                        stringResource(com.xxmrk888ytxx.coreandroid.R.string.camera_back_chip)
+                                    },
                                     color = Color.White,
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold

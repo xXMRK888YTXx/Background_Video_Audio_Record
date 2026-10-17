@@ -147,7 +147,7 @@ fun RecordVideoScreen(
             ) {
                 Column {
                     Text(
-                        text = "Запись видео",
+                        text = stringResource(R.string.video_recording_header),
                         color = themeColors.primaryFontColor,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
@@ -171,9 +171,9 @@ fun RecordVideoScreen(
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = when (recordState) {
-                                is RecordState.Recording -> "Запись (${recordState.currentDuration.milliSecondToString()})"
-                                is RecordState.Pause -> "На паузе"
-                                else -> "Готов к фоновой записи"
+                                is RecordState.Recording -> "${stringResource(R.string.video_recording_prefix)} (${recordState.currentDuration.milliSecondToString()})"
+                                is RecordState.Pause -> stringResource(R.string.video_on_pause)
+                                else -> stringResource(R.string.video_ready_for_background)
                             },
                             color = when (recordState) {
                                 is RecordState.Recording -> Color(0xFFEF4444)
@@ -205,7 +205,7 @@ fun RecordVideoScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Превью",
+                            text = stringResource(R.string.preview_button),
                             color = if (isPreviewSelected) Color.White else themeColors.secondFontColor,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold
@@ -220,7 +220,7 @@ fun RecordVideoScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Экран",
+                            text = stringResource(R.string.screen_button),
                             color = if (!isPreviewSelected) Color.White else themeColors.secondFontColor,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold
@@ -632,9 +632,9 @@ private fun RecordingHudCard(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = when {
-                        isRecording -> "REC  •  ФОНОВАЯ ЗАПИСЬ"
-                        isPaused -> "PAUSE  •  НА ПАУЗЕ"
-                        else -> "STANDBY  •  ГОТОВ К ЗАПИСИ"
+                        isRecording -> stringResource(R.string.status_pill_recording)
+                        isPaused -> stringResource(R.string.status_pill_paused)
+                        else -> stringResource(R.string.status_pill_standby)
                     },
                     color = when {
                         isRecording -> Color(0xFFEF4444)
@@ -662,9 +662,9 @@ private fun RecordingHudCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             val cameraLabel = when (currentSelectedCamera) {
-                is CurrentSelectedCameraModel.Both -> "📹 Две камеры (Dual)"
-                is CurrentSelectedCameraModel.Back -> "📹 Основная камера"
-                is CurrentSelectedCameraModel.Front -> "🤳 Фронтальная камера"
+                is CurrentSelectedCameraModel.Both -> stringResource(R.string.camera_dual_label)
+                is CurrentSelectedCameraModel.Back -> stringResource(R.string.camera_main_label)
+                is CurrentSelectedCameraModel.Front -> stringResource(R.string.camera_front_label)
             }
             Box(
                 modifier = Modifier
@@ -685,9 +685,9 @@ private fun RecordingHudCard(
 
             Text(
                 text = if (isIdle) {
-                    "Камера готова к записи в фоновом режиме.\nНажмите кнопку внизу для старта."
+                    stringResource(R.string.camera_ready_hint)
                 } else {
-                    "Камера ведёт запись в фоновом режиме.\nВы можете свернуть приложение."
+                    stringResource(R.string.camera_recording_hint)
                 },
                 color = themeColors.secondFontColor,
                 fontSize = 12.sp,

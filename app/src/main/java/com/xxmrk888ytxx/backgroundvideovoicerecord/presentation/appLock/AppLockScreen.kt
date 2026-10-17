@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -101,14 +102,14 @@ fun AppLockScreen(
                 }
 
                 Text(
-                    text = "Введите PIN-код",
+                    text = stringResource(R.string.enter_pin_code),
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
 
                 Text(
-                    text = if (isError) "Неверный PIN-код, попробуйте снова" else "Для доступа к приложению",
+                    text = if (isError) stringResource(R.string.wrong_pin_try_again) else stringResource(R.string.to_access_app),
                     fontSize = 14.sp,
                     color = if (isError) Color(0xFFEF4444) else Color(0xFF94A3B8)
                 )

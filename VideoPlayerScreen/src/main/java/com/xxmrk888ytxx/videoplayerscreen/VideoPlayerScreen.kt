@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -142,7 +143,7 @@ fun VideoPlayerScreen(
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_arrow_back),
-                                contentDescription = "Назад",
+                                contentDescription = stringResource(R.string.back),
                                 tint = Color.White
                             )
                         }
@@ -151,7 +152,7 @@ fun VideoPlayerScreen(
 
                         Column {
                             Text(
-                                text = "Видеозапись",
+                                text = stringResource(R.string.video_record_title),
                                 color = Color.White,
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -172,6 +173,7 @@ fun VideoPlayerScreen(
                     }
 
                     // Share Button
+                    val shareChooserTitle = stringResource(R.string.share_video_chooser)
                     IconButton(
                         onClick = {
                             try {
@@ -181,7 +183,7 @@ fun VideoPlayerScreen(
                                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                 }
                                 context.startActivity(
-                                    Intent.createChooser(shareIntent, "Поделиться видео")
+                                    Intent.createChooser(shareIntent, shareChooserTitle)
                                 )
                             } catch (_: Exception) {}
                         },
@@ -192,7 +194,7 @@ fun VideoPlayerScreen(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_share),
-                            contentDescription = "Поделиться",
+                            contentDescription = stringResource(R.string.share),
                             tint = Color.White
                         )
                     }

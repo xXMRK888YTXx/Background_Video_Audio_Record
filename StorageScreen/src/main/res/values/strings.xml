@@ -37,4 +37,24 @@
     <string name="both_videos_exported_successfully">Both videos exported successfully</string>
     <string name="video_record_default_title">Video record</string>
     <string name="audio_record_default_title">Audio record</string>
+    <string name="no_records_yet">No recordings yet</string>
+    <string name="dual_primary_back">Back</string>
+    <string name="dual_primary_front">Front</string>
+    <string name="pip_top_left">Top left</string>
+    <string name="pip_top_right">Top right</string>
+    <string name="pip_bottom_left">Bottom left</string>
+    <string name="pip_bottom_right">Bottom right</string>
+    <string name="dual_pip_settings_title">Merging Settings (Dual PiP)</string>
+    <string name="primary_camera_fullscreen">Primary camera (full screen):</string>
+    <string name="camera_back_chip">📷 Back</string>
+    <string name="camera_selfie_chip">🤳 Selfie</string>
+    <string name="pip_window_position">Secondary window position (PiP):</string>
+    <string name="pip_top_left_arrow">↖ Top left</string>
+    <string name="pip_top_right_arrow">↗ Top right</string>
+    <string name="pip_bottom_left_arrow">↙ Bottom left</string>
+    <string name="pip_bottom_right_arrow">↘ Bottom right</string>
+    <string name="hide_arrow">Hide ▴</string>
+    <string name="configure_gear">Configure ⚙️</string>
+    <string name="export_both_together_btn">💾 Export both together</string>
+    <string name="play_both_together_btn">▶ Play both together</string>
 </resources>

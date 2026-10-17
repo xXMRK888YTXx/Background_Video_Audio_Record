@@ -7,4 +7,6 @@
     <string name="Pause_Recording">Приостановить запись</string>
     <string name="Resume_recording">Возобновить запись</string>
     <string name="Stop_Recording">Остановить запись</string>
+    <string name="video_recording_stopped">Запись видео остановлена</string>
+    <string name="not_enough_free_space">Недостаточно свободного места на устройстве</string>
 </resources>

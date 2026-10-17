@@ -16,4 +16,9 @@
     <string name="do_not_close_the_app">Do not close the app</string>
     <string name="the_folder_for_export_is_unavailable">The folder for export is unavailable</string>
     <string name="specify_the_folder_to_export_again">Specify the folder to export again</string>
+    <string name="biometric_subtitle">Confirm your identity to enter</string>
+    <string name="use_pin">Use PIN</string>
+    <string name="enter_pin_code">Enter PIN code</string>
+    <string name="wrong_pin_try_again">Incorrect PIN, please try again</string>
+    <string name="to_access_app">To access the application</string>
 </resources>

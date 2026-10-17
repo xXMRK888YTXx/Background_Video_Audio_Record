@@ -33,15 +33,15 @@ class FastOpenAppQuickSettingsService : TileService(), TitleServiceActivityRunne
 
         if (isRecording) {
             tile.state = Tile.STATE_ACTIVE
-            tile.label = "Идёт запись"
+            tile.label = getString(R.string.recording_in_progress)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                tile.subtitle = "Нажмите для остановки"
+                tile.subtitle = getString(R.string.tap_to_stop)
             }
         } else {
             tile.state = Tile.STATE_INACTIVE
-            tile.label = "Быстрая запись"
+            tile.label = getString(R.string.fast_record)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                tile.subtitle = "Нажмите для старта"
+                tile.subtitle = getString(R.string.tap_to_start)
             }
         }
         tile.updateTile()

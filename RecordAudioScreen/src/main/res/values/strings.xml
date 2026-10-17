@@ -6,4 +6,16 @@
     <string name="The_entered_date_is_less_than_the_current_date">The entered date is less than the current date. Please enter a valid value</string>
     <string name="Delayed_start_of_audio_recording">Delayed start of audio recording</string>
     <string name="ad_key">ca-app-pub-6313040706847570/8232180717</string>
+    <string name="audio_recording_header">Audio recording</string>
+    <string name="background_audio_recording">● Background audio recording</string>
+    <string name="audio_recording_paused">❚❚ Recording paused</string>
+    <string name="audio_specs_header">High quality WAV • Uncompressed</string>
+    <string name="status_paused">PAUSE</string>
+    <string name="status_ready">READY</string>
+    <string name="status_pill_recording">REC  •  BACKGROUND RECORD</string>
+    <string name="status_pill_paused">PAUSE  •  ON PAUSE</string>
+    <string name="status_pill_standby">STANDBY  •  READY TO RECORD</string>
+    <string name="audio_specs_badge">🎙️ High quality microphone • WAV</string>
+    <string name="audio_ready_hint">Microphone is ready for background recording.\nTap the button below to start.</string>
+    <string name="audio_recording_hint">Audio recording in progress.\nYou can minimize the application.</string>
 </resources>

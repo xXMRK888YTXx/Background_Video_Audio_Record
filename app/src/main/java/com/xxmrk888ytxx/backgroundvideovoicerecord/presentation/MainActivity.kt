@@ -262,8 +262,8 @@ internal class MainActivity : androidx.fragment.app.FragmentActivity(), LockBloc
             )
             val promptInfo = androidx.biometric.BiometricPrompt.PromptInfo.Builder()
                 .setTitle(getString(R.string.app_name))
-                .setSubtitle("Подтвердите личность для входа")
-                .setNegativeButtonText("Использовать PIN")
+                .setSubtitle(getString(R.string.biometric_subtitle))
+                .setNegativeButtonText(getString(R.string.use_pin))
                 .build()
 
             biometricPrompt.authenticate(promptInfo)

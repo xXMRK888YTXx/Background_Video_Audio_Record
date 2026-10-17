@@ -37,4 +37,24 @@
     <string name="both_videos_exported_successfully">Оба видео успешно сохранены</string>
     <string name="video_record_default_title">Видеозапись</string>
     <string name="audio_record_default_title">Аудиозапись</string>
+    <string name="no_records_yet">Записей пока нет</string>
+    <string name="dual_primary_back">Задняя</string>
+    <string name="dual_primary_front">Селфи</string>
+    <string name="pip_top_left">Вверху слева</string>
+    <string name="pip_top_right">Вверху справа</string>
+    <string name="pip_bottom_left">Внизу слева</string>
+    <string name="pip_bottom_right">Внизу справа</string>
+    <string name="dual_pip_settings_title">Настройки объединения (Dual PiP)</string>
+    <string name="primary_camera_fullscreen">Основная камера (на весь экран):</string>
+    <string name="camera_back_chip">📷 Задняя</string>
+    <string name="camera_selfie_chip">🤳 Селфи</string>
+    <string name="pip_window_position">Положение дополнительного окна (PiP):</string>
+    <string name="pip_top_left_arrow">↖ Вверху слева</string>
+    <string name="pip_top_right_arrow">↗ Вверху справа</string>
+    <string name="pip_bottom_left_arrow">↙ Внизу слева</string>
+    <string name="pip_bottom_right_arrow">↘ Внизу справа</string>
+    <string name="hide_arrow">Скрыть ▴</string>
+    <string name="configure_gear">Настроить ⚙️</string>
+    <string name="export_both_together_btn">💾 Экспортировать обе вместе</string>
+    <string name="play_both_together_btn">▶ Воспроизвести обе вместе</string>
 </resources>

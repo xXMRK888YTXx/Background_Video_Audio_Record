@@ -259,8 +259,8 @@ class AudioRecordService : Service(), AudioRecordServiceController {
             val channelId = getChannelId(com.xxmrk888ytxx.coreandroid.models.NotificationIconType.MIC.id)
             ensureNotificationChannel(com.xxmrk888ytxx.coreandroid.models.NotificationIconType.MIC.id)
             val notif = applicationContext.buildNotification(channelId) {
-                setContentTitle("Запись аудио остановлена")
-                setContentText("Недостаточно свободного места на устройстве")
+                setContentTitle(getString(R.string.audio_recording_stopped))
+                setContentText(getString(R.string.not_enough_free_space))
                 setSmallIcon(android.R.drawable.stat_notify_error)
                 setAutoCancel(true)
             }

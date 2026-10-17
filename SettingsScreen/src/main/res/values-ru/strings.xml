@@ -32,4 +32,20 @@
     <string name="pip_top_left">Сверху слева</string>
     <string name="pip_bottom_right">Снизу справа</string>
     <string name="pip_bottom_left">Снизу слева</string>
+    <string name="video_split_limit_setting">Авто-нарезка видео (лимит 4 ГБ / 30 мин)</string>
+    <string name="security">Безопасность</string>
+    <string name="app_lock_pin">Блокировка приложения (PIN-код)</string>
+    <string name="change_pin_code">Изменить PIN-код</string>
+    <string name="unlock_with_fingerprint">Разблокировка по отпечатку пальца</string>
+    <string name="notification_icon_masking">Иконка уведомления (маскировка):</string>
+    <string name="notice_header_preview">Заголовок уведомления</string>
+    <string name="background_recording_preview">Фоновая запись звука/видео</string>
+    <string name="masking_text_preview">Текст маскировки</string>
+    <string name="recording_in_progress_preview">Идёт запись: 00:01:23</string>
+    <string name="change_pin_title">Изменение PIN-кода</string>
+    <string name="set_pin_title">Установка PIN-кода</string>
+    <string name="create_pin_hint">Придумайте 4-значный PIN-код</string>
+    <string name="repeat_pin_hint">Повторите 4-значный PIN-код</string>
+    <string name="pins_do_not_match">PIN-коды не совпадают!</string>
+    <string name="cancel">Отмена</string>
 </resources>

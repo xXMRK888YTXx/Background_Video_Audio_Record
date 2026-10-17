@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -165,16 +166,16 @@ fun RecordAudioScreen(
             ) {
                 Column {
                     Text(
-                        text = "Запись аудио",
+                        text = stringResource(R.string.audio_recording_header),
                         color = themeColors.primaryFontColor,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = when (recordState) {
-                            is RecordState.Recording -> "● Фоновая запись звука"
-                            is RecordState.Paused -> "❚❚ Запись приостановлена"
-                            else -> "Высокое качество WAV • Без сжатия"
+                            is RecordState.Recording -> stringResource(R.string.background_audio_recording)
+                            is RecordState.Paused -> stringResource(R.string.audio_recording_paused)
+                            else -> stringResource(R.string.audio_specs_header)
                         },
                         color = when (recordState) {
                             is RecordState.Recording -> Color(0xFFEF4444)
@@ -225,8 +226,8 @@ fun RecordAudioScreen(
                     Text(
                         text = when (recordState) {
                             is RecordState.Recording -> "REC"
-                            is RecordState.Paused -> "ПАУЗА"
-                            else -> "ГОТОВ"
+                            is RecordState.Paused -> stringResource(R.string.status_paused)
+                            else -> stringResource(R.string.status_ready)
                         },
                         color = when (recordState) {
                             is RecordState.Recording -> Color(0xFFEF4444)
@@ -465,9 +466,9 @@ private fun AudioRecordingHudCard(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = when {
-                        isRecording -> "REC  •  ФОНОВАЯ ЗАПИСЬ"
-                        isPaused -> "PAUSE  •  НА ПАУЗЕ"
-                        else -> "STANDBY  •  ГОТОВ К ЗАПИСИ"
+                        isRecording -> stringResource(R.string.status_pill_recording)
+                        isPaused -> stringResource(R.string.status_pill_paused)
+                        else -> stringResource(R.string.status_pill_standby)
                     },
                     color = when {
                         isRecording -> Color(0xFFEF4444)
@@ -511,7 +512,7 @@ private fun AudioRecordingHudCard(
                     .padding(horizontal = 14.dp, vertical = 7.dp)
             ) {
                 Text(
-                    text = "🎙️ Микрофон высокого качества • WAV",
+                    text = stringResource(R.string.audio_specs_badge),
                     color = Color.White,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium
@@ -522,9 +523,9 @@ private fun AudioRecordingHudCard(
 
             Text(
                 text = if (isIdle) {
-                    "Микрофон готов к записи в фоновом режиме.\nНажмите кнопку внизу для старта."
+                    stringResource(R.string.audio_ready_hint)
                 } else {
-                    "Идёт запись звука в фоновом режиме.\nВы можете свернуть приложение."
+                    stringResource(R.string.audio_recording_hint)
                 },
                 color = Color(0xFF94A3B8),
                 fontSize = 12.sp,

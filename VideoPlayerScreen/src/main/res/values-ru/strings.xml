@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back">Назад</string>
+    <string name="video_record_title">Видеозапись</string>
+    <string name="share_video_chooser">Поделиться видео</string>
+    <string name="share">Поделиться</string>
+</resources>

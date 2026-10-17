@@ -24,4 +24,18 @@
     <string name="save_dual_both_together_desc">Объединить видео в одно (картинка в картинке)</string>
     <string name="save_dual_processing">Обработка и сохранение видео…</string>
     <string name="video_saved_to_internal_storage">Видео сохранено во встроенное хранилище</string>
+    <string name="video_recording_header">Запись видео</string>
+    <string name="video_recording_prefix">Запись</string>
+    <string name="video_on_pause">На паузе</string>
+    <string name="video_ready_for_background">Готов к фоновой записи</string>
+    <string name="preview_button">Превью</string>
+    <string name="screen_button">Экран</string>
+    <string name="status_pill_recording">REC  •  ФОНОВАЯ ЗАПИСЬ</string>
+    <string name="status_pill_paused">PAUSE  •  НА ПАУЗЕ</string>
+    <string name="status_pill_standby">STANDBY  •  ГОТОВ К ЗАПИСИ</string>
+    <string name="camera_dual_label">📹 Две камеры (Dual)</string>
+    <string name="camera_main_label">📹 Основная камера</string>
+    <string name="camera_front_label">🤳 Фронтальная камера</string>
+    <string name="camera_ready_hint">Камера готова к записи в фоновом режиме.\nНажмите кнопку внизу для старта.</string>
+    <string name="camera_recording_hint">Камера ведёт запись в фоновом режиме.\nВы можете свернуть приложение.</string>
 </resources>

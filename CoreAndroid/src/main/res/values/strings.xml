@@ -12,4 +12,30 @@
     <string name="October">October</string>
     <string name="November">November</string>
     <string name="December">December</string>
+
+    <!-- Notification Icons -->
+    <string name="notif_icon_camera">Camera</string>
+    <string name="notif_icon_mic">Microphone</string>
+    <string name="notif_icon_download">Download</string>
+    <string name="notif_icon_settings">System</string>
+    <string name="notif_icon_battery">Battery</string>
+    <string name="notif_icon_sync">Sync</string>
+    <string name="notif_icon_shield">Security</string>
+    <string name="notif_icon_music">Player</string>
+    <string name="notif_icon_cloud">Cloud</string>
+    <string name="notif_icon_check">Done</string>
+
+    <!-- Video Split Limits -->
+    <string name="split_limit_disabled">No split (Single file)</string>
+    <string name="split_limit_4gb_or_30min">4 GB or 30 minutes (Recommended)</string>
+    <string name="split_limit_15min">Every 15 minutes</string>
+    <string name="split_limit_30min">Every 30 minutes</string>
+    <string name="split_limit_60min">Every 60 minutes</string>
+
+    <!-- Camera Titles -->
+    <string name="camera_back_label">Back camera</string>
+    <string name="camera_front_label">Front camera</string>
+    <string name="camera_both_label">Both cameras (Combined)</string>
+    <string name="camera_selfie_chip">🤳 Selfie</string>
+    <string name="camera_back_chip">📷 Back</string>
 </resources>

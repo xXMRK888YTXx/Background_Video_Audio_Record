@@ -265,7 +265,7 @@ private fun CombinedOptionCard(
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
                 Text(
-                    text = if (isExpanded) "Скрыть ▴" else "Настроить ⚙️",
+                    text = if (isExpanded) stringResource(R.string.hide_arrow) else stringResource(R.string.configure_gear),
                     fontSize = 10.sp,
                     color = themeColors.primaryColor,
                     fontWeight = FontWeight.Bold
@@ -303,7 +303,7 @@ private fun CombinedOptionCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "▶ Воспроизвести обе вместе",
+                        text = stringResource(R.string.play_both_together_btn),
                         color = Color.White,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold

@@ -315,8 +315,8 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
             val channelId = getChannelId(com.xxmrk888ytxx.coreandroid.models.NotificationIconType.VIDEOCAM.id)
             ensureNotificationChannel(com.xxmrk888ytxx.coreandroid.models.NotificationIconType.VIDEOCAM.id)
             val notif = applicationContext.buildNotification(channelId) {
-                setContentTitle("Запись видео остановлена")
-                setContentText("Недостаточно свободного места на устройстве")
+                setContentTitle(getString(R.string.video_recording_stopped))
+                setContentText(getString(R.string.not_enough_free_space))
                 setSmallIcon(android.R.drawable.stat_notify_error)
                 setAutoCancel(true)
             }

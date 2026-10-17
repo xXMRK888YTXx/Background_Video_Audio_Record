@@ -24,4 +24,18 @@
     <string name="save_dual_both_together_desc">Combine both cameras into a single Picture-in-Picture video</string>
     <string name="save_dual_processing">Processing and saving video…</string>
     <string name="video_saved_to_internal_storage">Video saved to internal storage</string>
+    <string name="video_recording_header">Video recording</string>
+    <string name="video_recording_prefix">Recording</string>
+    <string name="video_on_pause">On pause</string>
+    <string name="video_ready_for_background">Ready for background recording</string>
+    <string name="preview_button">Preview</string>
+    <string name="screen_button">Screen</string>
+    <string name="status_pill_recording">REC  •  BACKGROUND RECORD</string>
+    <string name="status_pill_paused">PAUSE  •  ON PAUSE</string>
+    <string name="status_pill_standby">STANDBY  •  READY TO RECORD</string>
+    <string name="camera_dual_label">📹 Dual cameras</string>
+    <string name="camera_main_label">📹 Main camera</string>
+    <string name="camera_front_label">🤳 Front camera</string>
+    <string name="camera_ready_hint">Camera is ready for background recording.\nTap the button below to start.</string>
+    <string name="camera_recording_hint">Camera is recording in background.\nYou can minimize the application.</string>
 </resources>

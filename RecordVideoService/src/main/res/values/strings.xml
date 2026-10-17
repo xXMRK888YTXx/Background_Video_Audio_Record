@@ -7,4 +7,6 @@
     <string name="Pause_Recording">Pause Recording</string>
     <string name="Resume_recording">Resume recording</string>
     <string name="Stop_Recording">Stop Recording</string>
+    <string name="video_recording_stopped">Video recording stopped</string>
+    <string name="not_enough_free_space">Not enough free storage space on device</string>
 </resources>

@@ -43,7 +43,7 @@ internal fun cameraParams(settingsViewModel: SettingsViewModel): ImmutableList<S
             onClick = settingsViewModel::showPipPositionSelectDialogState
         ),
         SettingsParamType.Button(
-            text = "Авто-нарезка видео (лимит 4 ГБ / 30 мин)",
+            text = stringResource(R.string.video_split_limit_setting),
             icon = R.drawable.camera_type,
             onClick = settingsViewModel::showVideoSplitLimitSelectDialog
         )
@@ -147,7 +147,7 @@ internal fun securityParams(
 
     list.add(
         SettingsParamType.Switch(
-            text = "Блокировка приложения (PIN-код)",
+            text = stringResource(R.string.app_lock_pin),
             icon = R.drawable.ic_lock,
             isSwitched = isAppLockEnabled,
             onStateChanged = settingsViewModel::onAppLockSwitchChanged
@@ -157,7 +157,7 @@ internal fun securityParams(
     if (isAppLockEnabled) {
         list.add(
             SettingsParamType.Button(
-                text = "Изменить PIN-код",
+                text = stringResource(R.string.change_pin_code),
                 icon = R.drawable.ic_lock,
                 onClick = { settingsViewModel.showSetPinDialog(isChangeMode = true) }
             )
@@ -166,7 +166,7 @@ internal fun securityParams(
         if (settingsViewModel.isBiometricsSupported) {
             list.add(
                 SettingsParamType.Switch(
-                    text = "Разблокировка по отпечатку пальца",
+                    text = stringResource(R.string.unlock_with_fingerprint),
                     icon = R.drawable.ic_fingerprint,
                     isSwitched = isBiometricEnabled,
                     onStateChanged = settingsViewModel::onBiometricSwitchChanged

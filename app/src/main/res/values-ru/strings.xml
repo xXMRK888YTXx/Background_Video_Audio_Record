@@ -12,4 +12,9 @@
     <string name="do_not_close_the_app">Не закрывайте приложение</string>
     <string name="the_folder_for_export_is_unavailable">Папка для экспорта не доступна</string>
     <string name="specify_the_folder_to_export_again">Укажите папку для экспорта ещё раз</string>
+    <string name="biometric_subtitle">Подтвердите личность для входа</string>
+    <string name="use_pin">Использовать PIN</string>
+    <string name="enter_pin_code">Введите PIN-код</string>
+    <string name="wrong_pin_try_again">Неверный PIN-код, попробуйте снова</string>
+    <string name="to_access_app">Для доступа к приложению</string>
 </resources>

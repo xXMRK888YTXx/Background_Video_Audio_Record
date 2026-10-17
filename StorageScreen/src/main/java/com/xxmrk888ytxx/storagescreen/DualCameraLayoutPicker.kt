@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,16 +27,18 @@ import com.xxmrk888ytxx.coreandroid.models.DualCameraPrimary
 import com.xxmrk888ytxx.coreandroid.models.PipPosition
 import com.xxmrk888ytxx.corecompose.themeColors
 
+@Composable
 fun PipPosition.toDisplayName(): String = when (this) {
-    PipPosition.TOP_LEFT -> "Вверху слева"
-    PipPosition.TOP_RIGHT -> "Вверху справа"
-    PipPosition.BOTTOM_LEFT -> "Внизу слева"
-    PipPosition.BOTTOM_RIGHT -> "Внизу справа"
+    PipPosition.TOP_LEFT -> stringResource(R.string.pip_top_left)
+    PipPosition.TOP_RIGHT -> stringResource(R.string.pip_top_right)
+    PipPosition.BOTTOM_LEFT -> stringResource(R.string.pip_bottom_left)
+    PipPosition.BOTTOM_RIGHT -> stringResource(R.string.pip_bottom_right)
 }
 
+@Composable
 fun DualCameraPrimary.toDisplayName(): String = when (this) {
-    DualCameraPrimary.BACK -> "Задняя"
-    DualCameraPrimary.FRONT -> "Селфи"
+    DualCameraPrimary.BACK -> stringResource(R.string.dual_primary_back)
+    DualCameraPrimary.FRONT -> stringResource(R.string.dual_primary_front)
 }
 
 @Composable
@@ -55,7 +58,7 @@ fun DualCameraLayoutPicker(
             .padding(12.dp)
     ) {
         Text(
-            text = "Настройки объединения (Dual PiP)",
+            text = stringResource(R.string.dual_pip_settings_title),
             color = Color.White,
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold
@@ -65,7 +68,7 @@ fun DualCameraLayoutPicker(
 
         // Main camera
         Text(
-            text = "Основная камера (на весь экран):",
+            text = stringResource(R.string.primary_camera_fullscreen),
             color = themeColors.secondFontColor,
             fontSize = 11.sp
         )
@@ -76,13 +79,13 @@ fun DualCameraLayoutPicker(
         ) {
             val isBack = primaryCamera == DualCameraPrimary.BACK
             LayoutChip(
-                text = "📷 Задняя",
+                text = stringResource(R.string.camera_back_chip),
                 isSelected = isBack,
                 modifier = Modifier.weight(1f),
                 onClick = { onPrimaryChanged(DualCameraPrimary.BACK) }
             )
             LayoutChip(
-                text = "🤳 Селфи",
+                text = stringResource(R.string.camera_selfie_chip),
                 isSelected = !isBack,
                 modifier = Modifier.weight(1f),
                 onClick = { onPrimaryChanged(DualCameraPrimary.FRONT) }
@@ -93,7 +96,7 @@ fun DualCameraLayoutPicker(
 
         // PiP Corner Selection (2x2 grid representing the video screen)
         Text(
-            text = "Положение дополнительного окна (PiP):",
+            text = stringResource(R.string.pip_window_position),
             color = themeColors.secondFontColor,
             fontSize = 11.sp
         )
@@ -105,13 +108,13 @@ fun DualCameraLayoutPicker(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 LayoutChip(
-                    text = "↖ Вверху слева",
+                    text = stringResource(R.string.pip_top_left_arrow),
                     isSelected = pipPosition == PipPosition.TOP_LEFT,
                     modifier = Modifier.weight(1f),
                     onClick = { onPositionChanged(PipPosition.TOP_LEFT) }
                 )
                 LayoutChip(
-                    text = "↗ Вверху справа",
+                    text = stringResource(R.string.pip_top_right_arrow),
                     isSelected = pipPosition == PipPosition.TOP_RIGHT,
                     modifier = Modifier.weight(1f),
                     onClick = { onPositionChanged(PipPosition.TOP_RIGHT) }
@@ -122,13 +125,13 @@ fun DualCameraLayoutPicker(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 LayoutChip(
-                    text = "↙ Внизу слева",
+                    text = stringResource(R.string.pip_bottom_left_arrow),
                     isSelected = pipPosition == PipPosition.BOTTOM_LEFT,
                     modifier = Modifier.weight(1f),
                     onClick = { onPositionChanged(PipPosition.BOTTOM_LEFT) }
                 )
                 LayoutChip(
-                    text = "↘ Внизу справа",
+                    text = stringResource(R.string.pip_bottom_right_arrow),
                     isSelected = pipPosition == PipPosition.BOTTOM_RIGHT,
                     modifier = Modifier.weight(1f),
                     onClick = { onPositionChanged(PipPosition.BOTTOM_RIGHT) }

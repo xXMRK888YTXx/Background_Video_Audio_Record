@@ -6,4 +6,16 @@
     <string name="The_entered_date_is_less_than_the_current_date">Введённая дата меньше текущей. Введите корректное значение</string>
     <string name="Delayed_start_of_audio_recording">Отложенный запуск записи звука</string>
     <string name="ad_key">ca-app-pub-6313040706847570/8232180717</string>
+    <string name="audio_recording_header">Запись аудио</string>
+    <string name="background_audio_recording">● Фоновая запись звука</string>
+    <string name="audio_recording_paused">❚❚ Запись приостановлена</string>
+    <string name="audio_specs_header">Высокое качество WAV • Без сжатия</string>
+    <string name="status_paused">ПАУЗА</string>
+    <string name="status_ready">ГОТОВ</string>
+    <string name="status_pill_recording">REC  •  ФОНОВАЯ ЗАПИСЬ</string>
+    <string name="status_pill_paused">PAUSE  •  НА ПАУЗЕ</string>
+    <string name="status_pill_standby">STANDBY  •  ГОТОВ К ЗАПИСИ</string>
+    <string name="audio_specs_badge">🎙️ Микрофон высокого качества • WAV</string>
+    <string name="audio_ready_hint">Микрофон готов к записи в фоновом режиме.\nНажмите кнопку внизу для старта.</string>
+    <string name="audio_recording_hint">Идёт запись звука в фоновом режиме.\nВы можете свернуть приложение.</string>
 </resources>
