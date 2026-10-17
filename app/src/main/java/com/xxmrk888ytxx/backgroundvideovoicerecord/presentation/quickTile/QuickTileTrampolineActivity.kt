@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
+import com.xxmrk888ytxx.audiorecordservice.models.RecordAudioState
 import com.xxmrk888ytxx.backgroundvideovoicerecord.App
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioRecordServiceManager.AudioRecordServiceManager
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.models.CameraType
@@ -19,6 +20,7 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.MainActivity
 import com.xxmrk888ytxx.coreandroid.R as CoreR
 import com.xxmrk888ytxx.coreandroid.models.QuickTileAction
 import com.xxmrk888ytxx.coreandroid.models.QuickTileCameraType
+import com.xxmrk888ytxx.recordvideoservice.models.RecordVideoState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -72,11 +74,33 @@ class QuickTileTrampolineActivity : ComponentActivity() {
             return
         }
 
-        val actionId = intent.getIntExtra(EXTRA_ACTION_ID, QuickTileAction.OPEN_APP.id)
-        val action = QuickTileAction.fromId(actionId)
-
         lifecycleScope.launch {
             try {
+                val action = if (intent.hasExtra(EXTRA_ACTION_ID)) {
+                    val actionId = intent.getIntExtra(EXTRA_ACTION_ID, QuickTileAction.OPEN_APP.id)
+                    QuickTileAction.fromId(actionId)
+                } else {
+                    quickTileActionManager.currentAction.first()
+                }
+
+                if (action == QuickTileAction.OPEN_APP) {
+                    startActivity(Intent(this@QuickTileTrampolineActivity, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    })
+                    return@launch
+                }
+
+                val isVideoRecording = videoRecordServiceManager.currentRecordState.first() !is RecordVideoState.Idle
+                val isAudioRecording = audioRecordServiceManager.currentRecordState.first() !is RecordAudioState.Idle
+
+                // Toggle behavior: if any recording is already active, stop it
+                if (isVideoRecording || isAudioRecording) {
+                    if (isVideoRecording) videoRecordServiceManager.stopRecord()
+                    if (isAudioRecording) audioRecordServiceManager.stopRecord()
+                    return@launch
+                }
+
+                // If not recording, start the requested recording
                 when (action) {
                     QuickTileAction.START_VIDEO_RECORD -> {
                         val hasCamera = checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
@@ -131,14 +155,10 @@ class QuickTileTrampolineActivity : ComponentActivity() {
                             }
                         }
                     }
-                    QuickTileAction.OPEN_APP -> {
-                        startActivity(Intent(this@QuickTileTrampolineActivity, MainActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                        })
-                    }
+                    QuickTileAction.OPEN_APP -> Unit
                 }
             } catch (e: Exception) {
-                Log.e("TrampolineActivity", "Error during record launch", e)
+                Log.e("TrampolineActivity", "Error during record launch or toggle", e)
             } finally {
                 finish()
                 overridePendingTransition(0, 0)
