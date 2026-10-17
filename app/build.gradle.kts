@@ -18,7 +18,7 @@ android {
         applicationId = libs.versions.packageName.get()
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.compileSdk.get().toInt()
-        versionCode = 10
+        versionCode = 11
         versionName = "2.0 Faradey"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
