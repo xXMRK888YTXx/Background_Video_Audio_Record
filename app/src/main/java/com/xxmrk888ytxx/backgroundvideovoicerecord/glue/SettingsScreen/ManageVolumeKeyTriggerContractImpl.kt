@@ -33,6 +33,7 @@ class ManageVolumeKeyTriggerContractImpl @Inject constructor(
         volumeKeyActionManager.setTriggerEnabled(enabled)
         if (enabled && isAllPermissionsGranted) {
             VolumeKeyTriggerService.start(context)
+            VolumeKeyTriggerService.scheduleWatchdog(context)
         } else {
             VolumeKeyTriggerService.stop(context)
         }

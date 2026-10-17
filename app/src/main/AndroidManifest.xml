@@ -63,9 +63,14 @@
 
         <receiver
             android:name=".presentation.volumeKey.BootReceiver"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.xxmrk888ytxx.action.RESTART_VOLUME_KEY_SERVICE" />
+                <action android:name="com.xxmrk888ytxx.action.WATCHDOG_CHECK" />
             </intent-filter>
         </receiver>
 

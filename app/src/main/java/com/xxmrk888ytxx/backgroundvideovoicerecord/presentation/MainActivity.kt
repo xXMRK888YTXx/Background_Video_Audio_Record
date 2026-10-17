@@ -20,6 +20,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.volumeKey.VolumeKeyTriggerService
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -268,6 +270,25 @@ internal class MainActivity : androidx.fragment.app.FragmentActivity(), LockBloc
 
             biometricPrompt.authenticate(promptInfo)
         } catch (_: Exception) {}
+    }
+
+    override fun onStart() {
+        super.onStart()
+        checkVolumeKeyTriggerService()
+    }
+
+    private fun checkVolumeKeyTriggerService() {
+        lifecycleScope.launch(Dispatchers.Default) {
+            try {
+                val volumeKeyActionManager = appComponent.volumeKeyActionManager
+                if (volumeKeyActionManager.isTriggerEnabled.first() && volumeKeyActionManager.isAllPermissionsGranted()) {
+                    if (!VolumeKeyTriggerService.isRunning) {
+                        VolumeKeyTriggerService.start(this@MainActivity)
+                    }
+                    VolumeKeyTriggerService.scheduleWatchdog(this@MainActivity)
+                }
+            } catch (_: Exception) {}
+        }
     }
 
     override fun onStop() {
