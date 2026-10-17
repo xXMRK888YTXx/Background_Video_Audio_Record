@@ -108,6 +108,8 @@ class AudioRecordServiceManagerImpl @Inject constructor(
             recordServiceController?.stopRecord()
 
             disconnectFromService()
+            _currentRecordState.update { RecordAudioState.Idle }
+            notifyTileService()
         }
     }
 
@@ -147,6 +149,7 @@ class AudioRecordServiceManagerImpl @Inject constructor(
         recordStateObserverScope.coroutineContext.cancelChildren()
 
         _currentRecordState.update { RecordAudioState.Idle }
+        notifyTileService()
     }
 
     override fun onServiceConnected(name: ComponentName?, serviceBinder: IBinder?) {
@@ -170,12 +173,7 @@ class AudioRecordServiceManagerImpl @Inject constructor(
                         stopRecord()
                     }
 
-                    try {
-                        android.service.quicksettings.TileService.requestListeningState(
-                            context,
-                            ComponentName(context, "com.xxmrk888ytxx.fastopenappquicksettingsservice.FastOpenAppQuickSettingsService")
-                        )
-                    } catch (_: Exception) {}
+                    notifyTileService()
 
                     lastRecordState = state
                 }
@@ -201,6 +199,15 @@ class AudioRecordServiceManagerImpl @Inject constructor(
                 delayedManageRequest.poll()?.invoke()
             }
         }
+    }
+
+    private fun notifyTileService() {
+        try {
+            android.service.quicksettings.TileService.requestListeningState(
+                context,
+                ComponentName(context, "com.xxmrk888ytxx.fastopenappquicksettingsservice.FastOpenAppQuickSettingsService")
+            )
+        } catch (_: Exception) {}
     }
 
     companion object {

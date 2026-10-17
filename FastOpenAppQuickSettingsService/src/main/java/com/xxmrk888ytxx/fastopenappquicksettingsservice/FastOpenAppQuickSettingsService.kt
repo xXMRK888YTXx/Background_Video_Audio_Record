@@ -7,11 +7,21 @@ import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import com.xxmrk888ytxx.coredeps.DepsProvider.getDepsByApplication
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class FastOpenAppQuickSettingsService : TileService(), TitleServiceActivityRunner {
 
     private val fastOpenAppQuickSettingsServiceCallback: FastOpenAppQuickSettingsServiceCallback
             by lazy { getDepsByApplication() }
+
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private var listeningJob: Job? = null
 
     override fun onTileAdded() {
         super.onTileAdded()
@@ -20,12 +30,28 @@ class FastOpenAppQuickSettingsService : TileService(), TitleServiceActivityRunne
 
     override fun onStartListening() {
         super.onStartListening()
-        updateTileState()
+        listeningJob?.cancel()
+        listeningJob = serviceScope.launch {
+            fastOpenAppQuickSettingsServiceCallback.isRecordingFlow.collectLatest { isRecording ->
+                updateTileState(isRecording)
+            }
+        }
     }
 
-    private fun updateTileState() {
+    override fun onStopListening() {
+        super.onStopListening()
+        listeningJob?.cancel()
+        listeningJob = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        serviceScope.cancel()
+    }
+
+    private fun updateTileState(isRecordingOverride: Boolean? = null) {
         val tile = qsTile ?: return
-        val isRecording = try {
+        val isRecording = isRecordingOverride ?: try {
             fastOpenAppQuickSettingsServiceCallback.isRecording()
         } catch (_: Exception) {
             false
@@ -55,8 +81,15 @@ class FastOpenAppQuickSettingsService : TileService(), TitleServiceActivityRunne
     override fun onClick() {
         super.onClick()
         unlockAndRun {
+            val wasRecording = try {
+                fastOpenAppQuickSettingsServiceCallback.isRecording()
+            } catch (_: Exception) {
+                false
+            }
+            // Instant optimistic update for immediate visual feedback
+            updateTileState(!wasRecording)
+
             fastOpenAppQuickSettingsServiceCallback.onClicked(this)
-            updateTileState()
         }
     }
 

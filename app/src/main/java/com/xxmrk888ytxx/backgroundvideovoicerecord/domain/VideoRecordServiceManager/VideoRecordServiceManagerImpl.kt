@@ -80,12 +80,7 @@ class VideoRecordServiceManagerImpl @Inject constructor(
                         _hasPendingDualRecord.update { videoRecordRepository.hasPendingDualRecord() }
                     }
 
-                    try {
-                        android.service.quicksettings.TileService.requestListeningState(
-                            context,
-                            ComponentName(context, "com.xxmrk888ytxx.fastopenappquicksettingsservice.FastOpenAppQuickSettingsService")
-                        )
-                    } catch (_: Exception) {}
+                    notifyTileService()
 
                     lastRecordState = state
                 }
@@ -95,6 +90,15 @@ class VideoRecordServiceManagerImpl @Inject constructor(
 
     private fun stopObserver() {
         recordStateObserverScope.coroutineContext.cancelChildren()
+    }
+
+    private fun notifyTileService() {
+        try {
+            android.service.quicksettings.TileService.requestListeningState(
+                context,
+                ComponentName(context, "com.xxmrk888ytxx.fastopenappquicksettingsservice.FastOpenAppQuickSettingsService")
+            )
+        } catch (_: Exception) {}
     }
     //
 
@@ -129,7 +133,9 @@ class VideoRecordServiceManagerImpl @Inject constructor(
             controller = null
 
             stopObserver()
+            _currentRecordState.update { RecordVideoState.Idle }
             _hasPendingDualRecord.update { videoRecordRepository.hasPendingDualRecord() }
+            notifyTileService()
         }
     }
 
@@ -167,6 +173,7 @@ class VideoRecordServiceManagerImpl @Inject constructor(
         recordStateObserverScope.coroutineContext.cancelChildren()
 
         _currentRecordState.update { RecordVideoState.Idle }
+        notifyTileService()
     }
     //
 
@@ -257,7 +264,9 @@ class VideoRecordServiceManagerImpl @Inject constructor(
 
                 disconnectFromService()
 
+                _currentRecordState.update { RecordVideoState.Idle }
                 _hasPendingDualRecord.update { videoRecordRepository.hasPendingDualRecord() }
+                notifyTileService()
             } finally {
                 isStopping = false
             }

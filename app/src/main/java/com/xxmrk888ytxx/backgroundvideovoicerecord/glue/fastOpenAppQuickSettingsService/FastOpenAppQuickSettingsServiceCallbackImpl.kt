@@ -11,6 +11,8 @@ import com.xxmrk888ytxx.coreandroid.models.QuickTileAction
 import com.xxmrk888ytxx.fastopenappquicksettingsservice.FastOpenAppQuickSettingsServiceCallback
 import com.xxmrk888ytxx.fastopenappquicksettingsservice.TitleServiceActivityRunner
 import com.xxmrk888ytxx.recordvideoservice.models.RecordVideoState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -21,6 +23,13 @@ class FastOpenAppQuickSettingsServiceCallbackImpl @Inject constructor(
     private val audioRecordServiceManager: AudioRecordServiceManager,
     private val quickTileActionManager: QuickTileActionManager
 ) : FastOpenAppQuickSettingsServiceCallback {
+
+    override val isRecordingFlow: Flow<Boolean> = combine(
+        videoRecordServiceManager.currentRecordState,
+        audioRecordServiceManager.currentRecordState
+    ) { videoState, audioState ->
+        videoState !is RecordVideoState.Idle || audioState !is RecordAudioState.Idle
+    }
 
     override fun isRecording(): Boolean = runBlocking {
         try {
