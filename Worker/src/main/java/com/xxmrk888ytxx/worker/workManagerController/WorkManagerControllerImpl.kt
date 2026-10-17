@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.xxmrk888ytxx.worker.model.FileType
@@ -31,6 +32,7 @@ internal class WorkManagerControllerImpl(
 
         val worker = OneTimeWorkRequestBuilder<SingleFileExportWorker>()
             .setInputData(data)
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .addTag(SINGLE_FILE_WORKER_NAME)
             .build()
 

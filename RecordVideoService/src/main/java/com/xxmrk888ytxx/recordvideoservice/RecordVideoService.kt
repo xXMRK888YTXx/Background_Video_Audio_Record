@@ -177,7 +177,9 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         abandonAudioFocus()
         videoRecordServiceScope.launch(NonCancellable) {
             stopRecordInternal()
-            lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+            withContext(Dispatchers.Main) {
+                lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+            }
             recordStateObserverScope.cancel()
             videoRecordServiceScope.cancel()
             recordNotificationStateObserverScope.cancel()

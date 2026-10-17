@@ -84,7 +84,7 @@ fun CameraPreview(
     LaunchedEffect(cameraType, isRecord, isActive, mainCamera, cameraProvider, localLifecycleOwner, primaryPreviewView, secondaryPreviewView) {
         val provider = cameraProvider ?: return@LaunchedEffect
         try {
-            provider.unbindAll()
+            provider.unbind(primaryPreview, secondaryPreview)
         } catch (_: Exception) {}
 
         if (!isRecord && isActive) {
@@ -98,10 +98,10 @@ fun CameraPreview(
         }
     }
 
-    DisposableEffect(cameraProvider) {
+    DisposableEffect(cameraProvider, primaryPreview, secondaryPreview) {
         onDispose {
             try {
-                cameraProvider?.unbindAll()
+                cameraProvider?.unbind(primaryPreview, secondaryPreview)
             } catch (_: Exception) {}
         }
     }
@@ -193,7 +193,7 @@ private fun bindPreview(
     mainCamera: DualCameraPrimary = DualCameraPrimary.BACK
 ) {
     try {
-        cameraProvider.unbindAll()
+        cameraProvider.unbind(primaryPreview, secondaryPreview)
         if (cameraType is CameraType.Both) {
             val concurrentCameras = cameraProvider.availableConcurrentCameraInfos
             if (concurrentCameras.isNotEmpty()) {
@@ -247,7 +247,7 @@ private fun bindPreview(
         }
     } catch (_: Exception) {
         try {
-            cameraProvider.unbindAll()
+            cameraProvider.unbind(primaryPreview, secondaryPreview)
             val fallbackSelector = if (cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)) {
                 CameraSelector.DEFAULT_BACK_CAMERA
             } else {

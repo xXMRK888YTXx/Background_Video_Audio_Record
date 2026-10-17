@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.domain.externalStorageExport
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordServiceManager.VideoRecordServiceManagerImpl.Companion.LOG_TAG
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.externalStorageExportManager.model.ExportToExternalStorageConfig
 import com.xxmrk888ytxx.preferencesstorage.PreferencesStorage
 import com.xxmrk888ytxx.worker.model.FileType
@@ -31,7 +32,7 @@ class ExternalStorageExportManagerImpl @Inject constructor(
         preferencesStorage.getProperty(isExportEnabledPreferencesKey, false),
         preferencesStorage.getPropertyOrNull(exportFolderUriPreferencesKey),
         preferencesStorage.getProperty(scanFolderTimePreferencesKey, DEFAULT_SCAN_FOLDER_TIME),
-        preferencesStorage.getProperty(updateAutoExportAfterCreateNewRecordPreferencesKey, false)
+        preferencesStorage.getProperty(updateAutoExportAfterCreateNewRecordPreferencesKey, true)
     ) { isExportEnabled, exportFolderUriString, scanFolderTime, isAutoExportAfterCreateNewRecordEnabled ->
         ExportToExternalStorageConfig(
             isExportEnabled,
@@ -80,18 +81,26 @@ class ExternalStorageExportManagerImpl @Inject constructor(
         }
 
     override suspend fun exportNewAudioFile(file: File){
-        if (!isNeedExportNewFile()) return
+        if (!isNeedExportNewFile()) {
+            android.util.Log.d(LOG_TAG, "exportNewAudioFile skipped: isNeedExportNewFile is false")
+            return
+        }
         workManagerController.runExportForSingleFile(file, FileType.AUDIO)
     }
 
     override suspend fun exportNewVideoFile(file: File) {
-        if (!isNeedExportNewFile()) return
+        if (!isNeedExportNewFile()) {
+            android.util.Log.d(LOG_TAG, "exportNewVideoFile skipped: isNeedExportNewFile is false")
+            return
+        }
         workManagerController.runExportForSingleFile(file, FileType.VIDEO)
     }
 
     private suspend fun isNeedExportNewFile(): Boolean {
         val config = exportConfig.first()
-        return config.isExportEnabled && config.exportFolderUriString != null && config.isAutoExportAfterCreateNewRecordEnabled
+        val need = config.isExportEnabled && config.exportFolderUriString != null && config.isAutoExportAfterCreateNewRecordEnabled
+        android.util.Log.d(LOG_TAG, "isNeedExportNewFile: isExportEnabled=${config.isExportEnabled}, hasFolder=${config.exportFolderUriString != null}, isAutoExportAfterCreate=${config.isAutoExportAfterCreateNewRecordEnabled} -> $need")
+        return need
     }
 
 

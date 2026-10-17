@@ -285,25 +285,96 @@ class AudioRecordService : Service(), AudioRecordServiceController {
         requestAudioFocus()
 
         audioRecordServiceScope.launch {
-            mediaRecorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-                MediaRecorder(applicationContext)
-            else MediaRecorder()
+            fun createRecorder(): MediaRecorder =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    MediaRecorder(applicationContext)
+                else MediaRecorder()
 
-            mediaRecorder?.let { recorder ->
+            var recorder = createRecorder()
+            var prepared = false
+
+            // Try 1: Studio Quality Stereo AAC (48kHz, 256kbps, 2 channels)
+            try {
                 recorder.apply {
                     setAudioSource(MediaRecorder.AudioSource.MIC)
-                    setAudioSamplingRate(44100)
                     setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
                     setOutputFile(recordFileOutput.absolutePath)
-                    setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB)
-                    setAudioEncodingBitRate(16)
+                    setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                    setAudioChannels(2)
+                    setAudioSamplingRate(48000)
+                    setAudioEncodingBitRate(256000)
                     prepare()
-                    start()
+                    prepared = true
+                }
+            } catch (e: Exception) {
+                Log.w(LOG_TAG, "Stereo 48kHz AAC recording unsupported, trying high-quality Mono 48kHz AAC", e)
+                try {
+                    recorder.reset()
+                    recorder.release()
+                } catch (_: Exception) {}
+            }
+
+            // Try 2: High Quality Mono AAC (48kHz, 192kbps, 1 channel)
+            if (!prepared) {
+                recorder = createRecorder()
+                try {
+                    recorder.apply {
+                        setAudioSource(MediaRecorder.AudioSource.MIC)
+                        setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                        setOutputFile(recordFileOutput.absolutePath)
+                        setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                        setAudioChannels(1)
+                        setAudioSamplingRate(48000)
+                        setAudioEncodingBitRate(192000)
+                        prepare()
+                        prepared = true
+                    }
+                } catch (e: Exception) {
+                    Log.w(LOG_TAG, "48kHz Mono AAC failed, falling back to standard 44.1kHz AAC", e)
+                    try {
+                        recorder.reset()
+                        recorder.release()
+                    } catch (_: Exception) {}
                 }
             }
 
-            toRecordingState()
-            Log.i(LOG_TAG, "record started")
+            // Try 3: Standard 44.1kHz AAC (128kbps, 1 channel)
+            if (!prepared) {
+                recorder = createRecorder()
+                try {
+                    recorder.apply {
+                        setAudioSource(MediaRecorder.AudioSource.MIC)
+                        setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                        setOutputFile(recordFileOutput.absolutePath)
+                        setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                        setAudioSamplingRate(44100)
+                        setAudioEncodingBitRate(128000)
+                        prepare()
+                        prepared = true
+                    }
+                } catch (e: Exception) {
+                    Log.e(LOG_TAG, "Failed to initialize high quality audio recorder", e)
+                }
+            }
+
+            if (prepared) {
+                try {
+                    recorder.start()
+                    mediaRecorder = recorder
+                    toRecordingState()
+                    Log.i(LOG_TAG, "High quality audio recording started")
+                } catch (e: Exception) {
+                    Log.e(LOG_TAG, "Failed to start MediaRecorder", e)
+                    try {
+                        recorder.release()
+                    } catch (_: Exception) {}
+                    mediaRecorder = null
+                    toIdleState()
+                }
+            } else {
+                mediaRecorder = null
+                toIdleState()
+            }
         }
     }
 
