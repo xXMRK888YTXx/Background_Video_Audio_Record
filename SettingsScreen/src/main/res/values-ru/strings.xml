@@ -48,4 +48,6 @@
     <string name="repeat_pin_hint">Повторите 4-значный PIN-код</string>
     <string name="pins_do_not_match">PIN-коды не совпадают!</string>
     <string name="cancel">Отмена</string>
+    <string name="quick_tile_action_setting">Действие плитки в шторке</string>
+    <string name="quick_tile_camera_setting">Камера для записи из шторки</string>
 </resources>

@@ -104,6 +104,12 @@ interface DomainModule {
         appLockManagerImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.appLock.AppLockManagerImpl
     ): com.xxmrk888ytxx.backgroundvideovoicerecord.domain.appLock.AppLockManager
 
+    @Binds
+    @AppScope
+    fun bindQuickTileActionManager(
+        quickTileActionManagerImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.quickTile.QuickTileActionManagerImpl
+    ): com.xxmrk888ytxx.backgroundvideovoicerecord.domain.quickTile.QuickTileActionManager
+
     companion object {
         @Provides
         fun bindsExternalStorageRepositoryFactory() : ExternalStorageRepositoryFactory = Factory()

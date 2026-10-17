@@ -3,10 +3,11 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.glue.fastOpenAppQuickSetting
 import android.content.Context
 import com.xxmrk888ytxx.audiorecordservice.models.RecordAudioState
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.AudioRecordServiceManager.AudioRecordServiceManager
-import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.IsCanStartRecordVideoServiceUseCase.IsCanStartRecordVideoServiceUseCase
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.VideoRecordServiceManager.VideoRecordServiceManager
-import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.appLock.AppLockManager
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.quickTile.QuickTileActionManager
 import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.MainActivity
+import com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.quickTile.QuickTileTrampolineActivity
+import com.xxmrk888ytxx.coreandroid.models.QuickTileAction
 import com.xxmrk888ytxx.fastopenappquicksettingsservice.FastOpenAppQuickSettingsServiceCallback
 import com.xxmrk888ytxx.fastopenappquicksettingsservice.TitleServiceActivityRunner
 import com.xxmrk888ytxx.recordvideoservice.models.RecordVideoState
@@ -18,8 +19,7 @@ class FastOpenAppQuickSettingsServiceCallbackImpl @Inject constructor(
     private val context: Context,
     private val videoRecordServiceManager: VideoRecordServiceManager,
     private val audioRecordServiceManager: AudioRecordServiceManager,
-    private val isCanStartRecordVideoServiceUseCase: IsCanStartRecordVideoServiceUseCase,
-    private val appLockManager: AppLockManager
+    private val quickTileActionManager: QuickTileActionManager
 ) : FastOpenAppQuickSettingsServiceCallback {
 
     override fun isRecording(): Boolean = runBlocking {
@@ -33,6 +33,14 @@ class FastOpenAppQuickSettingsServiceCallbackImpl @Inject constructor(
             false
         } catch (_: Exception) {
             false
+        }
+    }
+
+    override fun getActionTitleRes(): Int = runBlocking {
+        try {
+            quickTileActionManager.currentAction.first().titleRes
+        } catch (_: Exception) {
+            com.xxmrk888ytxx.coreandroid.R.string.quick_tile_action_open_app
         }
     }
 
@@ -51,17 +59,21 @@ class FastOpenAppQuickSettingsServiceCallbackImpl @Inject constructor(
                     return@runBlocking
                 }
 
-                val isLockEnabled = appLockManager.isAppLockEnabled.first()
-                val isUnlocked = appLockManager.isSessionUnlocked.first()
-                if (isLockEnabled && !isUnlocked) {
-                    titleServiceActivityRunner.startActivity(MainActivity::class.java)
-                    return@runBlocking
-                }
-
-                if (isCanStartRecordVideoServiceUseCase.execute()) {
-                    videoRecordServiceManager.startRecord()
-                } else {
-                    titleServiceActivityRunner.startActivity(MainActivity::class.java)
+                val action = quickTileActionManager.currentAction.first()
+                when (action) {
+                    QuickTileAction.OPEN_APP -> {
+                        titleServiceActivityRunner.startActivity(MainActivity::class.java)
+                    }
+                    QuickTileAction.START_VIDEO_RECORD -> {
+                        titleServiceActivityRunner.startActivity(QuickTileTrampolineActivity::class.java) { intent ->
+                            intent.putExtra(QuickTileTrampolineActivity.EXTRA_ACTION_ID, QuickTileAction.START_VIDEO_RECORD.id)
+                        }
+                    }
+                    QuickTileAction.START_AUDIO_RECORD -> {
+                        titleServiceActivityRunner.startActivity(QuickTileTrampolineActivity::class.java) { intent ->
+                            intent.putExtra(QuickTileTrampolineActivity.EXTRA_ACTION_ID, QuickTileAction.START_AUDIO_RECORD.id)
+                        }
+                    }
                 }
             } catch (_: Exception) {
                 titleServiceActivityRunner.startActivity(MainActivity::class.java)

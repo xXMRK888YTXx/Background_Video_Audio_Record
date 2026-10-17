@@ -193,6 +193,20 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
             onDismiss = settingsViewModel::hideSetPinDialog
         )
     }
+
+    if (dialogState.quickTileActionSelectDialogState is com.xxmrk888ytxx.settingsscreen.models.DialogModels.QuickTileActionSelectDialogState.Showed) {
+        QuickTileActionSelectDialog(
+            settingsViewModel = settingsViewModel,
+            initialAction = (dialogState.quickTileActionSelectDialogState as com.xxmrk888ytxx.settingsscreen.models.DialogModels.QuickTileActionSelectDialogState.Showed).currentAction
+        )
+    }
+
+    if (dialogState.quickTileCameraSelectDialogState is com.xxmrk888ytxx.settingsscreen.models.DialogModels.QuickTileCameraSelectDialogState.Showed) {
+        QuickTileCameraSelectDialog(
+            settingsViewModel = settingsViewModel,
+            initialCameraType = (dialogState.quickTileCameraSelectDialogState as com.xxmrk888ytxx.settingsscreen.models.DialogModels.QuickTileCameraSelectDialogState.Showed).currentCameraType
+        )
+    }
 }
 
 @Composable
@@ -820,6 +834,60 @@ internal fun VideoSplitLimitSelectDialog(
                 title = stringResource(limit.titleRes),
                 isSelected = selectedId == limit.id,
                 onClick = { selectedId = limit.id }
+            )
+        }.toPersistentList()
+    )
+}
+
+@Composable
+internal fun QuickTileActionSelectDialog(
+    settingsViewModel: SettingsViewModel,
+    initialAction: com.xxmrk888ytxx.coreandroid.models.QuickTileAction,
+) {
+    var selectedId by rememberSaveable {
+        mutableStateOf(initialAction.id)
+    }
+
+    SelectDialog(
+        onConfirm = {
+            settingsViewModel.changeQuickTileAction(
+                com.xxmrk888ytxx.coreandroid.models.QuickTileAction.fromId(selectedId)
+            )
+            settingsViewModel.hideQuickTileActionSelectDialog()
+        },
+        onCancel = settingsViewModel::hideQuickTileActionSelectDialog,
+        items = com.xxmrk888ytxx.coreandroid.models.QuickTileAction.values().map { action ->
+            SelectDialogModel(
+                title = stringResource(action.titleRes),
+                isSelected = selectedId == action.id,
+                onClick = { selectedId = action.id }
+            )
+        }.toPersistentList()
+    )
+}
+
+@Composable
+internal fun QuickTileCameraSelectDialog(
+    settingsViewModel: SettingsViewModel,
+    initialCameraType: com.xxmrk888ytxx.coreandroid.models.QuickTileCameraType,
+) {
+    var selectedId by rememberSaveable {
+        mutableStateOf(initialCameraType.id)
+    }
+
+    SelectDialog(
+        onConfirm = {
+            settingsViewModel.changeQuickTileCameraType(
+                com.xxmrk888ytxx.coreandroid.models.QuickTileCameraType.fromId(selectedId)
+            )
+            settingsViewModel.hideQuickTileCameraSelectDialog()
+        },
+        onCancel = settingsViewModel::hideQuickTileCameraSelectDialog,
+        items = com.xxmrk888ytxx.coreandroid.models.QuickTileCameraType.values().map { type ->
+            SelectDialogModel(
+                title = stringResource(type.titleRes),
+                isSelected = selectedId == type.id,
+                onClick = { selectedId = type.id }
             )
         }.toPersistentList()
     )

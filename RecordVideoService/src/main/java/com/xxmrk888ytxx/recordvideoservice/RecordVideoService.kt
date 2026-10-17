@@ -24,6 +24,7 @@ import com.xxmrk888ytxx.coreandroid.buildNotificationChannel
 import com.xxmrk888ytxx.coreandroid.cancelChillersAndLaunch
 import com.xxmrk888ytxx.coreandroid.milliSecondToString
 import com.xxmrk888ytxx.coredeps.DepsProvider.getDepsByApplication
+import com.xxmrk888ytxx.recordvideoservice.models.CameraType
 import com.xxmrk888ytxx.recordvideoservice.models.ForegroundNotificationType
 import com.xxmrk888ytxx.recordvideoservice.models.RecordVideoState
 import com.xxmrk888ytxx.videorecorder.VideoRecorder
@@ -190,6 +191,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
 
     private var currentPrimaryFile: File? = null
     private var currentSecondaryFile: File? = null
+    private var currentCameraTypeOverride: CameraType? = null
     private var accumulatedDurationMs: Long = 0L
     private var isRotating: Boolean = false
 
@@ -327,7 +329,11 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     }
 
     //Record control
-    override fun startRecord(outputFile: File, secondaryOutputFile: File?) {
+    override fun startRecord(
+        outputFile: File,
+        secondaryOutputFile: File?,
+        cameraTypeOverride: CameraType?
+    ) {
         if (recorder != null) return
 
         val availableSpace = outputFile.parentFile?.usableSpace ?: applicationContext.filesDir.usableSpace
@@ -339,6 +345,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
 
         currentPrimaryFile = outputFile
         currentSecondaryFile = secondaryOutputFile
+        currentCameraTypeOverride = cameraTypeOverride
         accumulatedDurationMs = 0L
         isRotating = false
 
@@ -347,13 +354,14 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
 
         videoRecordServiceScope.launch {
             val config = recordVideoParams.cameraConfig.first()
+            val effectiveCameraType = currentCameraTypeOverride?.cameraTypeForRecorder ?: config.cameraType.cameraTypeForRecorder
 
             recorder = VideoRecorder.Builder(
                 applicationContext,
                 outputFile,
                 this@RecordVideoService
             ).apply {
-                setCameraType(config.cameraType.cameraTypeForRecorder)
+                setCameraType(effectiveCameraType)
                 setMaxQuality(config.maxQuality.videoRecorderMaxQuality)
                 setCameraRotation(config.cameraRotation.cameraRotation)
                 if (secondaryOutputFile != null) {
@@ -393,12 +401,13 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         currentSecondaryFile = nextSecondary
 
         val config = recordVideoParams.cameraConfig.first()
+        val effectiveCameraType = currentCameraTypeOverride?.cameraTypeForRecorder ?: config.cameraType.cameraTypeForRecorder
         recorder = VideoRecorder.Builder(
             applicationContext,
             nextPrimary,
             this@RecordVideoService
         ).apply {
-            setCameraType(config.cameraType.cameraTypeForRecorder)
+            setCameraType(effectiveCameraType)
             setMaxQuality(config.maxQuality.videoRecorderMaxQuality)
             setCameraRotation(config.cameraRotation.cameraRotation)
             if (nextSecondary != null) {
@@ -449,6 +458,7 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
 
             recorder = null
             accumulatedDurationMs = 0L
+            currentCameraTypeOverride = null
             isRotating = false
 
             Log.i(LOG_TAG, "stopRecord")

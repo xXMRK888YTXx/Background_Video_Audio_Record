@@ -52,4 +52,9 @@ interface SettingsScreenModule {
     fun bindManageAppLockContract(
         manageAppLockContractImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.glue.SettingsScreen.ManageAppLockContractImpl
     ): com.xxmrk888ytxx.settingsscreen.contracts.ManageAppLockContract
+
+    @Binds
+    fun bindManageQuickTileContract(
+        manageQuickTileContractImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.glue.SettingsScreen.ManageQuickTileContractImpl
+    ): com.xxmrk888ytxx.settingsscreen.contracts.ManageQuickTileContract
 }

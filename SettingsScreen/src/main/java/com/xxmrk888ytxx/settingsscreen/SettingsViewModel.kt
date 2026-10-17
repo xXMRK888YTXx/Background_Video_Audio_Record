@@ -36,8 +36,12 @@ class SettingsViewModel @Inject constructor(
     private val manageVideoNotificationConfigContract: ManageVideoNotificationConfigContract,
     private val provideAppVersionContract: ProvideAppVersionContract,
     private val openActivityContract: OpenActivityContract,
-    private val manageAppLockContract: ManageAppLockContract
+    private val manageAppLockContract: ManageAppLockContract,
+    private val manageQuickTileContract: com.xxmrk888ytxx.settingsscreen.contracts.ManageQuickTileContract
 ) : ViewModel() {
+
+    val quickTileAction = manageQuickTileContract.quickTileAction
+    val quickTileCameraType = manageQuickTileContract.quickTileCameraType
 
     //Open terms of use
     internal fun openTermsOfUse() {
@@ -352,6 +356,56 @@ class SettingsViewModel @Inject constructor(
     internal fun onBiometricSwitchChanged(enabled: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             manageAppLockContract.setBiometricEnabled(enabled)
+        }
+    }
+
+    internal fun showQuickTileActionSelectDialog() {
+        viewModelScope.launch(Dispatchers.Default) {
+            val currentAction = manageQuickTileContract.quickTileAction.first()
+            _dialogState.update {
+                it.copy(
+                    quickTileActionSelectDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.QuickTileActionSelectDialogState.Showed(currentAction)
+                )
+            }
+        }
+    }
+
+    internal fun hideQuickTileActionSelectDialog() {
+        _dialogState.update {
+            it.copy(
+                quickTileActionSelectDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.QuickTileActionSelectDialogState.Hidden
+            )
+        }
+    }
+
+    internal fun changeQuickTileAction(action: com.xxmrk888ytxx.coreandroid.models.QuickTileAction) {
+        viewModelScope.launch(Dispatchers.Default) {
+            manageQuickTileContract.setQuickTileAction(action)
+        }
+    }
+
+    internal fun showQuickTileCameraSelectDialog() {
+        viewModelScope.launch(Dispatchers.Default) {
+            val currentCameraType = manageQuickTileContract.quickTileCameraType.first()
+            _dialogState.update {
+                it.copy(
+                    quickTileCameraSelectDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.QuickTileCameraSelectDialogState.Showed(currentCameraType)
+                )
+            }
+        }
+    }
+
+    internal fun hideQuickTileCameraSelectDialog() {
+        _dialogState.update {
+            it.copy(
+                quickTileCameraSelectDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.QuickTileCameraSelectDialogState.Hidden
+            )
+        }
+    }
+
+    internal fun changeQuickTileCameraType(cameraType: com.xxmrk888ytxx.coreandroid.models.QuickTileCameraType) {
+        viewModelScope.launch(Dispatchers.Default) {
+            manageQuickTileContract.setQuickTileCameraType(cameraType)
         }
     }
     //

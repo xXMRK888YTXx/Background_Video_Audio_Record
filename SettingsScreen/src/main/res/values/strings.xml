@@ -48,4 +48,6 @@
     <string name="repeat_pin_hint">Repeat 4-digit PIN</string>
     <string name="pins_do_not_match">PINs do not match!</string>
     <string name="cancel">Cancel</string>
+    <string name="quick_tile_action_setting">Quick Settings Tile action</string>
+    <string name="quick_tile_camera_setting">Tile camera for recording</string>
 </resources>

@@ -38,4 +38,11 @@
     <string name="camera_both_label">Обе камеры (вместе)</string>
     <string name="camera_selfie_chip">🤳 Селфи</string>
     <string name="camera_back_chip">📷 Задняя</string>
+    <string name="quick_tile_action_open_app">Открыть приложение</string>
+    <string name="quick_tile_action_record_video">Начать запись видео</string>
+    <string name="quick_tile_action_record_audio">Начать запись звука</string>
+    <string name="quick_tile_camera_as_in_settings">Как в общих настройках</string>
+    <string name="quick_tile_camera_back">Задняя камера</string>
+    <string name="quick_tile_camera_front">Фронтальная камера</string>
+    <string name="quick_tile_camera_both">Обе камеры</string>
 </resources>

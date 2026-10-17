@@ -170,22 +170,31 @@ class VideoRecordServiceManagerImpl @Inject constructor(
 
     private var controller: RecordVideoServiceController? = null
 
-    override fun startRecord() {
+    override fun startRecord(cameraTypeOverride: CameraType?) {
         Log.i(LOG_TAG,"request start record")
         serviceManagedScope.launch {
             if(!isConnected) {
-                delayedManageRequest.add(::startRecord)
+                delayedManageRequest.add { startRecord(cameraTypeOverride) }
 
                 connectToService()
 
                 return@launch
             }
 
-            val isDual = cameraConfigManager.config.first().cameraType is CameraType.Both
+            val effectiveCameraType = cameraTypeOverride ?: cameraConfigManager.config.first().cameraType
+            val isDual = effectiveCameraType is CameraType.Both
             val primaryFile = videoRecordRepository.getFileForRecord()
             val secondaryFile = if (isDual) videoRecordRepository.getSecondaryFileForRecord() else null
 
-            controller?.startRecord(primaryFile, secondaryFile)
+            val serviceOverride = cameraTypeOverride?.let {
+                when (it) {
+                    is CameraType.Front -> com.xxmrk888ytxx.recordvideoservice.models.CameraType.Front
+                    is CameraType.Back -> com.xxmrk888ytxx.recordvideoservice.models.CameraType.Back
+                    is CameraType.Both -> com.xxmrk888ytxx.recordvideoservice.models.CameraType.Both
+                }
+            }
+
+            controller?.startRecord(primaryFile, secondaryFile, serviceOverride)
         }
     }
 

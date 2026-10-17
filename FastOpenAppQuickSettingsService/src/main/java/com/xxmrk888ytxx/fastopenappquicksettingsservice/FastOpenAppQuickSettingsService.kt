@@ -39,7 +39,12 @@ class FastOpenAppQuickSettingsService : TileService(), TitleServiceActivityRunne
             }
         } else {
             tile.state = Tile.STATE_INACTIVE
-            tile.label = getString(R.string.fast_record)
+            val actionLabel = try {
+                getString(fastOpenAppQuickSettingsServiceCallback.getActionTitleRes())
+            } catch (_: Exception) {
+                getString(R.string.fast_record)
+            }
+            tile.label = actionLabel
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 tile.subtitle = getString(R.string.tap_to_start)
             }
@@ -58,11 +63,23 @@ class FastOpenAppQuickSettingsService : TileService(), TitleServiceActivityRunne
     override fun <I : Activity> startActivity(
         activityClass: Class<I>,
     ) {
+        startActivity(activityClass) {}
+    }
+
+    override fun <I : Activity> startActivity(
+        activityClass: Class<I>,
+        configureIntent: (Intent) -> Unit
+    ) {
         val intent = Intent(this, activityClass).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            configureIntent(this)
         }
-        val pendingIntent = PendingIntent.getActivity(this, 23432, intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            23432,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
         startActivityAndCollapse(pendingIntent)
     }
 }

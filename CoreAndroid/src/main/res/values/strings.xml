@@ -38,4 +38,11 @@
     <string name="camera_both_label">Both cameras (Combined)</string>
     <string name="camera_selfie_chip">🤳 Selfie</string>
     <string name="camera_back_chip">📷 Back</string>
+    <string name="quick_tile_action_open_app">Open application</string>
+    <string name="quick_tile_action_record_video">Start video recording</string>
+    <string name="quick_tile_action_record_audio">Start audio recording</string>
+    <string name="quick_tile_camera_as_in_settings">As in main settings</string>
+    <string name="quick_tile_camera_back">Back camera</string>
+    <string name="quick_tile_camera_front">Front camera</string>
+    <string name="quick_tile_camera_both">Both cameras</string>
 </resources>

@@ -53,8 +53,11 @@ internal fun cameraParams(settingsViewModel: SettingsViewModel): ImmutableList<S
 @SuppressLint("ResourceType")
 @Composable
 internal fun notificationParams(settingsViewModel: SettingsViewModel): ImmutableList<SettingsParamType> {
+    val quickTileAction by settingsViewModel.quickTileAction.collectAsState(initial = com.xxmrk888ytxx.coreandroid.models.QuickTileAction.OPEN_APP)
 
-    return persistentListOf(
+    val list = persistentListOf<SettingsParamType>().builder()
+
+    list.add(
         SettingsParamType.Button(
             text = stringResource(R.string.Notification_audio_params),
             icon = R.drawable.baseline_edit_notifications_24,
@@ -65,7 +68,10 @@ internal fun notificationParams(settingsViewModel: SettingsViewModel): Immutable
                     )
                 }
             }
-        ),
+        )
+    )
+
+    list.add(
         SettingsParamType.Button(
             text = stringResource(R.string.Notification_video_params),
             icon = R.drawable.baseline_edit_notifications_24,
@@ -78,6 +84,26 @@ internal fun notificationParams(settingsViewModel: SettingsViewModel): Immutable
             }
         )
     )
+
+    list.add(
+        SettingsParamType.Button(
+            text = stringResource(R.string.quick_tile_action_setting),
+            icon = R.drawable.baseline_edit_notifications_24,
+            onClick = settingsViewModel::showQuickTileActionSelectDialog
+        )
+    )
+
+    if (quickTileAction == com.xxmrk888ytxx.coreandroid.models.QuickTileAction.START_VIDEO_RECORD) {
+        list.add(
+            SettingsParamType.Button(
+                text = stringResource(R.string.quick_tile_camera_setting),
+                icon = R.drawable.camera_type,
+                onClick = settingsViewModel::showQuickTileCameraSelectDialog
+            )
+        )
+    }
+
+    return list.build()
 }
 
 @SuppressLint("ResourceType")

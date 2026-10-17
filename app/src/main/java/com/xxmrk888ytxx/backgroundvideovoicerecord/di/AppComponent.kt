@@ -50,6 +50,7 @@ import dagger.Lazy
 @AppScope
 internal interface AppComponent : WorkerDeps {
     fun inject(mainActivity: MainActivity)
+    fun inject(quickTileTrampolineActivity: com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.quickTile.QuickTileTrampolineActivity)
 
     @Component.Factory
     interface Factory {
@@ -67,4 +68,5 @@ internal interface AppComponent : WorkerDeps {
     override val allRecordAutoExportWorkerWork: AllRecordAutoExportWorkerWork
 
     val fastOpenAppQuickSettingsServiceCallback: FastOpenAppQuickSettingsServiceCallback
+    val quickTileActionManager: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.quickTile.QuickTileActionManager
 }
