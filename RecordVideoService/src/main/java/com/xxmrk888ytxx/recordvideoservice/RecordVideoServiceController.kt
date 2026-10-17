@@ -19,6 +19,6 @@ interface RecordVideoServiceController {
     
     fun resumeRecord()
     
-    fun stopRecord()
+    suspend fun stopRecord()
     
 }

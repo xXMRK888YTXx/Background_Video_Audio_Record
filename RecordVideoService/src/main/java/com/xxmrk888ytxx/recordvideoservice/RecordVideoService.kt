@@ -169,6 +169,8 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     }
     //
 
+    private val stopRecordMutex = Mutex()
+
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(notificationCommandReceiver)
@@ -176,15 +178,20 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         releaseWakeLock()
         abandonAudioFocus()
         videoRecordServiceScope.launch(NonCancellable) {
-            stopRecordInternal()
-            withContext(Dispatchers.Main) {
-                lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
-            }
-            recordStateObserverScope.cancel()
-            videoRecordServiceScope.cancel()
-            recordNotificationStateObserverScope.cancel()
+            try {
+                stopRecordMutex.withLock {
+                    stopRecordInternal()
+                }
+            } finally {
+                withContext(Dispatchers.Main) {
+                    lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+                }
+                recordStateObserverScope.cancel()
+                videoRecordServiceScope.cancel()
+                recordNotificationStateObserverScope.cancel()
 
-            notificationManager.cancel(NOTIFICATION_ID)
+                notificationManager.cancel(NOTIFICATION_ID)
+            }
         }
     }
     //
@@ -393,9 +400,8 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         }
 
         val baseDir = currentPrimaryFile?.parentFile ?: applicationContext.cacheDir
-        val timestamp = System.currentTimeMillis()
-        val nextPrimary = File(baseDir, "REC_${timestamp}.mp4")
-        val nextSecondary = if (currentSecondaryFile != null) File(baseDir, "REC_${timestamp}_secondary.mp4") else null
+        val nextPrimary = currentPrimaryFile ?: File(baseDir, "recording")
+        val nextSecondary = currentSecondaryFile
         currentPrimaryFile = nextPrimary
         currentSecondaryFile = nextSecondary
 
@@ -445,31 +451,38 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         }
     }
 
-    override fun stopRecord() {
-        if (recorder == null) return
+    override suspend fun stopRecord() {
         releaseWakeLock()
         abandonAudioFocus()
-        videoRecordServiceScope.launch {
+        stopRecordMutex.withLock {
             stopRecordInternal()
         }
     }
 
     private suspend fun stopRecordInternal() {
-        if (recorder == null) return
-        stopRecordObserver(resetState = true)
-        val activeRecorder = recorder
+        val activeRecorder = recorder ?: return
         recorder = null
+        stopRecordObserver(resetState = false)
         accumulatedDurationMs = 0L
         currentCameraTypeOverride = null
         isRotating = false
 
-        activeRecorder?.stopRecordAndDestroyRecorder()
+        try {
+            activeRecorder.stopRecordAndDestroyRecorder()
+            Log.i(LOG_TAG, "stopRecord")
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Error stopping recorder", e)
+        }
 
-        Log.i(LOG_TAG, "stopRecord")
-
-        withContext(NonCancellable) {
-            recordVideoParams.saveRecordedVideoStrategy.saveRecord()
-            Log.i(LOG_TAG, "record saved")
+        try {
+            withContext(NonCancellable) {
+                recordVideoParams.saveRecordedVideoStrategy.saveRecord()
+                Log.i(LOG_TAG, "record saved")
+            }
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Error saving record", e)
+        } finally {
+            _currentState.update { RecordVideoState.Idle }
         }
     }
     //
@@ -500,7 +513,9 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
                         if (usableSpace < MIN_STORAGE_CRITICAL_BYTES && !isRotating) {
                             Log.e(LOG_TAG, "Critical low storage (< 100MB)! Stopping video recording safely.")
                             showLowStorageNotification()
-                            stopRecord()
+                            videoRecordServiceScope.launch {
+                                stopRecord()
+                            }
                             return@collect
                         }
 
@@ -654,7 +669,9 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
                 when (intent.getStringExtra(ServiceNotificationActions.COMMAND_KEY)) {
 
                     ServiceNotificationActions.STOP_RECORD_ACTION -> {
-                        this@RecordVideoService.stopRecord()
+                        videoRecordServiceScope.launch {
+                            this@RecordVideoService.stopRecord()
+                        }
                     }
 
                     ServiceNotificationActions.RESUME_RECORD_ACTION -> {

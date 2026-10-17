@@ -43,10 +43,16 @@ class VideoRecordRepositoryImpl @Inject constructor(
                 throw IllegalStateException("Recorded file is empty (0 bytes)")
             }
             val newFilePath = newFile
-            fileForRecord.renameTo(newFilePath)
+            if (!fileForRecord.renameTo(newFilePath)) {
+                fileForRecord.copyTo(newFilePath, overwrite = true)
+                fileForRecord.delete()
+            }
             if (secondaryFileForRecord.exists()) {
                 val secondaryTarget = File(videoDir, "${newFilePath.name}_secondary")
-                secondaryFileForRecord.renameTo(secondaryTarget)
+                if (!secondaryFileForRecord.renameTo(secondaryTarget)) {
+                    secondaryFileForRecord.copyTo(secondaryTarget, overwrite = true)
+                    secondaryFileForRecord.delete()
+                }
             }
             loadNewFile(newFilePath)
             return newFilePath
@@ -119,7 +125,10 @@ class VideoRecordRepositoryImpl @Inject constructor(
     override suspend fun addCustomFile(file: File, displayName: String?): File {
         if (file.exists()) {
             val newFilePath = newFile
-            file.renameTo(newFilePath)
+            if (!file.renameTo(newFilePath)) {
+                file.copyTo(newFilePath, overwrite = true)
+                file.delete()
+            }
             loadNewFile(newFilePath)
             if (displayName != null) {
                 val id = newFilePath.fileNameToLong()
@@ -150,14 +159,15 @@ class VideoRecordRepositoryImpl @Inject constructor(
         ContextWrapper(context).getDir("RecordedVideos", Context.MODE_PRIVATE)
     }
 
-    private val newFile:File
+    private val newFile: File
         get() {
             val files = videoDir.listFiles() ?: emptyArray()
-
-            val newFileId = if(files.isEmpty()) 0L
-            else files.maxOf { it.fileNameToLong() } + 1
-
-            return File(videoDir,newFileId.toString())
+            val maxId = files.map { it.fileNameToLong() }.filter { it >= 0 }.maxOrNull() ?: -1L
+            var targetId = maxId + 1
+            while (File(videoDir, targetId.toString()).exists()) {
+                targetId++
+            }
+            return File(videoDir, targetId.toString())
         }
     //
 

@@ -32,6 +32,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.cancel
@@ -382,45 +383,49 @@ internal class VideoRecorderImpl constructor(
             secDeferred?.complete(Unit)
         }
 
-        // Wait for CameraX to finalize and write the MP4 headers/moov atom to disk
-        if (hasPrimary) {
-            withTimeoutOrNull(5000L) {
-                primDeferred.await()
-            }
-        }
-        if (hasSecondary && secDeferred != null) {
-            withTimeoutOrNull(5000L) {
-                secDeferred.await()
-            }
-        }
-
         try {
-            recording?.close()
-        } catch (_: Exception) {}
-        try {
-            secondaryRecording?.close()
-        } catch (_: Exception) {}
-
-        cameraProvider?.run {
-            withContext(Dispatchers.Main) {
-                try {
-                    unbindAll()
-                } catch (_: Exception) {}
+            // Wait for CameraX to finalize and write the MP4 headers/moov atom to disk
+            if (hasPrimary) {
+                withTimeoutOrNull(5000L) {
+                    primDeferred.await()
+                }
             }
+            if (hasSecondary && secDeferred != null) {
+                withTimeoutOrNull(5000L) {
+                    secDeferred.await()
+                }
+            }
+        } finally {
+            try {
+                recording?.close()
+            } catch (_: Exception) {}
+            try {
+                secondaryRecording?.close()
+            } catch (_: Exception) {}
+
+            cameraProvider?.run {
+                withContext(NonCancellable) {
+                    withContext(Dispatchers.Main) {
+                        try {
+                            unbindAll()
+                        } catch (_: Exception) {}
+                    }
+                }
+            }
+
+            recording = null
+            secondaryRecording = null
+            primaryFinalizeDeferred = null
+            secondaryFinalizeDeferred = null
+            cameraProvider = null
+            videoCapture = null
+            secondaryVideoCapture = null
+
+            toDestroyState()
+
+            observerRecordDurationScope.cancel()
+            scope.cancel()
         }
-
-        recording = null
-        secondaryRecording = null
-        primaryFinalizeDeferred = null
-        secondaryFinalizeDeferred = null
-        cameraProvider = null
-        videoCapture = null
-        secondaryVideoCapture = null
-
-        toDestroyState()
-
-        observerRecordDurationScope.cancel()
-        scope.cancel()
     }
 
     private suspend fun toRecordState() {

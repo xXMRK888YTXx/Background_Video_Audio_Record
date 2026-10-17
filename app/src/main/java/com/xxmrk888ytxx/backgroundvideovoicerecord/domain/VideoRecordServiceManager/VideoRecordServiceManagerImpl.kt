@@ -53,6 +53,9 @@ class VideoRecordServiceManagerImpl @Inject constructor(
 
     private val _hasPendingDualRecord: MutableStateFlow<Boolean> = MutableStateFlow(videoRecordRepository.hasPendingDualRecord())
 
+    @Volatile
+    private var isStopping = false
+
     override val hasPendingDualRecord: Flow<Boolean> = _hasPendingDualRecord.asStateFlow()
     //
 
@@ -66,6 +69,7 @@ class VideoRecordServiceManagerImpl @Inject constructor(
 
                     if(
                         isConnected &&
+                        !isStopping &&
                         _currentRecordState.value is RecordVideoState.Idle &&
                         lastRecordState !is RecordVideoState.Idle
                     ) {
@@ -238,20 +242,25 @@ class VideoRecordServiceManagerImpl @Inject constructor(
     override fun stopRecord() {
         Log.i(LOG_TAG,"request stop record")
         serviceManagedScope.launch {
+            if (isStopping) return@launch
+            isStopping = true
+            try {
+                if(!isConnected) {
+                    delayedManageRequest.add(::stopRecord)
 
-            if(!isConnected) {
-                delayedManageRequest.add(::stopRecord)
+                    connectToService()
 
-                connectToService()
+                    return@launch
+                }
 
-                return@launch
+                controller?.stopRecord()
+
+                disconnectFromService()
+
+                _hasPendingDualRecord.update { videoRecordRepository.hasPendingDualRecord() }
+            } finally {
+                isStopping = false
             }
-
-            controller?.stopRecord()
-
-            disconnectFromService()
-
-            _hasPendingDualRecord.update { videoRecordRepository.hasPendingDualRecord() }
         }
     }
 
