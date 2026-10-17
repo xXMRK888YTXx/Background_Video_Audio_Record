@@ -172,6 +172,13 @@ class VideoRecordServiceManagerImpl @Inject constructor(
 
     override fun startRecord(cameraTypeOverride: CameraType?) {
         Log.i(LOG_TAG,"request start record")
+        val hasCamera = context.checkSelfPermission(android.Manifest.permission.CAMERA) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        val hasMic = context.checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        if (!hasCamera || !hasMic) {
+            Log.e(LOG_TAG, "Cannot start record: missing CAMERA or RECORD_AUDIO permission")
+            return
+        }
+
         serviceManagedScope.launch {
             if(!isConnected) {
                 delayedManageRequest.add { startRecord(cameraTypeOverride) }

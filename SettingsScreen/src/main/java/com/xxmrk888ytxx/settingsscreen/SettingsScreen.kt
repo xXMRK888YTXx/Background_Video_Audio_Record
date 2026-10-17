@@ -112,6 +112,13 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
 
             item {
                 SettingsCategory(
+                    categoryName = stringResource(R.string.volume_key_trigger_category),
+                    settingsParams = volumeKeyTriggerParams(settingsViewModel)
+                )
+            }
+
+            item {
+                SettingsCategory(
                     categoryName = stringResource(R.string.export_settings),
                     settingsParams = autoExportToExternalStorageParams(settingsViewModel, navigator)
                 )
@@ -205,6 +212,26 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
         QuickTileCameraSelectDialog(
             settingsViewModel = settingsViewModel,
             initialCameraType = (dialogState.quickTileCameraSelectDialogState as com.xxmrk888ytxx.settingsscreen.models.DialogModels.QuickTileCameraSelectDialogState.Showed).currentCameraType
+        )
+    }
+
+    if (dialogState.volumeKeyActionSelectDialogState is com.xxmrk888ytxx.settingsscreen.models.DialogModels.VolumeKeyActionSelectDialogState.Showed) {
+        VolumeKeyActionSelectDialog(
+            settingsViewModel = settingsViewModel,
+            initialAction = (dialogState.volumeKeyActionSelectDialogState as com.xxmrk888ytxx.settingsscreen.models.DialogModels.VolumeKeyActionSelectDialogState.Showed).currentAction
+        )
+    }
+
+    if (dialogState.volumeKeyCameraSelectDialogState is com.xxmrk888ytxx.settingsscreen.models.DialogModels.VolumeKeyCameraSelectDialogState.Showed) {
+        VolumeKeyCameraSelectDialog(
+            settingsViewModel = settingsViewModel,
+            initialCameraType = (dialogState.volumeKeyCameraSelectDialogState as com.xxmrk888ytxx.settingsscreen.models.DialogModels.VolumeKeyCameraSelectDialogState.Showed).currentCameraType
+        )
+    }
+
+    if (dialogState.adbPermissionDialogState is com.xxmrk888ytxx.settingsscreen.models.DialogModels.AdbPermissionDialogState.Showed) {
+        AdbPermissionDialog(
+            onDismiss = settingsViewModel::hideAdbPermissionDialog
         )
     }
 }
@@ -891,6 +918,202 @@ internal fun QuickTileCameraSelectDialog(
             )
         }.toPersistentList()
     )
+}
+
+@Composable
+internal fun VolumeKeyActionSelectDialog(
+    settingsViewModel: SettingsViewModel,
+    initialAction: com.xxmrk888ytxx.coreandroid.models.VolumeKeyAction,
+) {
+    var selectedId by rememberSaveable {
+        mutableStateOf(initialAction.id)
+    }
+
+    SelectDialog(
+        onConfirm = {
+            settingsViewModel.changeVolumeKeyAction(
+                com.xxmrk888ytxx.coreandroid.models.VolumeKeyAction.fromId(selectedId)
+            )
+            settingsViewModel.hideVolumeKeyActionSelectDialog()
+        },
+        onCancel = settingsViewModel::hideVolumeKeyActionSelectDialog,
+        items = com.xxmrk888ytxx.coreandroid.models.VolumeKeyAction.values().map { action ->
+            SelectDialogModel(
+                title = stringResource(action.titleRes),
+                isSelected = selectedId == action.id,
+                onClick = { selectedId = action.id }
+            )
+        }.toPersistentList()
+    )
+}
+
+@Composable
+internal fun VolumeKeyCameraSelectDialog(
+    settingsViewModel: SettingsViewModel,
+    initialCameraType: com.xxmrk888ytxx.coreandroid.models.QuickTileCameraType,
+) {
+    var selectedId by rememberSaveable {
+        mutableStateOf(initialCameraType.id)
+    }
+
+    SelectDialog(
+        onConfirm = {
+            settingsViewModel.changeVolumeKeyCameraType(
+                com.xxmrk888ytxx.coreandroid.models.QuickTileCameraType.fromId(selectedId)
+            )
+            settingsViewModel.hideVolumeKeyCameraSelectDialog()
+        },
+        onCancel = settingsViewModel::hideVolumeKeyCameraSelectDialog,
+        items = com.xxmrk888ytxx.coreandroid.models.QuickTileCameraType.values().map { type ->
+            SelectDialogModel(
+                title = stringResource(type.titleRes),
+                isSelected = selectedId == type.id,
+                onClick = { selectedId = type.id }
+            )
+        }.toPersistentList()
+    )
+}
+
+@Composable
+internal fun AdbPermissionDialog(
+    onDismiss: () -> Unit
+) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val adbCommand = "adb shell pm grant ${context.packageName} android.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER"
+
+    val isVolumeKeyGranted = context.checkSelfPermission("android.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER") ==
+            android.content.pm.PackageManager.PERMISSION_GRANTED
+    val isOverlayGranted = android.provider.Settings.canDrawOverlays(context)
+
+    Dialog(onDismissRequest = onDismiss) {
+        StyleCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.volume_key_permission_dialog_title),
+                    style = themeTypography.body,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
+
+                // Step 1: ADB Volume Key Listener
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.volume_key_adb_step_title),
+                        style = themeTypography.body,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp,
+                        color = Color.White
+                    )
+
+                    if (isVolumeKeyGranted) {
+                        Text(
+                            text = stringResource(R.string.volume_key_adb_step_granted),
+                            style = themeTypography.body,
+                            fontSize = 13.sp,
+                            color = Color(0xFF4ADE80)
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.volume_key_adb_step_desc, adbCommand),
+                            style = themeTypography.body,
+                            fontSize = 13.sp,
+                            color = Color(0xFFCBD5E1)
+                        )
+
+                        androidx.compose.material3.Button(
+                            onClick = {
+                                val clipboard = context.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as? android.content.ClipboardManager
+                                val clip = android.content.ClipData.newPlainText("ADB Command", adbCommand)
+                                clipboard?.setPrimaryClip(clip)
+                                android.widget.Toast.makeText(context, context.getString(R.string.adb_command_copied), android.widget.Toast.LENGTH_SHORT).show()
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = stringResource(R.string.copy_adb_command),
+                                color = Color.White,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
+
+                // Step 2: Overlay Permission (can be granted directly in settings without ADB)
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.volume_key_overlay_step_title),
+                        style = themeTypography.body,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp,
+                        color = Color.White
+                    )
+
+                    if (isOverlayGranted) {
+                        Text(
+                            text = stringResource(R.string.volume_key_overlay_step_granted),
+                            style = themeTypography.body,
+                            fontSize = 13.sp,
+                            color = Color(0xFF4ADE80)
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.volume_key_overlay_step_desc),
+                            style = themeTypography.body,
+                            fontSize = 13.sp,
+                            color = Color(0xFFCBD5E1)
+                        )
+
+                        androidx.compose.material3.OutlinedButton(
+                            onClick = {
+                                try {
+                                    val intent = android.content.Intent(
+                                        android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                        android.net.Uri.parse("package:${context.packageName}")
+                                    ).apply {
+                                        flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                                    }
+                                    context.startActivity(intent)
+                                } catch (_: Exception) {}
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = stringResource(R.string.open_settings),
+                                color = Color.White,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    androidx.compose.material3.TextButton(onClick = onDismiss) {
+                        Text(stringResource(R.string.cancel), color = Color(0xFF94A3B8))
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable

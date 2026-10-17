@@ -45,4 +45,13 @@
     <string name="quick_tile_camera_back">Задняя камера</string>
     <string name="quick_tile_camera_front">Фронтальная камера</string>
     <string name="quick_tile_camera_both">Обе камеры</string>
+    <string name="volume_key_action_record_video">Начать запись видео</string>
+    <string name="volume_key_action_record_audio">Начать запись звука</string>
+    <string name="volume_trigger_notification_channel">Аппаратный триггер</string>
+    <string name="volume_trigger_notification_title">Триггер кнопок громкости активен</string>
+    <string name="volume_trigger_notification_text">Двойное зажатие громкости для записи</string>
+    <string name="camera_and_mic_required_toast">Для начала записи требуются разрешения на камеру и микрофон</string>
+    <string name="camera_required_toast">Для начала записи требуется разрешение на камеру</string>
+    <string name="mic_required_toast">Для начала записи требуется разрешение на микрофон</string>
+    <string name="another_recording_already_active_toast">Невозможно начать запись: уже идёт другая запись</string>
 </resources>

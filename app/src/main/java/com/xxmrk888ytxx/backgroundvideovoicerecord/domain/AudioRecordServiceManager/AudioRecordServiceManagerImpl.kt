@@ -45,6 +45,12 @@ class AudioRecordServiceManagerImpl @Inject constructor(
     var recordServiceController: AudioRecordServiceController? = null
 
     override fun startRecord() {
+        val hasMic = context.checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        if (!hasMic) {
+            Log.e(LOG_TAG, "Cannot start record: missing RECORD_AUDIO permission")
+            return
+        }
+
         serviceManagedScope.launch {
             Log.i(LOG_TAG,"startRecord request")
             if(!isConnectedToService()) {

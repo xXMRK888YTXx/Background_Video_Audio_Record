@@ -50,4 +50,18 @@
     <string name="cancel">Cancel</string>
     <string name="quick_tile_action_setting">Quick Settings Tile action</string>
     <string name="quick_tile_camera_setting">Tile camera for recording</string>
+    <string name="volume_key_trigger_category">Volume Buttons (ADB)</string>
+    <string name="volume_key_trigger_switch">Volume button trigger</string>
+    <string name="volume_key_trigger_action_setting">Action on volume key press</string>
+    <string name="volume_key_trigger_camera_setting">Camera for recording</string>
+    <string name="volume_key_permission_dialog_title">Feature Setup</string>
+    <string name="volume_key_adb_step_title">1. Volume buttons intercept (ADB)</string>
+    <string name="volume_key_adb_step_desc">Run this command from your computer via ADB:\n\n%s</string>
+    <string name="volume_key_adb_step_granted">✓ ADB permission granted</string>
+    <string name="volume_key_overlay_step_title">2. Background recording</string>
+    <string name="volume_key_overlay_step_desc">Allow display over other apps so the app can record from the background without showing windows.</string>
+    <string name="volume_key_overlay_step_granted">✓ Overlay permission granted</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="copy_adb_command">Copy ADB Command</string>
+    <string name="adb_command_copied">Command copied to clipboard</string>
 </resources>

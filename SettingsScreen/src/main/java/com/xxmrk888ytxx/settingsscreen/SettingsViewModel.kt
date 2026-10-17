@@ -37,11 +37,19 @@ class SettingsViewModel @Inject constructor(
     private val provideAppVersionContract: ProvideAppVersionContract,
     private val openActivityContract: OpenActivityContract,
     private val manageAppLockContract: ManageAppLockContract,
-    private val manageQuickTileContract: com.xxmrk888ytxx.settingsscreen.contracts.ManageQuickTileContract
+    private val manageQuickTileContract: com.xxmrk888ytxx.settingsscreen.contracts.ManageQuickTileContract,
+    private val manageVolumeKeyTriggerContract: com.xxmrk888ytxx.settingsscreen.contracts.ManageVolumeKeyTriggerContract
 ) : ViewModel() {
 
     val quickTileAction = manageQuickTileContract.quickTileAction
     val quickTileCameraType = manageQuickTileContract.quickTileCameraType
+
+    val isVolumeKeyTriggerEnabled = manageVolumeKeyTriggerContract.isTriggerEnabled
+    val volumeKeyAction = manageVolumeKeyTriggerContract.volumeKeyAction
+    val volumeKeyCameraType = manageVolumeKeyTriggerContract.volumeKeyCameraType
+    val isVolumeKeyPermissionGranted: Boolean get() = manageVolumeKeyTriggerContract.isVolumeKeyPermissionGranted
+    val isOverlayPermissionGranted: Boolean get() = manageVolumeKeyTriggerContract.isOverlayPermissionGranted
+    val isAllPermissionsGranted: Boolean get() = manageVolumeKeyTriggerContract.isAllPermissionsGranted
 
     //Open terms of use
     internal fun openTermsOfUse() {
@@ -406,6 +414,82 @@ class SettingsViewModel @Inject constructor(
     internal fun changeQuickTileCameraType(cameraType: com.xxmrk888ytxx.coreandroid.models.QuickTileCameraType) {
         viewModelScope.launch(Dispatchers.Default) {
             manageQuickTileContract.setQuickTileCameraType(cameraType)
+        }
+    }
+
+    internal fun onVolumeKeyTriggerSwitchChanged(enabled: Boolean) {
+        viewModelScope.launch {
+            if (enabled) {
+                if (!manageVolumeKeyTriggerContract.isAllPermissionsGranted) {
+                    showAdbPermissionDialog()
+                } else {
+                    manageVolumeKeyTriggerContract.setTriggerEnabled(true)
+                }
+            } else {
+                manageVolumeKeyTriggerContract.setTriggerEnabled(false)
+            }
+        }
+    }
+
+    internal fun showAdbPermissionDialog() {
+        _dialogState.update {
+            it.copy(adbPermissionDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.AdbPermissionDialogState.Showed)
+        }
+    }
+
+    internal fun hideAdbPermissionDialog() {
+        _dialogState.update {
+            it.copy(adbPermissionDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.AdbPermissionDialogState.Hidden)
+        }
+    }
+
+    internal fun showVolumeKeyActionSelectDialog() {
+        viewModelScope.launch(Dispatchers.Default) {
+            val currentAction = manageVolumeKeyTriggerContract.volumeKeyAction.first()
+            _dialogState.update {
+                it.copy(
+                    volumeKeyActionSelectDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.VolumeKeyActionSelectDialogState.Showed(currentAction)
+                )
+            }
+        }
+    }
+
+    internal fun hideVolumeKeyActionSelectDialog() {
+        _dialogState.update {
+            it.copy(
+                volumeKeyActionSelectDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.VolumeKeyActionSelectDialogState.Hidden
+            )
+        }
+    }
+
+    internal fun changeVolumeKeyAction(action: com.xxmrk888ytxx.coreandroid.models.VolumeKeyAction) {
+        viewModelScope.launch(Dispatchers.Default) {
+            manageVolumeKeyTriggerContract.setVolumeKeyAction(action)
+        }
+    }
+
+    internal fun showVolumeKeyCameraSelectDialog() {
+        viewModelScope.launch(Dispatchers.Default) {
+            val currentCamera = manageVolumeKeyTriggerContract.volumeKeyCameraType.first()
+            _dialogState.update {
+                it.copy(
+                    volumeKeyCameraSelectDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.VolumeKeyCameraSelectDialogState.Showed(currentCamera)
+                )
+            }
+        }
+    }
+
+    internal fun hideVolumeKeyCameraSelectDialog() {
+        _dialogState.update {
+            it.copy(
+                volumeKeyCameraSelectDialogState = com.xxmrk888ytxx.settingsscreen.models.DialogModels.VolumeKeyCameraSelectDialogState.Hidden
+            )
+        }
+    }
+
+    internal fun changeVolumeKeyCameraType(cameraType: com.xxmrk888ytxx.coreandroid.models.QuickTileCameraType) {
+        viewModelScope.launch(Dispatchers.Default) {
+            manageVolumeKeyTriggerContract.setVolumeKeyCameraType(cameraType)
         }
     }
     //

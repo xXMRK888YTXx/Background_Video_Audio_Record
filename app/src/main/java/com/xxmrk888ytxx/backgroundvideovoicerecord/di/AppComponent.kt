@@ -51,6 +51,8 @@ import dagger.Lazy
 internal interface AppComponent : WorkerDeps {
     fun inject(mainActivity: MainActivity)
     fun inject(quickTileTrampolineActivity: com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.quickTile.QuickTileTrampolineActivity)
+    fun inject(volumeKeyTriggerService: com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.volumeKey.VolumeKeyTriggerService)
+    fun inject(bootReceiver: com.xxmrk888ytxx.backgroundvideovoicerecord.presentation.volumeKey.BootReceiver)
 
     @Component.Factory
     interface Factory {
@@ -69,4 +71,5 @@ internal interface AppComponent : WorkerDeps {
 
     val fastOpenAppQuickSettingsServiceCallback: FastOpenAppQuickSettingsServiceCallback
     val quickTileActionManager: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.quickTile.QuickTileActionManager
+    val volumeKeyActionManager: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.volumeKey.VolumeKeyActionManager
 }

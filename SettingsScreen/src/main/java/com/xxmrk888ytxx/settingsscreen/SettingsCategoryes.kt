@@ -202,4 +202,46 @@ internal fun securityParams(
     }
 
     return list.build()
+}
+
+@SuppressLint("ResourceType")
+@Composable
+internal fun volumeKeyTriggerParams(
+    settingsViewModel: SettingsViewModel
+): ImmutableList<SettingsParamType> {
+    val isEnabled by settingsViewModel.isVolumeKeyTriggerEnabled.collectAsState(initial = false)
+    val volumeKeyAction by settingsViewModel.volumeKeyAction.collectAsState(initial = com.xxmrk888ytxx.coreandroid.models.VolumeKeyAction.START_VIDEO_RECORD)
+
+    val list = persistentListOf<SettingsParamType>().builder()
+
+    list.add(
+        SettingsParamType.Switch(
+            text = stringResource(R.string.volume_key_trigger_switch),
+            icon = R.drawable.baseline_edit_notifications_24,
+            isSwitched = isEnabled,
+            onStateChanged = settingsViewModel::onVolumeKeyTriggerSwitchChanged
+        )
+    )
+
+    if (isEnabled) {
+        list.add(
+            SettingsParamType.Button(
+                text = stringResource(R.string.volume_key_trigger_action_setting),
+                icon = R.drawable.baseline_edit_notifications_24,
+                onClick = settingsViewModel::showVolumeKeyActionSelectDialog
+            )
+        )
+
+        if (volumeKeyAction == com.xxmrk888ytxx.coreandroid.models.VolumeKeyAction.START_VIDEO_RECORD) {
+            list.add(
+                SettingsParamType.Button(
+                    text = stringResource(R.string.volume_key_trigger_camera_setting),
+                    icon = R.drawable.camera_type,
+                    onClick = settingsViewModel::showVolumeKeyCameraSelectDialog
+                )
+            )
+        }
+    }
+
+    return list.build()
 }

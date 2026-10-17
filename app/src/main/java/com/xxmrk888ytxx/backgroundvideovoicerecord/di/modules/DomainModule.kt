@@ -110,6 +110,12 @@ interface DomainModule {
         quickTileActionManagerImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.quickTile.QuickTileActionManagerImpl
     ): com.xxmrk888ytxx.backgroundvideovoicerecord.domain.quickTile.QuickTileActionManager
 
+    @Binds
+    @AppScope
+    fun bindVolumeKeyActionManager(
+        volumeKeyActionManagerImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.volumeKey.VolumeKeyActionManagerImpl
+    ): com.xxmrk888ytxx.backgroundvideovoicerecord.domain.volumeKey.VolumeKeyActionManager
+
     companion object {
         @Provides
         fun bindsExternalStorageRepositoryFactory() : ExternalStorageRepositoryFactory = Factory()

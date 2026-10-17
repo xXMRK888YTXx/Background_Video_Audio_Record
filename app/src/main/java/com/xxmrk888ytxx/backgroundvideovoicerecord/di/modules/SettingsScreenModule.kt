@@ -57,4 +57,9 @@ interface SettingsScreenModule {
     fun bindManageQuickTileContract(
         manageQuickTileContractImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.glue.SettingsScreen.ManageQuickTileContractImpl
     ): com.xxmrk888ytxx.settingsscreen.contracts.ManageQuickTileContract
+
+    @Binds
+    fun bindManageVolumeKeyTriggerContract(
+        manageVolumeKeyTriggerContractImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.glue.SettingsScreen.ManageVolumeKeyTriggerContractImpl
+    ): com.xxmrk888ytxx.settingsscreen.contracts.ManageVolumeKeyTriggerContract
 }

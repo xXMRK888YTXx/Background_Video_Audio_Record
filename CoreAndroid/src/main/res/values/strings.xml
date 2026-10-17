@@ -45,4 +45,13 @@
     <string name="quick_tile_camera_back">Back camera</string>
     <string name="quick_tile_camera_front">Front camera</string>
     <string name="quick_tile_camera_both">Both cameras</string>
+    <string name="volume_key_action_record_video">Start video recording</string>
+    <string name="volume_key_action_record_audio">Start audio recording</string>
+    <string name="volume_trigger_notification_channel">Hardware Trigger</string>
+    <string name="volume_trigger_notification_title">Volume button trigger active</string>
+    <string name="volume_trigger_notification_text">Double long-press volume button to record</string>
+    <string name="camera_and_mic_required_toast">Camera and microphone permissions are required to start recording</string>
+    <string name="camera_required_toast">Camera permission is required to start recording</string>
+    <string name="mic_required_toast">Microphone permission is required to start recording</string>
+    <string name="another_recording_already_active_toast">Cannot start recording: another recording is already in progress</string>
 </resources>

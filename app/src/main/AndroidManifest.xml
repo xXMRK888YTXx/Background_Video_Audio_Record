@@ -12,6 +12,12 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission
+        android:name="android.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -37,10 +43,31 @@
 
         <activity
             android:name=".presentation.quickTile.QuickTileTrampolineActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:theme="@style/Theme.Trampoline"
+            android:taskAffinity="com.xxmrk888ytxx.backgroundvideovoicerecord.trampoline"
             android:excludeFromRecents="true"
-            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:launchMode="singleInstance"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
             android:exported="false" />
+
+        <service
+            android:name=".presentation.volumeKey.VolumeKeyTriggerService"
+            android:foregroundServiceType="specialUse"
+            android:exported="false">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Listening to hardware volume key long press events to trigger background recording" />
+        </service>
+
+        <receiver
+            android:name=".presentation.volumeKey.BootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
