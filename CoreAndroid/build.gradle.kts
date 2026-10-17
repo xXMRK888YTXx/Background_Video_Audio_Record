@@ -50,4 +50,6 @@ dependencies {
     api (libs.dagger.core)
     api (libs.coroutines.android)
     api (libs.immutable.collections)
+    api (libs.androidx.biometric)
+    api (libs.androidx.fragment)
 }

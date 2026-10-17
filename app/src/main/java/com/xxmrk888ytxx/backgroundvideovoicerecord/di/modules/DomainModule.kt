@@ -92,6 +92,24 @@ interface DomainModule {
         externalStorageExportManagerImpl: ExternalStorageExportManagerImpl
     ) : ExternalStorageExportManager
 
+    @Binds
+    @AppScope
+    fun bindDualCameraSettingsManager(
+        dualCameraSettingsManagerImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.dualCameraSettings.DualCameraSettingsManagerImpl
+    ): com.xxmrk888ytxx.backgroundvideovoicerecord.domain.dualCameraSettings.DualCameraSettingsManager
+
+    @Binds
+    @AppScope
+    fun bindAppLockManager(
+        appLockManagerImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.appLock.AppLockManagerImpl
+    ): com.xxmrk888ytxx.backgroundvideovoicerecord.domain.appLock.AppLockManager
+
+    @Binds
+    @AppScope
+    fun bindHardwareTriggerManager(
+        hardwareTriggerManagerImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.domain.hardwareTrigger.HardwareTriggerManagerImpl
+    ): com.xxmrk888ytxx.backgroundvideovoicerecord.domain.hardwareTrigger.HardwareTriggerManager
+
     companion object {
         @Provides
         fun bindsExternalStorageRepositoryFactory() : ExternalStorageRepositoryFactory = Factory()

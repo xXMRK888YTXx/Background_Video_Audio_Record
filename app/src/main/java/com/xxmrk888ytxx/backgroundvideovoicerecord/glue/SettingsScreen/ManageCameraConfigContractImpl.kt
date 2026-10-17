@@ -15,8 +15,13 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.mo
 import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.models.CameraRotation as CameraConfigCameraRotation
 
 
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.dualCameraSettings.DualCameraSettingsManager
+import com.xxmrk888ytxx.coreandroid.models.DualCameraPrimary
+import com.xxmrk888ytxx.coreandroid.models.PipPosition
+
 class ManageCameraConfigContractImpl @Inject constructor(
-    private val cameraConfigManager: CameraConfigManager
+    private val cameraConfigManager: CameraConfigManager,
+    private val dualCameraSettingsManager: DualCameraSettingsManager
 ) : ManageCameraConfigContract {
 
     /**
@@ -45,19 +50,37 @@ class ManageCameraConfigContractImpl @Inject constructor(
         )
     }
 
+    override val dualCameraPrimary: Flow<DualCameraPrimary> = dualCameraSettingsManager.primaryCamera
+
+    override suspend fun setupDualCameraPrimary(primary: DualCameraPrimary) {
+        dualCameraSettingsManager.setPrimaryCamera(primary)
+    }
+
+    override val pipPosition: Flow<PipPosition> = dualCameraSettingsManager.pipPosition
+
+    override suspend fun setupPipPosition(position: PipPosition) {
+        dualCameraSettingsManager.setPipPosition(position)
+    }
+
+    override val videoSplitLimit: Flow<com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit> = cameraConfigManager.videoSplitLimit
+
+    override suspend fun setupVideoSplitLimit(limit: com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit) {
+        cameraConfigManager.setVideoSplitLimit(limit)
+    }
+
     private fun CameraType.toCameraConfigType() : CameraConfigCameraType {
         return when(this) {
             CameraType.Front -> CameraConfigCameraType.Front
-
             CameraType.Back -> CameraConfigCameraType.Back
+            CameraType.Both -> CameraConfigCameraType.Both
         }
     }
 
     private fun CameraConfigCameraType.toSettingsScreenModel() : CameraType {
         return when(this) {
             CameraConfigCameraType.Front -> CameraType.Front
-
             CameraConfigCameraType.Back -> CameraType.Back
+            CameraConfigCameraType.Both -> CameraType.Both
         }
     }
 

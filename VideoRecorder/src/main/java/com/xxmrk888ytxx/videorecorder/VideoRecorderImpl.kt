@@ -2,6 +2,17 @@ package com.xxmrk888ytxx.videorecorder
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
+import android.util.Log
+import android.util.Rational
+import android.view.Surface
+import android.view.WindowManager
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.CompositionSettings
+import androidx.camera.core.ConcurrentCamera
+import androidx.camera.core.Preview
+import androidx.camera.core.UseCaseGroup
+import androidx.camera.core.ViewPort
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.FallbackStrategy
 import androidx.camera.video.FileOutputOptions
@@ -35,6 +46,7 @@ import javax.inject.Inject
 internal class VideoRecorderImpl constructor(
     private val context: Context,
     private val outputFile: File,
+    private val secondaryOutputFile: File? = null,
     private val lifecycleOwner: LifecycleOwner,
     private val scope:CoroutineScope,
     private val maxQuality: MaxQuality,
@@ -43,8 +55,10 @@ internal class VideoRecorderImpl constructor(
 ) : VideoRecorder {
 
     private var recording: Recording? = null
+    private var secondaryRecording: Recording? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private var videoCapture: VideoCapture<Recorder>? = null
+    private var secondaryVideoCapture: VideoCapture<Recorder>? = null
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val observerRecordDurationScope = CoroutineScope(
@@ -59,8 +73,17 @@ internal class VideoRecorderImpl constructor(
 
     private val listener by lazy {
         Consumer<VideoRecordEvent> { recordInfo ->
+            if (recordInfo == null) return@Consumer
+            if (recordInfo is VideoRecordEvent.Finalize) {
+                if (recordInfo.hasError()) {
+                    Log.e("VideoRecorder", "Recording finalized with error: ${recordInfo.error}, cause: ${recordInfo.cause}")
+                    observerRecordDurationScope.launch {
+                        _recordState.update { RecorderState.Idle }
+                    }
+                    return@Consumer
+                }
+            }
             observerRecordDurationScope.launch {
-                if(recordInfo == null) return@launch
                 val recordedMillis = recordInfo.recordingStats.recordedDurationNanos / 1_000_000
                 _recordState.update {
                     when(it) {
@@ -83,42 +106,227 @@ internal class VideoRecorderImpl constructor(
                 FallbackStrategy.lowerQualityOrHigherThan(Quality.SD)
             )
 
+            val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+            @Suppress("DEPRECATION")
+            val displayRotation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                try {
+                    context.display?.rotation ?: windowManager?.defaultDisplay?.rotation ?: Surface.ROTATION_0
+                } catch (_: Exception) {
+                    windowManager?.defaultDisplay?.rotation ?: Surface.ROTATION_0
+                }
+            } else {
+                windowManager?.defaultDisplay?.rotation ?: Surface.ROTATION_0
+            }
+
+            val effectiveRotation = if (cameraRotation.rotation != Surface.ROTATION_0) {
+                cameraRotation.rotation
+            } else {
+                displayRotation
+            }
+
+            val isLandscape = (effectiveRotation == Surface.ROTATION_90 || effectiveRotation == Surface.ROTATION_270)
+            val aspectRatio = if (isLandscape) Rational(16, 9) else Rational(9, 16)
+            val viewPort = ViewPort.Builder(aspectRatio, effectiveRotation)
+                .setScaleType(ViewPort.FILL_CENTER)
+                .build()
+
             val recorded = Recorder.Builder()
                 .setQualitySelector(qualitySelector)
                 .setExecutor(Dispatchers.IO.asExecutor())
                 .build()
 
             videoCapture = VideoCapture.withOutput(recorded).apply {
-                targetRotation = cameraRotation.rotation
+                targetRotation = effectiveRotation
             }
 
             cameraProvider = ProcessCameraProvider.getInstance(context).get().apply {
                 withContext(Dispatchers.Main) {
-                    bindToLifecycle(
-                        lifecycleOwner,cameraType.cameraSelector,videoCapture
-                    )
+                    try {
+                        unbindAll()
+                    } catch (_: Exception) {}
+
+                    if (cameraType is CameraType.Both) {
+                        val concurrentCameras = availableConcurrentCameraInfos
+                        if (concurrentCameras.isNotEmpty()) {
+                            var primarySelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                            var secondarySelector: CameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+                            for (cameraInfoList in concurrentCameras) {
+                                for (cameraInfo in cameraInfoList) {
+                                    if (cameraInfo.lensFacing == CameraSelector.LENS_FACING_BACK) {
+                                        primarySelector = cameraInfo.cameraSelector
+                                    } else if (cameraInfo.lensFacing == CameraSelector.LENS_FACING_FRONT) {
+                                        secondarySelector = cameraInfo.cameraSelector
+                                    }
+                                }
+                            }
+
+                            if (secondaryOutputFile != null) {
+                                // Independent dual-camera recording
+                                val secondaryRecorder = Recorder.Builder()
+                                    .setQualitySelector(qualitySelector)
+                                    .setExecutor(Dispatchers.IO.asExecutor())
+                                    .build()
+                                secondaryVideoCapture = VideoCapture.withOutput(secondaryRecorder).apply {
+                                    targetRotation = effectiveRotation
+                                }
+
+                                val primaryGroup = UseCaseGroup.Builder()
+                                    .setViewPort(viewPort)
+                                    .addUseCase(videoCapture!!)
+                                    .build()
+                                val secondaryGroup = UseCaseGroup.Builder()
+                                    .setViewPort(viewPort)
+                                    .addUseCase(secondaryVideoCapture!!)
+                                    .build()
+
+                                val primaryConfig = ConcurrentCamera.SingleCameraConfig(
+                                    primarySelector,
+                                    primaryGroup,
+                                    lifecycleOwner
+                                )
+                                val secondaryConfig = ConcurrentCamera.SingleCameraConfig(
+                                    secondarySelector,
+                                    secondaryGroup,
+                                    lifecycleOwner
+                                )
+                                try {
+                                    bindToLifecycle(listOf(primaryConfig, secondaryConfig))
+                                } catch (e: Exception) {
+                                    Log.w("VideoRecorder", "Dual camera independent binding failed, fallback to back camera", e)
+                                    try {
+                                        val fallbackGroup = UseCaseGroup.Builder()
+                                            .setViewPort(viewPort)
+                                            .addUseCase(videoCapture!!)
+                                            .build()
+                                        bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, fallbackGroup)
+                                    } catch (_: Exception) {
+                                        bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, videoCapture!!)
+                                    }
+                                    secondaryVideoCapture = null
+                                }
+                            } else {
+                                // Hardware Real-Time Dual Composition
+                                val dummyPreview = Preview.Builder().build()
+                                val useCaseGroup = UseCaseGroup.Builder()
+                                    .setViewPort(viewPort)
+                                    .addUseCase(videoCapture!!)
+                                    .addUseCase(dummyPreview)
+                                    .build()
+                                val primaryConfig = ConcurrentCamera.SingleCameraConfig(
+                                    primarySelector,
+                                    useCaseGroup,
+                                    CompositionSettings.Builder()
+                                        .setAlpha(1.0f)
+                                        .setOffset(0.0f, 0.0f)
+                                        .setScale(1.0f, 1.0f)
+                                        .build(),
+                                    lifecycleOwner
+                                )
+                                val secondaryConfig = ConcurrentCamera.SingleCameraConfig(
+                                    secondarySelector,
+                                    useCaseGroup,
+                                    CompositionSettings.Builder()
+                                        .setAlpha(1.0f)
+                                        .setOffset(0.6f, 0.6f)
+                                        .setScale(0.35f, 0.35f)
+                                        .build(),
+                                    lifecycleOwner
+                                )
+                                try {
+                                    bindToLifecycle(listOf(primaryConfig, secondaryConfig))
+                                } catch (e: Exception) {
+                                    Log.w("VideoRecorder", "Concurrent camera binding failed, fallback to back camera", e)
+                                    try {
+                                        val fallbackGroup = UseCaseGroup.Builder()
+                                            .setViewPort(viewPort)
+                                            .addUseCase(videoCapture!!)
+                                            .build()
+                                        bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, fallbackGroup)
+                                    } catch (_: Exception) {
+                                        bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, videoCapture!!)
+                                    }
+                                }
+                            }
+                        } else {
+                            Log.w("VideoRecorder", "Concurrent camera unsupported, fallback to back camera")
+                            try {
+                                val fallbackGroup = UseCaseGroup.Builder()
+                                    .setViewPort(viewPort)
+                                    .addUseCase(videoCapture!!)
+                                    .build()
+                                bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, fallbackGroup)
+                            } catch (_: Exception) {
+                                bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, videoCapture!!)
+                            }
+                        }
+                    } else {
+                        try {
+                            val singleGroup = UseCaseGroup.Builder()
+                                .setViewPort(viewPort)
+                                .addUseCase(videoCapture!!)
+                                .build()
+                            bindToLifecycle(
+                                lifecycleOwner, cameraType.cameraSelector, singleGroup
+                            )
+                        } catch (e: Exception) {
+                            Log.w("VideoRecorder", "Single group binding failed, fallback to direct useCase", e)
+                            bindToLifecycle(
+                                lifecycleOwner, cameraType.cameraSelector, videoCapture!!
+                            )
+                        }
+                    }
                 }
             }
 
-            val mediaStoreOutput = FileOutputOptions
-                .Builder(outputFile)
-                .build()
+            try {
+                val mediaStoreOutput = FileOutputOptions
+                    .Builder(outputFile)
+                    .build()
 
-            toRecordState()
+                try {
+                    recording = videoCapture!!.output
+                        .prepareRecording(context, mediaStoreOutput)
+                        .withAudioEnabled()
+                        .start(
+                            Dispatchers.IO.asExecutor(),
+                            listener
+                        )
+                } catch (audioEx: SecurityException) {
+                    Log.w("VideoRecorder", "Audio record permission missing, recording video only", audioEx)
+                    recording = videoCapture!!.output
+                        .prepareRecording(context, mediaStoreOutput)
+                        .start(
+                            Dispatchers.IO.asExecutor(),
+                            listener
+                        )
+                }
 
-            recording = videoCapture!!.output
-                .prepareRecording(context, mediaStoreOutput)
-                .withAudioEnabled()
-                .start(
-                    Dispatchers.IO.asExecutor(),
-                    listener
-                )
+                if (secondaryVideoCapture != null && secondaryOutputFile != null) {
+                    val secondaryMediaStoreOutput = FileOutputOptions
+                        .Builder(secondaryOutputFile)
+                        .build()
+
+                    secondaryRecording = secondaryVideoCapture!!.output
+                        .prepareRecording(context, secondaryMediaStoreOutput)
+                        .start(
+                            Dispatchers.IO.asExecutor()
+                        ) { /* secondary event listener */ }
+                }
+
+                toRecordState()
+            } catch (e: Exception) {
+                Log.e("VideoRecorder", "Failed to start recording session", e)
+                _recordState.update { RecorderState.Idle }
+            }
         }
     }
 
     override fun pauseRecord() {
         scope.launch {
             recording?.run {
+                pause()
+            }
+            secondaryRecording?.run {
                 pause()
             }
 
@@ -129,6 +337,9 @@ internal class VideoRecorderImpl constructor(
     override fun resumeRecord() {
         scope.launch {
             recording?.run {
+                resume()
+            }
+            secondaryRecording?.run {
                 resume()
             }
 
@@ -142,16 +353,22 @@ internal class VideoRecorderImpl constructor(
                 stop()
                 close()
             }
+            secondaryRecording?.run {
+                stop()
+                close()
+            }
 
             cameraProvider?.run {
                 withContext(Dispatchers.Main) {
-                    unbind(videoCapture)
+                    unbindAll()
                 }
             }
 
             recording = null
+            secondaryRecording = null
             cameraProvider = null
             videoCapture = null
+            secondaryVideoCapture = null
 
             toDestroyState()
 

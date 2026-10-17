@@ -27,16 +27,33 @@ import java.util.LinkedList
 import java.util.Queue
 import javax.inject.Inject
 
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.CameraConfigManager
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.CameraConfigManager.models.CameraType
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.externalStorageExportManager.ExternalStorageExportManager
+import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.videoProcessing.DualVideoCombiner
+import com.xxmrk888ytxx.recordvideoscreen.models.DualCameraSaveOption
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
+import java.io.File
+
 class VideoRecordServiceManagerImpl @Inject constructor(
     private val context: Context,
     @RecordVideoStateObserverScopeQualifier private val recordStateObserverScope: CoroutineScope,
     @VideoServiceManagedScopeQualifier private val serviceManagedScope: CoroutineScope,
-    private val videoRecordRepository: VideoRecordRepository
+    private val videoRecordRepository: VideoRecordRepository,
+    private val cameraConfigManager: CameraConfigManager,
+    private val dualVideoCombiner: DualVideoCombiner,
+    private val externalStorageExportManager: ExternalStorageExportManager
 ) : VideoRecordServiceManager,ServiceConnection {
     //Record state
     private val _currentRecordState:MutableStateFlow<RecordVideoState> = MutableStateFlow(RecordVideoState.Idle)
 
     override val currentRecordState: Flow<RecordVideoState> = _currentRecordState.asStateFlow()
+
+    private val _hasPendingDualRecord: MutableStateFlow<Boolean> = MutableStateFlow(videoRecordRepository.hasPendingDualRecord())
+
+    override val hasPendingDualRecord: Flow<Boolean> = _hasPendingDualRecord.asStateFlow()
     //
 
     //State observe
@@ -54,6 +71,17 @@ class VideoRecordServiceManagerImpl @Inject constructor(
                     ) {
                         this@VideoRecordServiceManagerImpl.stopRecord()
                     }
+
+                    if (state is RecordVideoState.Idle) {
+                        _hasPendingDualRecord.update { videoRecordRepository.hasPendingDualRecord() }
+                    }
+
+                    try {
+                        android.service.quicksettings.TileService.requestListeningState(
+                            context,
+                            ComponentName(context, "com.xxmrk888ytxx.fastopenappquicksettingsservice.FastOpenAppQuickSettingsService")
+                        )
+                    } catch (_: Exception) {}
 
                     lastRecordState = state
                 }
@@ -97,6 +125,7 @@ class VideoRecordServiceManagerImpl @Inject constructor(
             controller = null
 
             stopObserver()
+            _hasPendingDualRecord.update { videoRecordRepository.hasPendingDualRecord() }
         }
     }
 
@@ -152,7 +181,11 @@ class VideoRecordServiceManagerImpl @Inject constructor(
                 return@launch
             }
 
-            controller?.startRecord(videoRecordRepository.getFileForRecord())
+            val isDual = cameraConfigManager.config.first().cameraType is CameraType.Both
+            val primaryFile = videoRecordRepository.getFileForRecord()
+            val secondaryFile = if (isDual) videoRecordRepository.getSecondaryFileForRecord() else null
+
+            controller?.startRecord(primaryFile, secondaryFile)
         }
     }
 
@@ -201,6 +234,67 @@ class VideoRecordServiceManagerImpl @Inject constructor(
             controller?.stopRecord()
 
             disconnectFromService()
+
+            _hasPendingDualRecord.update { videoRecordRepository.hasPendingDualRecord() }
+        }
+    }
+
+    override suspend fun saveDualRecord(option: DualCameraSaveOption) = withContext(Dispatchers.IO) {
+        val (primary, secondary) = videoRecordRepository.getPendingFiles()
+        if (primary == null || !primary.exists()) {
+            _hasPendingDualRecord.update { false }
+            videoRecordRepository.cleanUpPendingRecords()
+            return@withContext
+        }
+
+        try {
+            when (option) {
+                DualCameraSaveOption.BACK_ONLY -> {
+                    val saved = videoRecordRepository.addCustomFile(primary, "Задняя камера")
+                    externalStorageExportManager.exportNewVideoFile(saved)
+                    secondary?.delete()
+                }
+                DualCameraSaveOption.FRONT_ONLY -> {
+                    if (secondary != null && secondary.exists()) {
+                        val saved = videoRecordRepository.addCustomFile(secondary, "Передняя камера")
+                        externalStorageExportManager.exportNewVideoFile(saved)
+                    }
+                    primary.delete()
+                }
+                DualCameraSaveOption.BOTH_SEPARATELY -> {
+                    val savedBack = videoRecordRepository.addCustomFile(primary, "Задняя камера")
+                    externalStorageExportManager.exportNewVideoFile(savedBack)
+                    if (secondary != null && secondary.exists()) {
+                        val savedFront = videoRecordRepository.addCustomFile(secondary, "Передняя камера")
+                        externalStorageExportManager.exportNewVideoFile(savedFront)
+                    }
+                }
+                DualCameraSaveOption.BOTH_TOGETHER -> {
+                    if (secondary != null && secondary.exists()) {
+                        val combinedTemp = File(context.cacheDir, "temp_combined_${System.currentTimeMillis()}.mp4")
+                        val success = dualVideoCombiner.combine(primary, secondary, combinedTemp)
+                        if (success && combinedTemp.exists()) {
+                            val saved = videoRecordRepository.addCustomFile(combinedTemp, "Обе камеры (вместе)")
+                            externalStorageExportManager.exportNewVideoFile(saved)
+                            primary.delete()
+                            secondary.delete()
+                        } else {
+                            val savedBack = videoRecordRepository.addCustomFile(primary, "Задняя камера")
+                            externalStorageExportManager.exportNewVideoFile(savedBack)
+                            val savedFront = videoRecordRepository.addCustomFile(secondary, "Передняя камера")
+                            externalStorageExportManager.exportNewVideoFile(savedFront)
+                        }
+                    } else {
+                        val saved = videoRecordRepository.addCustomFile(primary, "Задняя камера")
+                        externalStorageExportManager.exportNewVideoFile(saved)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Error saving dual record: ${e.stackTraceToString()}")
+        } finally {
+            videoRecordRepository.cleanUpPendingRecords()
+            _hasPendingDualRecord.update { false }
         }
     }
 

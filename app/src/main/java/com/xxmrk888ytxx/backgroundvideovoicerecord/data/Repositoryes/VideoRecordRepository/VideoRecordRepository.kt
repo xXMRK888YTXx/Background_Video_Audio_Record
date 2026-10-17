@@ -12,9 +12,23 @@ interface VideoRecordRepository {
 
     suspend fun getFileById(id: Long): File?
 
+    suspend fun getSecondaryFileById(id: Long): File?
+
+    fun isDualRecord(id: Long): Boolean
+
     suspend fun removeFile(id: Long)
 
     val fileList: Flow<List<VideoModel>>
 
     suspend fun getFileForRecord(): File
+
+    suspend fun getSecondaryFileForRecord(): File
+
+    fun hasPendingDualRecord(): Boolean
+
+    suspend fun addCustomFile(file: File, displayName: String? = null): File
+
+    fun getPendingFiles(): Pair<File?, File?>
+
+    suspend fun cleanUpPendingRecords()
 }

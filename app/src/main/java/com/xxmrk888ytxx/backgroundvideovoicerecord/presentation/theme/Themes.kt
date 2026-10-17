@@ -27,100 +27,100 @@ object Themes {
     val dark = object : AppTheme {
         override val colors: Colors
             get() = Colors(
-                background = Color(0xFF1B252D),
-                statusBar = Color(0xFF1B252D),
-                navigationBar = Color(0xFF1B252D),
-                primaryFontColor = Color(0xFFFFFFFF),
-                secondFontColor = Color.Gray,
-                iconsColor = Color(0xFFFFFFFF),
-                bottomBarColor = Color(0xFF1B252D),
-                bottomBarSelectedContentColor = Color(0xFF5849C2),
-                bottomBarUnselectedContentColor = Color(0x99FFFFFF),
-                borderRecordWidgetWhenRecordDisabled = Color(0xFFD40415),
-                cardColor = Color(0xFF303F4F),
-                recordButtonColor = Color.Red,
-                supportControlRecordButtonColor = Color(0xFF5849C2),
-                cancelButtonColor = Color(0xFF303F4F).copy(0.7f),
-                yesButtonColor = Color(0xFF5849C2),
-                primaryColor = Color(0xFF5849C2),
-                disableColor = Color(0xFF303F4F),
-                uncheckedSettingsSwitch = Color(0xFFE6E6E6),
-                dropDownColor = Color(0xFF2C3947)
+                background = Color(0xFF0F1319),
+                statusBar = Color(0xFF0F1319),
+                navigationBar = Color(0xFF0F1319),
+                primaryFontColor = Color(0xFFF8FAFC),
+                secondFontColor = Color(0xFF94A3B8),
+                iconsColor = Color(0xFFF1F5F9),
+                bottomBarColor = Color(0xFF131924),
+                bottomBarSelectedContentColor = Color(0xFF818CF8),
+                bottomBarUnselectedContentColor = Color(0xFF64748B),
+                borderRecordWidgetWhenRecordDisabled = Color(0xFF263346),
+                cardColor = Color(0xFF1A2332),
+                recordButtonColor = Color(0xFFE11D48),
+                supportControlRecordButtonColor = Color(0xFF4F46E5),
+                cancelButtonColor = Color(0xFF263346),
+                yesButtonColor = Color(0xFF4F46E5),
+                primaryColor = Color(0xFF6366F1),
+                disableColor = Color(0xFF1E2838),
+                uncheckedSettingsSwitch = Color(0xFF475569),
+                dropDownColor = Color(0xFF1E2838)
             )
         override val gradients: Gradients
             get() = Gradients(
-                enablePermissionButtonGradient = Brush.linearGradient(listOf(Color(0xFF5849C2),Color(0xFF4871CC))),
-                disablePermissionButtonGradient = Brush.linearGradient(listOf(Color(0xFF25313D),Color(0xFF25313D)))
+                enablePermissionButtonGradient = Brush.linearGradient(listOf(Color(0xFF6366F1), Color(0xFF3B82F6))),
+                disablePermissionButtonGradient = Brush.linearGradient(listOf(Color(0xFF1E2838), Color(0xFF1E2838)))
             )
         override val dimensions: Dimensions
             get() = Dimensions(
-                iconSize = 30.dp,
-                controlButtonSize = 60.dp,
-                controlRecordButtonHolderWidgetPadding = 15.dp,
+                iconSize = 26.dp,
+                controlButtonSize = 64.dp,
+                controlRecordButtonHolderWidgetPadding = 18.dp,
                 controlRecordButtonHolderCameraPreviewPadding = 70.dp,
                 cardOutPaddings = 10.dp,
-                cardInPaddings = 10.dp,
+                cardInPaddings = 14.dp,
                 paddingBetweenLabelAndSettingsField = 10.dp,
-                categoryPadding = 15.dp,
-                settingsParamShape = 10.dp,
+                categoryPadding = 16.dp,
+                settingsParamShape = 14.dp,
             )
         override val shapes: Shapes
             get() = Shapes(
                 card = RoundedCornerShape(20.dp),
                 controlButtonShape = RoundedCornerShape(100),
-                permissionDialog = RoundedCornerShape(15.dp),
-                outlineButtonShape = RoundedCornerShape(80)
+                permissionDialog = RoundedCornerShape(20.dp),
+                outlineButtonShape = RoundedCornerShape(16.dp)
             )
         override val typography: Typography
             get() = Typography(
                 bottomBar = TextStyle(
                     fontSize = 12.sp,
-                    fontWeight = W500
+                    fontWeight = W600
                 ),
                 recordCounter = TextStyle(
-                    fontSize = 40.sp,
-                    fontWeight = W900
+                    fontSize = 42.sp,
+                    fontWeight = W700
                 ),
                 permissionDescription = TextStyle(
-                    fontSize = 18.sp,
+                    fontSize = 17.sp,
                     fontWeight = W600
                 ),
                 head = TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = W600
+                    fontSize = 19.sp,
+                    fontWeight = W700
                 ),
                 body = TextStyle(
-                    fontSize = 18.sp,
-                    fontWeight = W600
+                    fontSize = 16.sp,
+                    fontWeight = W500
                 ),
                 playerText = TextStyle(
-                    fontSize = 12.sp,
+                    fontSize = 13.sp,
                     fontWeight = W400
                 ),
                 stub = TextStyle(
-                    fontSize = 26.sp,
-                    fontWeight = W900
+                    fontSize = 24.sp,
+                    fontWeight = W700
                 ),
                 settingCategory = TextStyle(
-                    fontSize = 17.sp,
-                    fontWeight = W500
+                    fontSize = 15.sp,
+                    fontWeight = W600
                 ),
                 settingsParam = TextStyle(
-                    fontSize = 18.sp,
-                    fontWeight = W700
+                    fontSize = 17.sp,
+                    fontWeight = W600
                 ),
                 selectDialog = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = W500
                 ),
                 yesNoDialog = TextStyle(
-                    fontSize = 17.sp,
-                    fontWeight = W500
+                    fontSize = 16.sp,
+                    fontWeight = W600
                 )
             )
         override val values: Values
             get() = Values(
-                animationDuration = 5000,
+                animationDuration = 2000,
                 additionalAnimationDuration = 100
             )
 

@@ -45,15 +45,22 @@ composePlugin = "2.2.21"
 material = "1.13.0"
 workManager = "2.11.0"
 documentFile = "1.1.0"
+biometric = "1.1.0"
+fragment = "1.8.6"
 
 
 [libraries]
+# Biometric
+androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+androidx-fragment = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
+
 # Compose
 compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2025.11.01" }
 compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 compose-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 compose-material = { group = "androidx.compose.material", name = "material" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 compose-lifecycle = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 compose-system-ui-controller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "systemUiController" }

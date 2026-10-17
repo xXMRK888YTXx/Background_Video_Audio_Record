@@ -70,4 +70,9 @@ interface StorageScreenModule {
 
     @Binds
     fun bindExportAudioContract(exportAudioContractImpl: ExportAudioContractImpl) : ExportAudioContract
+
+    @Binds
+    fun bindManageDualCameraLayoutContract(
+        manageDualCameraLayoutContractImpl: com.xxmrk888ytxx.backgroundvideovoicerecord.glue.StorageScreen.VideoStorageList.ManageDualCameraLayoutContractImpl
+    ): com.xxmrk888ytxx.storagescreen.VideoStorageList.contract.ManageDualCameraLayoutContract
 }

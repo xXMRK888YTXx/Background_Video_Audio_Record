@@ -16,7 +16,7 @@ class SaveRecordedVideoStrategyImpl @Inject constructor(
     override suspend fun saveRecord() = withContext(Dispatchers.IO) {
         runCatching { videoRecordRepository.addFileFromRecorded() }
             .onSuccess { file -> externalStorageExportManager.exportNewVideoFile(file) }
-            .onFailure { Log.e(LOG_TAG,it.stackTraceToString()) }
+            .onFailure { Log.e(LOG_TAG, it.stackTraceToString()) }
         return@withContext
     }
 

@@ -170,10 +170,23 @@ class AudioStorageListViewModel @AssistedInject constructor(
         }
     }
 
-    fun removeAudioFile(file:AudioFileModel) {
+    fun requestDelete(file: AudioFileModel) {
+        _dialogState.update { it.copy(pendingDeleteAudio = file) }
+    }
+
+    fun cancelDelete() {
+        _dialogState.update { it.copy(pendingDeleteAudio = null) }
+    }
+
+    fun confirmDelete() {
+        val file = _dialogState.value.pendingDeleteAudio ?: return
+        _dialogState.update { it.copy(pendingDeleteAudio = null) }
+        removeAudioFile(file)
+    }
+
+    fun removeAudioFile(file: AudioFileModel) {
         viewModelScope.launch(Dispatchers.IO) {
             deleteAudioFileContract.execute(file.id.toInt())
-
         }
     }
 

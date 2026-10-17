@@ -7,4 +7,6 @@ sealed class CameraType(internal val cameraSelector: CameraSelector) {
     object Front : CameraType(CameraSelector.DEFAULT_FRONT_CAMERA)
 
     object Back : CameraType(CameraSelector.DEFAULT_BACK_CAMERA)
+
+    object Both : CameraType(CameraSelector.DEFAULT_BACK_CAMERA)
 }

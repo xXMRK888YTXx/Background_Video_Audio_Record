@@ -2,6 +2,7 @@
 <resources>
     <string name="Front_camera">Фронтальная камера</string>
     <string name="Back_camera">Задняя камера</string>
+    <string name="Both_cameras">Обе камеры</string>
     <string name="Camera">Камера</string>
     <string name="Camera_type">Тип камеры</string>
     <string name="Record_quality">Качество записи</string>
@@ -25,4 +26,10 @@
     <string name="Terms_of_use">Условия использования</string>
     <string name="automatic_copying_to_external_memory">Автоматическое копирование во внешнюю память</string>
     <string name="export_settings">Настройки экспорта</string>
+    <string name="dual_camera_primary">Основная камера (Обе вместе)</string>
+    <string name="dual_camera_pip_position">Расположение окна (PiP)</string>
+    <string name="pip_top_right">Сверху справа</string>
+    <string name="pip_top_left">Сверху слева</string>
+    <string name="pip_bottom_right">Снизу справа</string>
+    <string name="pip_bottom_left">Снизу слева</string>
 </resources>

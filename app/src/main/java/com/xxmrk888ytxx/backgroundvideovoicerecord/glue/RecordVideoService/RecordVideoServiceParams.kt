@@ -33,14 +33,17 @@ class RecordVideoServiceParams @Inject constructor(
 
 
     override val cameraConfig: Flow<RecordVideoConfig> = combine(
-        cameraConfigManager.config, videoForegroundNotificationConfig.config
-    ) { cameraConfig, videoForegroundNotificationConfig ->
+        cameraConfigManager.config,
+        videoForegroundNotificationConfig.config,
+        cameraConfigManager.videoSplitLimit
+    ) { cameraConfig, videoForegroundNotificationConfig, splitLimit ->
 
         RecordVideoConfig(
             cameraType = cameraConfig.cameraType.toServiceCameraType(),
             maxQuality = cameraConfig.maxQuality.toServiceMaxQuality(),
             cameraRotation = cameraConfig.cameraRotation.toServiceCameraRotation(),
             foregroundNotificationType = videoForegroundNotificationConfig.toServiceForegroundType(),
+            videoSplitLimitId = splitLimit.id
         )
     }
 
@@ -49,6 +52,8 @@ class RecordVideoServiceParams @Inject constructor(
             is CameraType.Front -> com.xxmrk888ytxx.recordvideoservice.models.CameraType.Front
 
             is CameraType.Back -> com.xxmrk888ytxx.recordvideoservice.models.CameraType.Back
+
+            is CameraType.Both -> com.xxmrk888ytxx.recordvideoservice.models.CameraType.Both
         }
     }
 
@@ -77,11 +82,11 @@ class RecordVideoServiceParams @Inject constructor(
     private fun ForegroundNotificationConfig.toServiceForegroundType(): VideoForegroundNotificationType {
         return when (this) {
             is ForegroundNotificationConfig.CustomNotification -> VideoForegroundNotificationType.CustomNotification(
-               isPauseResumeButtonActive,isStopRecordButtonEnabled,title,text
+               isPauseResumeButtonActive,isStopRecordButtonEnabled,title,text,iconId
             )
 
             is ForegroundNotificationConfig.ViewRecordStateType -> VideoForegroundNotificationType.ViewRecordStateType(
-                isPauseResumeButtonActive,isStopRecordButtonEnabled
+                isPauseResumeButtonActive, isStopRecordButtonEnabled, iconId
             )
         }
     }

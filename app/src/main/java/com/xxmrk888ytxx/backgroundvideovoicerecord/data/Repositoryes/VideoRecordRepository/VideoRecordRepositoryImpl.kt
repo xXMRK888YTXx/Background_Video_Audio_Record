@@ -7,6 +7,7 @@ import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
 import android.util.Log
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoFileNameRepository.VideoFileNameRepository
+import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoFileNameRepository.models.VideoNameModel
 import com.xxmrk888ytxx.backgroundvideovoicerecord.data.Repositoryes.VideoRecordRepository.models.VideoModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +39,10 @@ class VideoRecordRepositoryImpl @Inject constructor(
         if(fileForRecord.exists()) {
             val newFilePath = newFile
             fileForRecord.renameTo(newFilePath)
+            if (secondaryFileForRecord.exists()) {
+                val secondaryTarget = File(videoDir, "${newFilePath.name}_secondary")
+                secondaryFileForRecord.renameTo(secondaryTarget)
+            }
             loadNewFile(newFilePath)
             return newFilePath
         } else {
@@ -51,9 +56,20 @@ class VideoRecordRepositoryImpl @Inject constructor(
         return@withContext if(file.exists()) file else null
     }
 
+    override suspend fun getSecondaryFileById(id: Long): File? = withContext(Dispatchers.IO) {
+        val file = File(videoDir, "${id}_secondary")
+
+        return@withContext if(file.exists()) file else null
+    }
+
+    override fun isDualRecord(id: Long): Boolean {
+        return File(videoDir, "${id}_secondary").exists()
+    }
+
     override suspend fun removeFile(id: Long) {
         try {
             File(videoDir,id.toString()).delete()
+            File(videoDir, "${id}_secondary").delete()
 
             deleteFileFromFlow(id)
 
@@ -78,10 +94,52 @@ class VideoRecordRepositoryImpl @Inject constructor(
         return fileForRecord
     }
 
+    override suspend fun getSecondaryFileForRecord(): File {
+        if(secondaryFileForRecord.exists()) {
+            secondaryFileForRecord.delete()
+        }
+        return secondaryFileForRecord
+    }
+
+    override fun hasPendingDualRecord(): Boolean {
+        return fileForRecord.exists() && secondaryFileForRecord.exists()
+    }
+
+    override fun getPendingFiles(): Pair<File?, File?> {
+        val primary = if (fileForRecord.exists()) fileForRecord else null
+        val secondary = if (secondaryFileForRecord.exists()) secondaryFileForRecord else null
+        return Pair(primary, secondary)
+    }
+
+    override suspend fun addCustomFile(file: File, displayName: String?): File {
+        if (file.exists()) {
+            val newFilePath = newFile
+            file.renameTo(newFilePath)
+            loadNewFile(newFilePath)
+            if (displayName != null) {
+                val id = newFilePath.fileNameToLong()
+                if (id != -1L) {
+                    videoFileNameRepository.insertName(VideoNameModel(id, displayName))
+                }
+            }
+            return newFilePath
+        } else {
+            throw IllegalStateException("File to add does not exist: ${file.absolutePath}")
+        }
+    }
+
+    override suspend fun cleanUpPendingRecords() {
+        if (fileForRecord.exists()) fileForRecord.delete()
+        if (secondaryFileForRecord.exists()) secondaryFileForRecord.delete()
+    }
+
     //files
 
     private val fileForRecord:File
         get() = File(videoDir,"recording")
+
+    private val secondaryFileForRecord: File
+        get() = File(videoDir, "recording_secondary")
 
     private val videoDir : File by lazy {
         ContextWrapper(context).getDir("RecordedVideos", Context.MODE_PRIVATE)
@@ -111,8 +169,9 @@ class VideoRecordRepositoryImpl @Inject constructor(
         val id = fileNameToLong()
         val duration = getFileDuration(this)
         val createFileTime = getCreateFileTime(this)
+        val isDual = File(videoDir, "${id}_secondary").exists()
 
-        return VideoModel(id,duration,createFileTime)
+        return VideoModel(id, duration, createFileTime, isDualRecord = isDual)
     }
     //
 
@@ -133,7 +192,7 @@ class VideoRecordRepositoryImpl @Inject constructor(
 
     //Flow control
     private suspend fun loadAllFiles() = withContext(Dispatchers.IO) {
-        val files = videoDir.listFiles()?.filterNotNull() ?: return@withContext
+        val files = videoDir.listFiles()?.filterNotNull()?.filter { it.name.toLongOrNull() != null } ?: return@withContext
 
         _fileList.update { _ ->
             files

@@ -44,6 +44,7 @@ android {
 
 dependencies {
     implementation(project(":CoreCompose"))
+    implementation(project(":CoreAndroid"))
 
     implementation(libs.camera.core)
     implementation(libs.camera.camera2)

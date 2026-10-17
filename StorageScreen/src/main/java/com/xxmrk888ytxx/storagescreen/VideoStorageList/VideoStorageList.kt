@@ -40,6 +40,8 @@ fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
     val videoFiles by videoStorageListViewModel.videoFiles.collectAsStateWithLifecycle()
 
     val dialogState by videoStorageListViewModel.dialogState.collectAsStateWithLifecycle()
+    val dualCameraPrimary by videoStorageListViewModel.dualCameraPrimary.collectAsStateWithLifecycle()
+    val pipPosition by videoStorageListViewModel.pipPosition.collectAsStateWithLifecycle()
 
     val navigator = LocalNavigator.current
 
@@ -58,11 +60,11 @@ fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
                 val buttons = persistentListOf(
                     MediaFileButton(
                         icon = R.drawable.baseline_play_arrow_24,
-                        onClick = { videoStorageListViewModel.openVideo(it.id,navigator) }
+                        onClick = { videoStorageListViewModel.onPlayVideoClick(it, navigator) }
                     ),
                     MediaFileButton(
                         icon = R.drawable.baseline_delete_24,
-                        onClick = { videoStorageListViewModel.removeFile(it.id) }
+                        onClick = { videoStorageListViewModel.requestDelete(it.id) }
                     ),
                     MediaFileButton(
                         icon = R.drawable.remame,
@@ -70,9 +72,9 @@ fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
                     ),
                     MediaFileButton(
                         icon = R.drawable.export,
-                        onClick = { videoStorageListViewModel.sendExportPathRequest(
-                            videoId = it.id,
-                            activityResultLauncher = selectExportPathContract
+                        onClick = { videoStorageListViewModel.onExportClick(
+                            video = it,
+                            launcher = selectExportPathContract
                         ) }
                     )
                 )
@@ -81,7 +83,9 @@ fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
                     duration = it.duration,
                     created = it.created,
                     name = it.name ?: "",
-                    buttons = buttons
+                    buttons = buttons,
+                    isDualRecord = it.isDualRecord,
+                    isVideo = true
                 )
             }
         }
@@ -94,6 +98,35 @@ fun VideoStorageList(videoStorageListViewModel: VideoStorageListViewModel) {
             initialName = state.initialName,
             onDismiss = videoStorageListViewModel::hideRenameDialog,
             onRenamed = { videoStorageListViewModel.changeFileName(state.videoId,it) }
+        )
+    }
+
+    if(dialogState.dualPlayDialogVideoId != null) {
+        com.xxmrk888ytxx.storagescreen.SelectDualVideoPlayDialog(
+            primaryCamera = dualCameraPrimary,
+            pipPosition = pipPosition,
+            onPrimaryChanged = videoStorageListViewModel::setDualCameraPrimary,
+            onPositionChanged = videoStorageListViewModel::setPipPosition,
+            onDismiss = videoStorageListViewModel::hideDualPlayDialog,
+            onOptionSelected = { videoStorageListViewModel.onDualPlayOptionSelected(it, navigator) }
+        )
+    }
+
+    if(dialogState.dualExportDialogVideoId != null) {
+        com.xxmrk888ytxx.storagescreen.SelectDualVideoExportDialog(
+            primaryCamera = dualCameraPrimary,
+            pipPosition = pipPosition,
+            onPrimaryChanged = videoStorageListViewModel::setDualCameraPrimary,
+            onPositionChanged = videoStorageListViewModel::setPipPosition,
+            onDismiss = videoStorageListViewModel::hideDualExportDialog,
+            onOptionSelected = videoStorageListViewModel::onDualOptionSelected
+        )
+    }
+
+    if(dialogState.pendingDeleteVideoId != null) {
+        com.xxmrk888ytxx.storagescreen.ConfirmDeleteDialog(
+            onDismiss = videoStorageListViewModel::cancelDelete,
+            onConfirm = videoStorageListViewModel::confirmDelete
         )
     }
 

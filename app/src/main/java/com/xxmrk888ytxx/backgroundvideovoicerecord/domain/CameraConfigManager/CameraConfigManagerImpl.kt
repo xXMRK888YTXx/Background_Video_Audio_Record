@@ -29,7 +29,9 @@ class CameraConfigManagerImpl @Inject constructor(
 
             CameraType.Front.id -> CameraType.Front
 
-            else -> error("Not valid camera type")
+            CameraType.Both.id -> CameraType.Both
+
+            else -> CameraType.Back
         }
     }
 
@@ -81,6 +83,19 @@ class CameraConfigManagerImpl @Inject constructor(
     override suspend fun setCameraRotation(cameraRotation: CameraRotation) {
         withContext(Dispatchers.IO) {
             preferencesStorage.writeProperty(cameraRotationKey,cameraRotation.id)
+        }
+    }
+
+    private val videoSplitLimitKey = intPreferencesKey("videoSplitLimitKey")
+
+    override val videoSplitLimit: Flow<com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit> =
+        preferencesStorage.getProperty(videoSplitLimitKey, com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.DISABLED.id).map {
+            com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit.fromId(it)
+        }
+
+    override suspend fun setVideoSplitLimit(splitLimit: com.xxmrk888ytxx.coreandroid.models.VideoSplitLimit) {
+        withContext(Dispatchers.IO) {
+            preferencesStorage.writeProperty(videoSplitLimitKey, splitLimit.id)
         }
     }
 }

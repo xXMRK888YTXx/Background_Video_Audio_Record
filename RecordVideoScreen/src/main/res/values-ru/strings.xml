@@ -10,4 +10,18 @@
     <string name="ad_key">ca-app-pub-6313040706847570/4137023039</string>
     <string name="back">Задняя</string>
     <string name="front">Фронтальная</string>
+    <string name="both_cameras">Обе камеры</string>
+    <string name="concurrent_camera_not_supported">Аппаратная запись с 2 камер не поддерживается вашим устройством (нет FEATURE_CAMERA_CONCURRENT). Будет использована основная камера.</string>
+    <string name="save_dual_dialog_title">Сохранение записи</string>
+    <string name="save_dual_dialog_subtitle">Была выполнена запись с двух камер. Выберите вариант сохранения:</string>
+    <string name="save_dual_back_only">Только заднюю</string>
+    <string name="save_dual_back_only_desc">Сохранить только видео с основной камеры</string>
+    <string name="save_dual_front_only">Только переднюю</string>
+    <string name="save_dual_front_only_desc">Сохранить только видео с фронтальной камеры</string>
+    <string name="save_dual_both_separately">Обе отдельно</string>
+    <string name="save_dual_both_separately_desc">Сохранить как 2 отдельных видеофайла</string>
+    <string name="save_dual_both_together">Обе вместе</string>
+    <string name="save_dual_both_together_desc">Объединить видео в одно (картинка в картинке)</string>
+    <string name="save_dual_processing">Обработка и сохранение видео…</string>
+    <string name="video_saved_to_internal_storage">Видео сохранено во встроенное хранилище</string>
 </resources>

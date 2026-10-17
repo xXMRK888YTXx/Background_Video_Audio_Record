@@ -5,4 +5,6 @@ sealed class CameraType(val id:Int) {
     object Back : CameraType(0)
 
     object Front : CameraType(1)
+
+    object Both : CameraType(2)
 }

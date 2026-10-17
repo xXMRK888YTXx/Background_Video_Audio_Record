@@ -53,16 +53,37 @@ fun RecordStateWidget(
             }
             Canvas(
                 modifier = Modifier
-                    .size(300.dp)
+                    .size(260.dp)
                     .then(modifier)
             ) {
+                val strokeWidth = 5.dp.toPx()
+                val radius = (size.minDimension - strokeWidth) / 2
+                val centerOffset = Offset(x = size.width / 2, y = size.height / 2)
+
+                // Inner circle subtle glow
                 drawCircle(
-                    color = if(isRecordEnabled) borderWhenRecordEnabled
-                    else borderWhenRecordDisabled,
-                    style = Stroke(width = 8.dp.toPx()),
-                    center = Offset(x = size.width / 2, y = size.height / 2),
-                    radius = 150.dp.toPx()
+                    color = borderWhenRecordDisabled.copy(alpha = 0.2f),
+                    radius = radius,
+                    center = centerOffset
                 )
+
+                // Background track
+                drawCircle(
+                    color = borderWhenRecordDisabled,
+                    style = Stroke(width = strokeWidth),
+                    center = centerOffset,
+                    radius = radius
+                )
+
+                // Active recording ring
+                if (isRecordEnabled) {
+                    drawCircle(
+                        color = borderWhenRecordEnabled,
+                        style = Stroke(width = strokeWidth + 2.dp.toPx()),
+                        center = centerOffset,
+                        radius = radius
+                    )
+                }
             }
         }
 
