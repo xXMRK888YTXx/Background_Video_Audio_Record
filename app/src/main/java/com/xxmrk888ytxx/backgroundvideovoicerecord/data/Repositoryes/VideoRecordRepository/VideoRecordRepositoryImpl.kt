@@ -37,6 +37,11 @@ class VideoRecordRepositoryImpl @Inject constructor(
 
     override suspend fun addFileFromRecorded(): File {
         if(fileForRecord.exists()) {
+            if (fileForRecord.length() == 0L) {
+                fileForRecord.delete()
+                if (secondaryFileForRecord.exists()) secondaryFileForRecord.delete()
+                throw IllegalStateException("Recorded file is empty (0 bytes)")
+            }
             val newFilePath = newFile
             fileForRecord.renameTo(newFilePath)
             if (secondaryFileForRecord.exists()) {
@@ -182,11 +187,17 @@ class VideoRecordRepositoryImpl @Inject constructor(
 
     private suspend fun getFileDuration(file:File) : Long {
         val mediaMetadataRetriever = MediaMetadataRetriever()
-
-        mediaMetadataRetriever.setDataSource(file.absolutePath)
-
-        return mediaMetadataRetriever
-            .extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0
+        return try {
+            mediaMetadataRetriever.setDataSource(file.absolutePath)
+            mediaMetadataRetriever
+                .extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0L
+        } catch (_: Exception) {
+            0L
+        } finally {
+            try {
+                mediaMetadataRetriever.release()
+            } catch (_: Exception) {}
+        }
     }
     //
 

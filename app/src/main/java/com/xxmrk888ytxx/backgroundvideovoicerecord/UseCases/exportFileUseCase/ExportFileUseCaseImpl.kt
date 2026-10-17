@@ -19,6 +19,10 @@ class ExportFileUseCaseImpl @Inject constructor(
         fileForExport: File,
         fileType: ExportFileType,
     ): Result<Unit> = runCatching {
+        if (!fileForExport.exists() || fileForExport.length() == 0L) {
+            throw IllegalArgumentException("Source file does not exist or is empty: ${fileForExport.absolutePath}")
+        }
+
         val subFolderForFile = when (fileType) {
             ExportFileType.VIDEO -> externalStorageRepository.videoFolder
             ExportFileType.AUDIO -> externalStorageRepository.audioFolder
@@ -29,7 +33,14 @@ class ExportFileUseCaseImpl @Inject constructor(
             fileType.mineType,
             provideNameForExportFile(fileForExport, fileType)
         ).getOrThrow()
-        writeFileToExternalStorageUseCase.write(fileForExport, externalStorageFile.uri).getOrThrow()
+
+        val writeResult = writeFileToExternalStorageUseCase.write(fileForExport, externalStorageFile.uri)
+        if (writeResult.isFailure) {
+            try {
+                externalStorageFile.delete()
+            } catch (_: Exception) {}
+            writeResult.getOrThrow()
+        }
     }
 
     private val ExportFileType.mineType: String

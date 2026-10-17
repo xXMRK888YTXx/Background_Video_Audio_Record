@@ -3,6 +3,7 @@ package com.xxmrk888ytxx.backgroundvideovoicerecord.UseCases.writeFileToExternal
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.documentfile.provider.DocumentFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
@@ -10,6 +11,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
+import java.io.IOException
 import javax.inject.Inject
 
 class WriteFileToExternalStorageUseCaseImpl @Inject constructor(
@@ -22,26 +24,44 @@ class WriteFileToExternalStorageUseCaseImpl @Inject constructor(
         var outputFileStream: BufferedOutputStream? = null
 
         return@withContext try {
-            val buffer = ByteArray(15000)
-            exportFileStream = BufferedInputStream(FileInputStream(exportFile))
-            outputFileStream = BufferedOutputStream(context.contentResolver.openOutputStream(outputPath))
+            val expectedLength = exportFile.length()
+            if (!exportFile.exists() || expectedLength == 0L) {
+                throw IOException("Source file does not exist or is empty (0 bytes): ${exportFile.absolutePath}")
+            }
 
+            val buffer = ByteArray(65536)
+            exportFileStream = BufferedInputStream(FileInputStream(exportFile))
+            val rawOutputStream = context.contentResolver.openOutputStream(outputPath)
+                ?: throw IOException("Cannot open output stream for $outputPath")
+            outputFileStream = BufferedOutputStream(rawOutputStream)
+
+            var totalBytesWritten = 0L
             var readerBytes = exportFileStream.read(buffer)
 
             while (readerBytes != -1) {
                 outputFileStream.write(buffer, 0, readerBytes)
+                totalBytesWritten += readerBytes
                 readerBytes = exportFileStream.read(buffer)
             }
 
-            Log.i(LOG_TAG,"write successful")
+            outputFileStream.flush()
+
+            if (totalBytesWritten != expectedLength) {
+                throw IOException("Incomplete file write: expected $expectedLength bytes, wrote $totalBytesWritten bytes")
+            }
+
+            Log.i(LOG_TAG,"write successful ($totalBytesWritten bytes)")
             Result.success(Unit)
         }catch (e:Exception) {
             Log.e(LOG_TAG,"error in write time ${e.stackTraceToString()}")
+            try {
+                DocumentFile.fromSingleUri(context, outputPath)?.delete()
+            } catch (_: Exception) {}
             Result.failure(e)
         } finally {
             withContext(NonCancellable) {
-                exportFileStream?.close()
-                outputFileStream?.close()
+                try { exportFileStream?.close() } catch (_: Exception) {}
+                try { outputFileStream?.close() } catch (_: Exception) {}
 
                 exportFileStream = null
                 outputFileStream = null
@@ -50,6 +70,6 @@ class WriteFileToExternalStorageUseCaseImpl @Inject constructor(
     }
 
     companion object {
-        const val LOG_TAG = "ExportFileUseCaseImpl"
+        const val LOG_TAG = "WriteFileToExternalStorageUseCaseImpl"
     }
 }

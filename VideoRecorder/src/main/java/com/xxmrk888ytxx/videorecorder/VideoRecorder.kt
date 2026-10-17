@@ -97,7 +97,7 @@ interface VideoRecorder {
      *
      * Sets the recording state [RecorderState.Destroyed]
      */
-    fun stopRecordAndDestroyRecorder()
+    suspend fun stopRecordAndDestroyRecorder()
 
     /**
      * [Ru]

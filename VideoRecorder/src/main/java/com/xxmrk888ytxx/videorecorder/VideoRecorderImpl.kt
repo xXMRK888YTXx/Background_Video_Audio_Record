@@ -28,6 +28,7 @@ import com.xxmrk888ytxx.videorecorder.models.CameraRotation
 import com.xxmrk888ytxx.videorecorder.models.CameraType
 import com.xxmrk888ytxx.videorecorder.models.MaxQuality
 import com.xxmrk888ytxx.videorecorder.models.RecorderState
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -40,6 +41,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
 import javax.inject.Inject
 
@@ -56,6 +58,8 @@ internal class VideoRecorderImpl constructor(
 
     private var recording: Recording? = null
     private var secondaryRecording: Recording? = null
+    private var primaryFinalizeDeferred: CompletableDeferred<Unit>? = null
+    private var secondaryFinalizeDeferred: CompletableDeferred<Unit>? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private var videoCapture: VideoCapture<Recorder>? = null
     private var secondaryVideoCapture: VideoCapture<Recorder>? = null
@@ -80,8 +84,9 @@ internal class VideoRecorderImpl constructor(
                     observerRecordDurationScope.launch {
                         _recordState.update { RecorderState.Idle }
                     }
-                    return@Consumer
                 }
+                primaryFinalizeDeferred?.complete(Unit)
+                return@Consumer
             }
             observerRecordDurationScope.launch {
                 val recordedMillis = recordInfo.recordingStats.recordedDurationNanos / 1_000_000
@@ -310,7 +315,14 @@ internal class VideoRecorderImpl constructor(
                         .prepareRecording(context, secondaryMediaStoreOutput)
                         .start(
                             Dispatchers.IO.asExecutor()
-                        ) { /* secondary event listener */ }
+                        ) { event ->
+                            if (event is VideoRecordEvent.Finalize) {
+                                if (event.hasError()) {
+                                    Log.e("VideoRecorder", "Secondary recording finalized with error: ${event.error}, cause: ${event.cause}")
+                                }
+                                secondaryFinalizeDeferred?.complete(Unit)
+                            }
+                        }
                 }
 
                 toRecordState()
@@ -347,34 +359,68 @@ internal class VideoRecorderImpl constructor(
         }
     }
 
-    override fun stopRecordAndDestroyRecorder() {
-        scope.launch {
-            recording?.run {
-                stop()
-                close()
-            }
-            secondaryRecording?.run {
-                stop()
-                close()
-            }
+    override suspend fun stopRecordAndDestroyRecorder() {
+        val primDeferred = CompletableDeferred<Unit>()
+        val secDeferred = if (secondaryRecording != null) CompletableDeferred<Unit>() else null
+        primaryFinalizeDeferred = primDeferred
+        secondaryFinalizeDeferred = secDeferred
 
-            cameraProvider?.run {
-                withContext(Dispatchers.Main) {
-                    unbindAll()
-                }
-            }
+        val hasPrimary = recording != null
+        val hasSecondary = secondaryRecording != null
 
-            recording = null
-            secondaryRecording = null
-            cameraProvider = null
-            videoCapture = null
-            secondaryVideoCapture = null
-
-            toDestroyState()
-
-            observerRecordDurationScope.cancel()
-            scope.cancel()
+        try {
+            recording?.stop()
+        } catch (e: Exception) {
+            Log.e("VideoRecorder", "Error stopping primary recording", e)
+            primDeferred.complete(Unit)
         }
+
+        try {
+            secondaryRecording?.stop()
+        } catch (e: Exception) {
+            Log.e("VideoRecorder", "Error stopping secondary recording", e)
+            secDeferred?.complete(Unit)
+        }
+
+        // Wait for CameraX to finalize and write the MP4 headers/moov atom to disk
+        if (hasPrimary) {
+            withTimeoutOrNull(5000L) {
+                primDeferred.await()
+            }
+        }
+        if (hasSecondary && secDeferred != null) {
+            withTimeoutOrNull(5000L) {
+                secDeferred.await()
+            }
+        }
+
+        try {
+            recording?.close()
+        } catch (_: Exception) {}
+        try {
+            secondaryRecording?.close()
+        } catch (_: Exception) {}
+
+        cameraProvider?.run {
+            withContext(Dispatchers.Main) {
+                try {
+                    unbindAll()
+                } catch (_: Exception) {}
+            }
+        }
+
+        recording = null
+        secondaryRecording = null
+        primaryFinalizeDeferred = null
+        secondaryFinalizeDeferred = null
+        cameraProvider = null
+        videoCapture = null
+        secondaryVideoCapture = null
+
+        toDestroyState()
+
+        observerRecordDurationScope.cancel()
+        scope.cancel()
     }
 
     private suspend fun toRecordState() {

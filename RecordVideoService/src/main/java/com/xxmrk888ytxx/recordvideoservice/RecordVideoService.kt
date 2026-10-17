@@ -169,23 +169,21 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
     }
     //
 
-    //Destroy service
     override fun onDestroy() {
         super.onDestroy()
-        lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
         unregisterReceiver(notificationCommandReceiver)
         Log.i(LOG_TAG, "onDestroy")
         releaseWakeLock()
         abandonAudioFocus()
         videoRecordServiceScope.launch(NonCancellable) {
-            stopRecord()
+            stopRecordInternal()
+            lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
             recordStateObserverScope.cancel()
             videoRecordServiceScope.cancel()
             recordNotificationStateObserverScope.cancel()
 
             notificationManager.cancel(NOTIFICATION_ID)
         }
-
     }
     //
 
@@ -383,10 +381,9 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         accumulatedDurationMs += lastChunkDuration
 
         stopRecordObserver(resetState = false)
-        recorder?.run {
-            stopRecordAndDestroyRecorder()
-        }
+        val oldRecorder = recorder
         recorder = null
+        oldRecorder?.stopRecordAndDestroyRecorder()
 
         withContext(NonCancellable) {
             recordVideoParams.saveRecordedVideoStrategy.saveRecord()
@@ -451,22 +448,26 @@ class RecordVideoService : Service(), RecordVideoServiceController, LifecycleOwn
         releaseWakeLock()
         abandonAudioFocus()
         videoRecordServiceScope.launch {
-            stopRecordObserver(resetState = true)
-            recorder?.run {
-                stopRecordAndDestroyRecorder()
-            }
+            stopRecordInternal()
+        }
+    }
 
-            recorder = null
-            accumulatedDurationMs = 0L
-            currentCameraTypeOverride = null
-            isRotating = false
+    private suspend fun stopRecordInternal() {
+        if (recorder == null) return
+        stopRecordObserver(resetState = true)
+        val activeRecorder = recorder
+        recorder = null
+        accumulatedDurationMs = 0L
+        currentCameraTypeOverride = null
+        isRotating = false
 
-            Log.i(LOG_TAG, "stopRecord")
+        activeRecorder?.stopRecordAndDestroyRecorder()
 
-            withContext(NonCancellable) {
-                recordVideoParams.saveRecordedVideoStrategy.saveRecord()
-                Log.i(LOG_TAG, "record saved")
-            }
+        Log.i(LOG_TAG, "stopRecord")
+
+        withContext(NonCancellable) {
+            recordVideoParams.saveRecordedVideoStrategy.saveRecord()
+            Log.i(LOG_TAG, "record saved")
         }
     }
     //
