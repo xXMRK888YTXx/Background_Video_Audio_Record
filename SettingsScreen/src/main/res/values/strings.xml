@@ -64,4 +64,7 @@
     <string name="open_settings">Open Settings</string>
     <string name="copy_adb_command">Copy ADB Command</string>
     <string name="adb_command_copied">Command copied to clipboard</string>
+    <string name="volume_key_instructions_button">How it works &amp; ADB setup</string>
+    <string name="volume_key_how_it_works_title">How it works</string>
+    <string name="volume_key_how_it_works_desc">1. Press and hold either Volume Up or Volume Down until you feel a vibration.\n2. Release the button.\n3. Press and hold the volume button again within 2 seconds — recording starts (confirmed by double vibration).\n4. Repeat the double long press to stop recording.</string>
 </resources>

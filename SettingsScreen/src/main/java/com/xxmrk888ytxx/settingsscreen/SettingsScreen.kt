@@ -65,6 +65,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import com.xxmrk888ytxx.settingsscreen.models.DialogModels.NotificationConfigurationDialogState
@@ -991,33 +992,55 @@ internal fun AdbPermissionDialog(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.volume_key_permission_dialog_title),
-                    style = themeTypography.body,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    color = Color.White
-                )
-
-                // Step 1: ADB Volume Key Listener
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.volume_key_adb_step_title),
+                        text = stringResource(R.string.volume_key_permission_dialog_title),
                         style = themeTypography.body,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
                         color = Color.White
                     )
+
+                    // How it works section
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.volume_key_how_it_works_title),
+                            style = themeTypography.body,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp,
+                            color = themeColors.primaryColor
+                        )
+
+                        Text(
+                            text = stringResource(R.string.volume_key_how_it_works_desc),
+                            style = themeTypography.body,
+                            fontSize = 13.sp,
+                            color = Color(0xFFCBD5E1)
+                        )
+                    }
+
+                    // Step 1: ADB Volume Key Listener
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.volume_key_adb_step_title),
+                            style = themeTypography.body,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp,
+                            color = Color.White
+                        )
 
                     if (isVolumeKeyGranted) {
                         Text(

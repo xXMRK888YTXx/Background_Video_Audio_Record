@@ -243,5 +243,13 @@ internal fun volumeKeyTriggerParams(
         }
     }
 
+    list.add(
+        SettingsParamType.Button(
+            text = stringResource(R.string.volume_key_instructions_button),
+            icon = R.drawable.info,
+            onClick = settingsViewModel::showAdbPermissionDialog
+        )
+    )
+
     return list.build()
 }

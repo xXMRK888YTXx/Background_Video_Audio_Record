@@ -64,4 +64,7 @@
     <string name="open_settings">Открыть настройки</string>
     <string name="copy_adb_command">Скопировать команду ADB</string>
     <string name="adb_command_copied">Команда скопирована в буфер обмена</string>
+    <string name="volume_key_instructions_button">Как это работает и настройка ADB</string>
+    <string name="volume_key_how_it_works_title">Как это работает</string>
+    <string name="volume_key_how_it_works_desc">1. Зажмите любую кнопку громкости (+ или -), пока не почувствуете виброотклик.\n2. Отпустите кнопку.\n3. В течение 2 секунд зажмите кнопку громкости еще раз — начнется запись (подтверждается двойной вибрацией).\n4. Для остановки повторите двойное долгое нажатие.</string>
 </resources>
