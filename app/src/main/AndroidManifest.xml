@@ -50,7 +50,7 @@
             android:launchMode="singleInstance"
             android:showWhenLocked="true"
             android:turnScreenOn="true"
-            android:exported="false" />
+            android:exported="true" />
 
         <service
             android:name=".presentation.volumeKey.VolumeKeyTriggerService"
