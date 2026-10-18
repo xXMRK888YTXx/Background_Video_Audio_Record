@@ -9,5 +9,5 @@ class ProvideAppVersionContractImpl @Inject constructor(
 ) : ProvideAppVersionContract {
 
     override val appVersion: String
-        get() = BuildConfig.VERSION_NAME
+        get() = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
 }

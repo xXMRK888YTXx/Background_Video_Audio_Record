@@ -18,8 +18,8 @@ android {
         applicationId = libs.versions.packageName.get()
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.compileSdk.get().toInt()
-        versionCode = 11
-        versionName = "2.0 Faradey"
+        versionCode = 12
+        versionName = "Faradey.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
