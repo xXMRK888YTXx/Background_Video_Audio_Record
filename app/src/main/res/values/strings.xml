@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ShieldRec — Hidden Recording</string>
+    <string name="app_name">KageRec</string>
     <string name="Sound_record">Audio</string>
     <string name="Record_video">Video</string>
     <string name="Settings">Settings</string>
