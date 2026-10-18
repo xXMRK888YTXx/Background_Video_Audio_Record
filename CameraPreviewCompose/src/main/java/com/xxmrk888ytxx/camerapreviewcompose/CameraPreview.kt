@@ -1,5 +1,6 @@
 package com.xxmrk888ytxx.camerapreviewcompose
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ConcurrentCamera
@@ -20,8 +21,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,10 +38,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.xxmrk888ytxx.camerapreviewcompose.models.CameraType
 import com.xxmrk888ytxx.coreandroid.models.DualCameraPrimary
 import com.xxmrk888ytxx.coreandroid.models.PipPosition
+import kotlinx.coroutines.delay
+
+private const val TAG = "CameraPreview"
 
 @Composable
 fun CameraPreview(
@@ -81,26 +90,87 @@ fun CameraPreview(
 
     val isDual = cameraType is CameraType.Both
 
-    LaunchedEffect(cameraType, isRecord, isActive, mainCamera, cameraProvider, localLifecycleOwner, primaryPreviewView, secondaryPreviewView) {
+    var resumeTrigger by remember { mutableStateOf(0) }
+
+    DisposableEffect(localLifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                resumeTrigger++
+            }
+        }
+        localLifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            localLifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    LaunchedEffect(
+        cameraType,
+        isRecord,
+        isActive,
+        mainCamera,
+        cameraProvider,
+        localLifecycleOwner,
+        primaryPreviewView,
+        secondaryPreviewView,
+        resumeTrigger
+    ) {
         val provider = cameraProvider ?: return@LaunchedEffect
+
+        // Always detach surface providers first to signal CameraX that previous surfaces are reset
         try {
+            primaryPreview.setSurfaceProvider(null)
+            secondaryPreview.setSurfaceProvider(null)
             provider.unbind(primaryPreview, secondaryPreview)
         } catch (_: Exception) {}
 
         if (!isRecord && isActive) {
-            try {
-                primaryPreview.setSurfaceProvider(primaryPreviewView.surfaceProvider)
-                if (isDual) {
-                    secondaryPreview.setSurfaceProvider(secondaryPreviewView.surfaceProvider)
+            // Robust retry loop with backoff to handle camera hardware release latency
+            // (e.g. background service finalizing MP4 or camera HAL session transition)
+            var bound = false
+            var attempt = 0
+            val maxAttempts = 5
+
+            while (!bound && attempt < maxAttempts && !isRecord && isActive) {
+                attempt++
+                try {
+                    // Reset surface providers to force a fresh SurfaceRequest
+                    primaryPreview.setSurfaceProvider(null)
+                    if (isDual) {
+                        secondaryPreview.setSurfaceProvider(null)
+                    }
+                    provider.unbind(primaryPreview, secondaryPreview)
+
+                    primaryPreview.setSurfaceProvider(primaryPreviewView.surfaceProvider)
+                    if (isDual) {
+                        secondaryPreview.setSurfaceProvider(secondaryPreviewView.surfaceProvider)
+                    }
+
+                    bindPreview(
+                        cameraProvider = provider,
+                        lifecycleOwner = localLifecycleOwner,
+                        cameraType = cameraType,
+                        primaryPreview = primaryPreview,
+                        secondaryPreview = secondaryPreview,
+                        mainCamera = mainCamera
+                    )
+                    bound = true
+                    Log.d(TAG, "Camera preview bound successfully on attempt $attempt")
+                } catch (e: Exception) {
+                    Log.w(TAG, "Camera preview bind attempt $attempt failed: ${e.message}")
+                    if (attempt < maxAttempts) {
+                        delay(attempt * 150L)
+                    }
                 }
-                bindPreview(provider, localLifecycleOwner, cameraType, primaryPreview, secondaryPreview, mainCamera)
-            } catch (_: Exception) {}
+            }
         }
     }
 
     DisposableEffect(cameraProvider, primaryPreview, secondaryPreview) {
         onDispose {
             try {
+                primaryPreview.setSurfaceProvider(null)
+                secondaryPreview.setSurfaceProvider(null)
                 cameraProvider?.unbind(primaryPreview, secondaryPreview)
             } catch (_: Exception) {}
         }
@@ -116,7 +186,10 @@ fun CameraPreview(
                 Box(modifier = Modifier.fillMaxSize()) {
                     // Primary camera view (Fullscreen)
                     AndroidView(
-                        factory = { primaryPreviewView },
+                        factory = {
+                            (primaryPreviewView.parent as? ViewGroup)?.removeView(primaryPreviewView)
+                            primaryPreviewView
+                        },
                         update = { view ->
                             try {
                                 primaryPreview.setSurfaceProvider(view.surfaceProvider)
@@ -143,7 +216,10 @@ fun CameraPreview(
                                 .border(2.dp, Color(0xFF38BDF8), RoundedCornerShape(16.dp))
                         ) {
                             AndroidView(
-                                factory = { secondaryPreviewView },
+                                factory = {
+                                    (secondaryPreviewView.parent as? ViewGroup)?.removeView(secondaryPreviewView)
+                                    secondaryPreviewView
+                                },
                                 update = { view ->
                                     try {
                                         secondaryPreview.setSurfaceProvider(view.surfaceProvider)
@@ -245,7 +321,8 @@ private fun bindPreview(
             }
             cameraProvider.bindToLifecycle(lifecycleOwner, safeSelector, primaryPreview)
         }
-    } catch (_: Exception) {
+    } catch (e: Exception) {
+        Log.w(TAG, "Primary or concurrent binding failed, attempting fallback: ${e.message}", e)
         try {
             cameraProvider.unbind(primaryPreview, secondaryPreview)
             val fallbackSelector = if (cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)) {
@@ -254,7 +331,10 @@ private fun bindPreview(
                 CameraSelector.DEFAULT_FRONT_CAMERA
             }
             cameraProvider.bindToLifecycle(lifecycleOwner, fallbackSelector, primaryPreview)
-        } catch (_: Exception) {}
+        } catch (fallbackEx: Exception) {
+            Log.e(TAG, "Fallback binding also failed", fallbackEx)
+            throw fallbackEx
+        }
     }
 }
 
@@ -266,7 +346,8 @@ internal fun produceCameraProvider(): ProcessCameraProvider? {
         future.addListener({
             try {
                 value = future.get()
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to get ProcessCameraProvider", e)
                 value = null
             }
         }, ContextCompat.getMainExecutor(context))
