@@ -41,7 +41,13 @@ class AllRecordAutoExportWorkerWorkImpl @Inject constructor(
 
     private suspend fun exportVideo(externalStorageRepository: ExternalStorageRepository) {
         val videoRecordFilesHashInInternalStorage = videoRecordRepository.fileList.first()
-            .mapNotNull { videoRecordRepository.getFileById(it.id)?.toMD5HashAndFilePair() }
+            .flatMap { model ->
+                listOfNotNull(
+                    videoRecordRepository.getFileById(model.id),
+                    videoRecordRepository.getSecondaryFileById(model.id)
+                )
+            }
+            .mapNotNull { it.toMD5HashAndFilePair() }
             .toMap()
         val videoRecordFilesHashInExternalStorage =
             externalStorageRepository.videoFolder.listFiles()

@@ -58,7 +58,8 @@ class ExportFileUseCaseImpl @Inject constructor(
     private fun provideNameForExportFile(fileForExport: File, fileType: ExportFileType): String {
         val lastModificationTime = fileForExport.lastModified()
         val generatedExtraName = UUID.randomUUID().toString()
+        val suffix = if (fileForExport.name.contains("_secondary")) "_secondary" else ""
 
-        return "${lastModificationTime.toDateString(context)}-$generatedExtraName.${fileType.fileExtension}"
+        return "${lastModificationTime.toDateString(context)}-$generatedExtraName$suffix.${fileType.fileExtension}"
     }
 }

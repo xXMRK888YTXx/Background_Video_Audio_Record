@@ -6,6 +6,7 @@ import com.xxmrk888ytxx.backgroundvideovoicerecord.domain.externalStorageExportM
 import com.xxmrk888ytxx.recordvideoservice.SaveRecordedVideoStrategy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 class SaveRecordedVideoStrategyImpl @Inject constructor(
@@ -15,7 +16,15 @@ class SaveRecordedVideoStrategyImpl @Inject constructor(
 
     override suspend fun saveRecord() = withContext(Dispatchers.IO) {
         runCatching { videoRecordRepository.addFileFromRecorded() }
-            .onSuccess { file -> externalStorageExportManager.exportNewVideoFile(file) }
+            .onSuccess { file ->
+                externalStorageExportManager.exportNewVideoFile(file)
+                val secondaryFile = file.name.toLongOrNull()?.let { id ->
+                    videoRecordRepository.getSecondaryFileById(id)
+                } ?: File(file.parentFile, "${file.name}_secondary")
+                if (secondaryFile.exists()) {
+                    externalStorageExportManager.exportNewVideoFile(secondaryFile)
+                }
+            }
             .onFailure { Log.e(LOG_TAG, it.stackTraceToString()) }
         return@withContext
     }
