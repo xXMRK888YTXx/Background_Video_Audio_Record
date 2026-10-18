@@ -49,7 +49,7 @@
     <string name="volume_key_action_record_audio">Начать запись звука</string>
     <string name="volume_trigger_notification_channel">Аппаратный триггер</string>
     <string name="volume_trigger_notification_title">Триггер кнопок громкости активен</string>
-    <string name="volume_trigger_notification_text">Двойное зажатие громкости для записи</string>
+    <string name="volume_trigger_notification_text">Двойное зажатие громкости (+) для записи</string>
     <string name="camera_and_mic_required_toast">Для начала записи требуются разрешения на камеру и микрофон</string>
     <string name="camera_required_toast">Для начала записи требуется разрешение на камеру</string>
     <string name="mic_required_toast">Для начала записи требуется разрешение на микрофон</string>

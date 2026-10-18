@@ -66,5 +66,5 @@
     <string name="adb_command_copied">Command copied to clipboard</string>
     <string name="volume_key_instructions_button">How it works &amp; ADB setup</string>
     <string name="volume_key_how_it_works_title">How it works</string>
-    <string name="volume_key_how_it_works_desc">1. Press and hold either Volume Up or Volume Down until you feel a vibration.\n2. Release the button.\n3. Press and hold the volume button again within 2 seconds — recording starts (confirmed by double vibration).\n4. Repeat the double long press to stop recording.</string>
+    <string name="volume_key_how_it_works_desc">1. Press and hold Volume Up (+) until you feel a vibration (volume will increase normally).\n2. Release the button.\n3. Press and hold Volume Up (+) again within 2–3 seconds — recording starts (confirmed by double vibration).\n4. Repeat to stop recording (Volume Down button functions normally and does not affect recording).</string>
 </resources>

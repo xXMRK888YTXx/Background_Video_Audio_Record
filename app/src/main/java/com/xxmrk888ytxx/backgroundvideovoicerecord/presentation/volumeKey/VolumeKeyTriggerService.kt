@@ -65,11 +65,16 @@ class VolumeKeyTriggerService : Service() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
+    private val audioManager: AudioManager? by lazy {
+        getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+    }
+
     private var lastDownTime = 0L
     private var firstPressTimeMs = 0L
     private var lastReleaseTimeMs = 0L
     private var waitingForSecondPress = false
     private var resetJob: Job? = null
+    private var volumeRepeatJob: Job? = null
     private var heartbeatJob: Job? = null
 
     private var _wakeLock: PowerManager.WakeLock? = null
@@ -265,6 +270,47 @@ class VolumeKeyTriggerService : Service() {
             return
         }
 
+        // Volume Down is strictly isolated: never triggers recording and behaves as a regular volume down button
+        if (event.keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            if (waitingForSecondPress) {
+                waitingForSecondPress = false
+                resetJob?.cancel()
+                releaseWakeLock()
+            }
+            when (event.action) {
+                KeyEvent.ACTION_DOWN -> {
+                    if (event.downTime != lastDownTime) {
+                        lastDownTime = event.downTime
+                        volumeRepeatJob?.cancel()
+                        volumeRepeatJob = serviceScope.launch {
+                            audioManager?.adjustSuggestedStreamVolume(
+                                AudioManager.ADJUST_LOWER,
+                                AudioManager.USE_DEFAULT_STREAM_TYPE,
+                                AudioManager.FLAG_SHOW_UI
+                            )
+                            delay(140L)
+                            var count = 0
+                            while (isActive && count++ < 50) {
+                                audioManager?.adjustSuggestedStreamVolume(
+                                    AudioManager.ADJUST_LOWER,
+                                    AudioManager.USE_DEFAULT_STREAM_TYPE,
+                                    AudioManager.FLAG_SHOW_UI
+                                )
+                                delay(90L)
+                            }
+                        }
+                    }
+                }
+                KeyEvent.ACTION_UP -> {
+                    lastDownTime = 0L
+                    volumeRepeatJob?.cancel()
+                    volumeRepeatJob = null
+                }
+            }
+            return
+        }
+
+        // Only KEYCODE_VOLUME_UP reaches here
         when (event.action) {
             KeyEvent.ACTION_DOWN -> {
                 acquireWakeLock(5000L)
@@ -278,35 +324,78 @@ class VolumeKeyTriggerService : Service() {
                 val now = SystemClock.elapsedRealtime()
 
                 if (!waitingForSecondPress) {
-                    // First long-press detected
+                    // First hold detected: signal readiness with vibration and raise volume continuously while held
                     firstPressTimeMs = now
                     waitingForSecondPress = true
                     vibrateFirstPress()
+
+                    volumeRepeatJob?.cancel()
+                    volumeRepeatJob = serviceScope.launch {
+                        audioManager?.adjustSuggestedStreamVolume(
+                            AudioManager.ADJUST_RAISE,
+                            AudioManager.USE_DEFAULT_STREAM_TYPE,
+                            AudioManager.FLAG_SHOW_UI
+                        )
+                        delay(140L)
+                        var count = 0
+                        while (isActive && count++ < 50) {
+                            audioManager?.adjustSuggestedStreamVolume(
+                                AudioManager.ADJUST_RAISE,
+                                AudioManager.USE_DEFAULT_STREAM_TYPE,
+                                AudioManager.FLAG_SHOW_UI
+                            )
+                            delay(90L)
+                        }
+                    }
+
                     resetJob?.cancel()
                     resetJob = serviceScope.launch {
-                        delay(2500L)
+                        delay(3500L)
                         waitingForSecondPress = false
                         releaseWakeLock()
                     }
                 } else {
-                    // Potential second long-press
+                    // Second hold detected within timeout window: toggle recording, do NOT raise volume
+                    volumeRepeatJob?.cancel()
+                    volumeRepeatJob = null
+
                     val diffFromFirst = now - firstPressTimeMs
                     val diffFromRelease = if (lastReleaseTimeMs > 0L) now - lastReleaseTimeMs else diffFromFirst
-                    val isWithinWindow = (diffFromRelease in 0..2500L) || (diffFromFirst in 200..3000L)
+                    val isWithinWindow = (diffFromRelease in 0..3500L) || (diffFromFirst in 200..6000L)
 
                     if (isWithinWindow) {
-                        // Successfully matched double-long-press!
+                        // Successfully matched double-hold trigger!
                         waitingForSecondPress = false
                         resetJob?.cancel()
                         executeTriggerAction()
                     } else {
-                        // Window expired, treat as a new first long-press
+                        // Window expired: treat as a fresh first hold
                         firstPressTimeMs = now
                         waitingForSecondPress = true
                         vibrateFirstPress()
+
+                        volumeRepeatJob?.cancel()
+                        volumeRepeatJob = serviceScope.launch {
+                            audioManager?.adjustSuggestedStreamVolume(
+                                AudioManager.ADJUST_RAISE,
+                                AudioManager.USE_DEFAULT_STREAM_TYPE,
+                                AudioManager.FLAG_SHOW_UI
+                            )
+                            delay(140L)
+                            var count = 0
+                            while (isActive && count++ < 50) {
+                                audioManager?.adjustSuggestedStreamVolume(
+                                    AudioManager.ADJUST_RAISE,
+                                    AudioManager.USE_DEFAULT_STREAM_TYPE,
+                                    AudioManager.FLAG_SHOW_UI
+                                )
+                                delay(90L)
+                            }
+                        }
+
                         resetJob?.cancel()
                         resetJob = serviceScope.launch {
-                            delay(2500L)
+                            delay(3500L)
                             waitingForSecondPress = false
                             releaseWakeLock()
                         }
@@ -315,14 +404,17 @@ class VolumeKeyTriggerService : Service() {
             }
 
             KeyEvent.ACTION_UP -> {
+                lastDownTime = 0L
+                volumeRepeatJob?.cancel()
+                volumeRepeatJob = null
                 lastReleaseTimeMs = SystemClock.elapsedRealtime()
 
                 if (waitingForSecondPress) {
                     // Start timeout window from key release, maintain wake lock during window
-                    acquireWakeLock(3000L)
+                    acquireWakeLock(3500L)
                     resetJob?.cancel()
                     resetJob = serviceScope.launch {
-                        delay(2000L)
+                        delay(3000L)
                         waitingForSecondPress = false
                         releaseWakeLock()
                     }
